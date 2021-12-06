@@ -1,45 +1,45 @@
 {#
-	This marco render a ModelRenderable object in 'table' layout.
-	See ModelRenderable::table() method for details. 
-	
-	Param(s):
-		\Wongyip\Laravel\Renderable\ModelRenderable  MR
+    This marco render a ModelRenderable object in 'table' layout.
+    See ModelRenderable::table() method for details. 
+    
+    Param(s):
+        \Wongyip\Laravel\Renderable\ModelRenderable  MR
 #}
 {% macro handle(MR) %}
 
-	{% if MR.columns()|length %}
-	
-		{% import 'renderable::value' as valueRenderer %}
-	
-		<table class="model-renderable-table {{ MR.tableClass }}" style="{{ MR.tableStyle }}">
-			<thead>
-				<tr>
-					<th class="{{ MR.fieldHeaderClass }}" style="{{ MR.fieldHeaderStyle }}">
-					    {{ MR.captionField }}
-				    </th>
-					<th class="{{ MR.valueHeaderClass }}" style="{{ MR.valueHeaderStyle }}">
-					    {{ MR.captionValue }}
-				    </th>
-				</tr>
-			</thead>
-			<tbody>
-			{% for CR in MR.renderables() %}
-				<tr class="renderable-column renderable-column-{{ CR.name }}">
-					<th class="renderable-label renderable-label-{{ CR.name }}">
-						{{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
-					</th>
-					<td class="renderable-value renderable-value-{{ CR.name }}">
-						{{ valueRenderer.handle(CR) }}
-					</td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	
-	{% else %}
-	
-		<p><em>Empty record.</em></p>
-	
-	{% endif %}
+    {% if MR.columns()|length %}
+    
+        {% import 'renderable::value' as valueRenderer %}
+    
+        <table class="model-renderable-table {{ MR.tableClass }}" style="{{ MR.tableStyle }}">
+            <thead>
+                <tr>
+                    <th class="{{ MR.fieldHeaderClass }}" style="{{ MR.fieldHeaderStyle }}">
+                        {{ MR.captionField }}
+                    </th>
+                    <th class="{{ MR.valueHeaderClass }}" style="{{ MR.valueHeaderStyle }}">
+                        {{ MR.captionValue }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for CR in MR.renderables() %}
+                <tr class="renderable-column renderable-column-{{ CR.name }}">
+                    <th class="renderable-label renderable-label-{{ CR.name }}">
+                        {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
+                    </th>
+                    <td class="renderable-value renderable-value-{{ CR.name }}">
+                        {{ valueRenderer.handle(CR) }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    
+    {% else %}
+    
+        <p><em>Empty record.</em></p>
+    
+    {% endif %}
 
 {% endmacro %}

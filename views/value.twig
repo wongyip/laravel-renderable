@@ -1,42 +1,42 @@
 {#
-	This macro render a single ColumnRenderable object from the output of  
-	RenderableInterface::renderables() method.
+    This macro render a single ColumnRenderable object from the output of  
+    RenderableInterface::renderables() method.
 
-	Param(s):
-		\Wongyip\Laravel\Renderable\ColumnRenderable  CR
+    Param(s):
+        \Wongyip\Laravel\Renderable\ColumnRenderable  CR
 #}
 {% macro handle(CR) %}
 
-	{# The default type on top. #}
-	
+    {# The default type on top. #}
+    
     {% if CR.type == 'string' %}
     
         {{ CR.isHTML ? CR.value|raw : CR.value }}
 
-	{% elseif CR.type == 'text' %}
-		
-		{{ CR.isHTML ? CR.value|raw : CR.value|nl2br }}
-		
-	{% elseif CR.type == 'ol' %}
-	
-		<ol>
-		{% for li in CR.value %}
-			<li>{{ isHTML ? li|raw : li }}</li>
-		{% endfor %}
-		</ol>
-		
-	{% elseif type == 'ul' %}
-	
-		<ul>
-		{% for li in CR.value %}
-			<li>{{ isHTML ? li|raw : li }}</li>
-		{% endfor %}
-		</ul>
+    {% elseif CR.type == 'text' %}
+        
+        {{ CR.isHTML ? CR.value|raw : CR.value|nl2br }}
+        
+    {% elseif CR.type == 'ol' %}
+    
+        <ol>
+        {% for li in CR.value %}
+            <li>{{ isHTML ? li|raw : li }}</li>
+        {% endfor %}
+        </ol>
+        
+    {% elseif type == 'ul' %}
+    
+        <ul>
+        {% for li in CR.value %}
+            <li>{{ isHTML ? li|raw : li }}</li>
+        {% endfor %}
+        </ul>
 
-	{% else %}
-	
-		{{ CR.isHTML ? CR.value|raw : CR.value }}
-		
-	{% endif %}
+    {% else %}
+    
+        {{ CR.isHTML ? CR.value|raw : CR.value }}
+        
+    {% endif %}
 
 {% endmacro %}
