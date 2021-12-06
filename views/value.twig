@@ -1,0 +1,29 @@
+{#
+	Param(s):
+		\Wongyip\Laravel\Renderable\ColumnRenderable  R
+#}
+{% macro handle(R) %}
+
+	{% if R.type == 'ol' %}
+	
+		<ol>
+		{% for li in R.value %}
+			<li>{{ isHTML ? li|raw : li }}</li>
+		{% endfor %}
+		</ol>
+		
+	{% elseif type == 'ul' %}
+	
+		<ul>
+		{% for li in R.value %}
+			<li>{{ isHTML ? li|raw : li }}</li>
+		{% endfor %}
+		</ul>
+		
+	{% else %}
+	
+		{{ R.isHTML ? R.value|raw : R.value }}
+		
+	{% endif %}
+
+{% endmacro %}

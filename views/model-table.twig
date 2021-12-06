@@ -1,0 +1,36 @@
+{% macro handle(R) %}
+
+	{% if R.columns()|length %}
+	
+		{% import  as valueRenderer %}
+	
+		<table class="model-renderable-table">
+			<thead>
+				<tr>
+					<th class="{{ R.fieldHeaderClass }}" style="{{ R.fieldHeaderStyle }}">{{ R.captionField }}</th>
+					<th class="{{ R.valueHeaderClass }}" style="{{ R.valueHeaderStyle }}">{{ R.captuibValue }}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for R in R.renderables() %}
+				<tr>
+					<td class="renderable-label">
+						{{ C.labelHTML ? C.labelHTML|raw : C.label }}
+					</td>
+					<td class="renderable-value">
+						
+						{{ valueRenderer.handle(R) }}
+						
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	
+	{% else %}
+	
+		<p><em>Empty record.</em></p>
+	
+	{% endif %}
+
+{% endmacro %}

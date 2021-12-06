@@ -1,0 +1,34 @@
+{
+    "name": "wongyip/laravel-renderable",
+    "description": "Laravel Modle View Helper",
+    "homepage": "https://www.lib.polyu.edu.hk",
+    "authors": [
+        {
+            "name": "Wongyip",
+            "email": "wongyip@outlook.com",
+            "homepage": "https://github.com/wongyip"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "laravel/framework": "*",
+        "rcrowe/twigbridge": "*",
+        "wongyip/phphelpers": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wongyip\\Laravel\\Renderable\\": "src",
+            "App\\": "app",
+            "Test\\": "test"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wongyip\\Laravel\\Renderable\\RenderableServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+	"prefer-stable" : true
+}

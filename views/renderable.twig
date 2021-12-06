@@ -1,0 +1,9 @@
+{% macro handle(renderable) %}
+
+    {% import renderable.view() as renderer %}
+    
+    <div class="model-renderable">    
+        {{ renderer.handle(renderable) }}
+    </div>
+
+{% endmacro %}
