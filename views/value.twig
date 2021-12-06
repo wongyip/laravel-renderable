@@ -11,17 +11,17 @@
     
     {% if CR.type == 'string' %}
     
-        {{ CR.isHTML ? CR.value|raw : CR.value }}
+        {{ CR.options.html ? CR.value|raw : CR.value }}
 
     {% elseif CR.type == 'text' %}
         
-        {{ CR.isHTML ? CR.value|raw : CR.value|nl2br }}
+        {{ CR.options.html ? CR.value|raw : CR.value|nl2br }}
         
     {% elseif CR.type == 'ol' %}
     
         <ol>
         {% for val in CR.value %}
-            <li>{{ CR.isHTML ? val|raw : val }}</li>
+            <li>{{ CR.options.html ? val|raw : val }}</li>
         {% endfor %}
         </ol>
         
@@ -29,13 +29,13 @@
     
         <ul>
         {% for val in CR.value %}
-            <li>{{ CR.isHTML ? val|raw : val }}</li>
+            <li>{{ CR.options.html ? val|raw : val }}</li>
         {% endfor %}
         </ul>
 
     {% else %}
     
-        {{ CR.isHTML ? CR.value|raw : CR.value }}
+        {{ CR.options.html ? CR.value|raw : CR.value }}
         
     {% endif %}
 

@@ -10,15 +10,12 @@ trait TypeTrait
      * @var string[]
      */
     protected $types = [];
-    /**
-     * Type-specific options of columns.
-     *
-     * @var mixed[]
-     */
-    protected $typesOptions = [];
     
     /**
-     * Get|set of column data type.
+     * Get or set data type of a column, where setter support an array of columns as input.
+     * 
+     * Note that certain setter methods, e.g. typeBoolean(), is recommended to
+     * use when settting data type if there are options bound to that data type.
      *
      * @param string|string[] $column
      * @param string          $type
@@ -32,14 +29,20 @@ trait TypeTrait
             // @todo assumed $column is string here
             return key_exists($column, $this->types) ? $this->types[$column] : ModelRenderable::DEFAULT_COLUMN_TYPE;
         }
-        // Set
+        // Set type
         $cols = is_array($column) ? $column : [$column];
         foreach ($cols as $col) {
             $this->types[$col] = $type;
-            if (!is_null($options)) {
-                $this->typesOptions[$col] = $options;
-            }
         }
+        // Set options
+        if (!is_null($options)) {
+            if (is_array($options)) {
+                $this->options($col, $options);
+            }
+            else {
+                throw new \Exception('Input $options must be an array.');
+            }
+        }   
         return $this;
     }
     
@@ -57,18 +60,22 @@ trait TypeTrait
         $valueTrue  = is_null($valueTrue)  ? 'Yes' : $valueTrue;
         $valueFalse = is_null($valueFalse) ? 'No' : $valueFalse;
         $valueNull  = is_null($valueNull)  ? $valueFalse : $valueNull;
-        return $this->type($column, 'boolean', compact('valueTrue', 'valueFalse', 'valueNull'));
+        $options = compact('valueTrue', 'valueFalse', 'valueNull');
+        return $this->type($column, 'boolean', $options);
     }
     
     /**
      * Type column(s) as CSV.
      *
      * @param string|string[] $column
+     * @param string          $glue
      * @return \Wongyip\Laravel\Renderable\ModelRenderable
      */
-    public function typeCSV($column)
+    public function typeCSV($column, $glue = null)
     {
-        return $this->type($column, 'csv');
+        $glue = is_string($glue) ? $glue : ', ';
+        $options = compact('glue');
+        return $this->type($column, 'csv', $options);
     }
     
     /**

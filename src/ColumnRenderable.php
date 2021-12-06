@@ -8,10 +8,6 @@
 class ColumnRenderable
 {
     /**
-     * @var boolean
-     */
-    public $isHTML;
-    /**
      * @var string
      */
     public $label;
@@ -23,6 +19,10 @@ class ColumnRenderable
      * @var string
      */
     public $name;
+    /**
+     * @var array
+     */
+    public $options;
     /**
      * @var string
      */
