@@ -1,6 +1,6 @@
 {
     "name": "wongyip/laravel-renderable",
-    "description": "Laravel Modle View Helper",
+    "description": "Laravel model rendering simplified.",
     "homepage": "https://www.lib.polyu.edu.hk",
     "authors": [
         {
@@ -18,7 +18,6 @@
     "autoload": {
         "psr-4": {
             "Wongyip\\Laravel\\Renderable\\": "src",
-            "App\\": "app",
             "Test\\": "test"
         }
     },

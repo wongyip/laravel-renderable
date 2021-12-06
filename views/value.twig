@@ -4,7 +4,17 @@
 #}
 {% macro handle(CR) %}
 
-	{% if CR.type == 'ol' %}
+	{# The default type on top. #}
+	
+    {% if CR.type == 'string' %}
+    
+        {{ CR.isHTML ? CR.value|raw : CR.value }}
+
+	{% elseif CR.type = 'text' %}
+		
+		{{ CR.isHTML ? CR.value|raw : CR.value|nl2br }}
+		
+	{% elseif CR.type == 'ol' %}
 	
 		<ol>
 		{% for li in CR.value %}
@@ -19,7 +29,7 @@
 			<li>{{ isHTML ? li|raw : li }}</li>
 		{% endfor %}
 		</ul>
-		
+
 	{% else %}
 	
 		{{ CR.isHTML ? CR.value|raw : CR.value }}

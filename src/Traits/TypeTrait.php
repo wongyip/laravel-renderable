@@ -83,6 +83,19 @@ trait TypeTrait
     }
     
     /**
+     * Type column(s) as multi-line text, which will be rendered with |nl2br filter.
+     * 
+     * Note: no effect if column is declared as HTML.
+     *
+     * @param string|string[] $column
+     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     */
+    public function typeText($column)
+    {
+        return $this->type($column, 'text');
+    }
+    
+    /**
      * Type column(s) as Unordered List.
      *
      * @param string|string[] $column
