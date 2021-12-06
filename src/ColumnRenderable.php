@@ -1,6 +1,10 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
-
+/**
+ * Compiled output for the views.
+ * 
+ * @author yipli
+ */
 class ColumnRenderable
 {
     /**

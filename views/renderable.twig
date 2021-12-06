@@ -1,6 +1,10 @@
 {#
-	Param(s):
-		\Wongyip\Laravel\Renderable\RenderableInterface  Renderable
+	The main macro that render a common container for all kinds of Renderable 
+	object, and then passed the rendering task to the view defined in the 
+	given Renderable object.
+  
+    Param(s):
+    	\Wongyip\Laravel\Renderable\RenderableInterface  Renderable
 #}
 {% macro handle(renderable) %}
 

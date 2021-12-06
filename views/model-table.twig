@@ -1,4 +1,7 @@
 {#
+	This marco render a ModelRenderable object in 'table' layout.
+	See ModelRenderable::table() method for details. 
+	
 	Param(s):
 		\Wongyip\Laravel\Renderable\ModelRenderable  MR
 #}
@@ -11,8 +14,12 @@
 		<table class="model-renderable-table {{ MR.tableClass }}" style="{{ MR.tableStyle }}">
 			<thead>
 				<tr>
-					<th class="{{ MR.fieldHeaderClass }}" style="{{ MR.fieldHeaderStyle }}">{{ MR.captionField }}</th>
-					<th class="{{ MR.valueHeaderClass }}" style="{{ MR.valueHeaderStyle }}">{{ MR.captionValue }}</th>
+					<th class="{{ MR.fieldHeaderClass }}" style="{{ MR.fieldHeaderStyle }}">
+					    {{ MR.captionField }}
+				    </th>
+					<th class="{{ MR.valueHeaderClass }}" style="{{ MR.valueHeaderStyle }}">
+					    {{ MR.captionValue }}
+				    </th>
 				</tr>
 			</thead>
 			<tbody>

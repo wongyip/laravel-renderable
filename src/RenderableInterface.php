@@ -2,5 +2,6 @@
 
 interface RenderableInterface
 {
-    // Nothing now.
+    public function renderables();
+    public function view();
 }

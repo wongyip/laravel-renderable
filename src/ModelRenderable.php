@@ -63,7 +63,6 @@ class ModelRenderable implements RenderableInterface
     protected $model;
     
     /**
-     *
      * Note to $columns: default true to render all columns retrieved by $model->toArray() method.
      *
      * @param Model           $model
@@ -100,6 +99,8 @@ class ModelRenderable implements RenderableInterface
     }
     
     /**
+     * Instantiate a ModelRenderable object in 'table' layout.
+     * 
      * @param Model           $model
      * @param string[]|string $columns
      * @param string[]|string $excluded
@@ -156,6 +157,8 @@ class ModelRenderable implements RenderableInterface
     }
     
     /**
+     * Get an array of compiled ColumnRederable objects for rendering.
+     * 
      * @return \Wongyip\Laravel\Renderable\ColumnRenderable[]
      */
     public function renderables()
