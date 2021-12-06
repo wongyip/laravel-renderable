@@ -20,16 +20,16 @@
     {% elseif CR.type == 'ol' %}
     
         <ol>
-        {% for li in CR.value %}
-            <li>{{ isHTML ? li|raw : li }}</li>
+        {% for val in CR.value %}
+            <li>{{ CR.isHTML ? val|raw : val }}</li>
         {% endfor %}
         </ol>
         
     {% elseif type == 'ul' %}
     
         <ul>
-        {% for li in CR.value %}
-            <li>{{ isHTML ? li|raw : li }}</li>
+        {% for val in CR.value %}
+            <li>{{ CR.isHTML ? val|raw : val }}</li>
         {% endfor %}
         </ul>
 
