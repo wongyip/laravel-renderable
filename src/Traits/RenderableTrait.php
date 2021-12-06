@@ -1,6 +1,8 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-
+/**
+ * @author wongyip
+ */
 trait RenderableTrait
 {   
     /**

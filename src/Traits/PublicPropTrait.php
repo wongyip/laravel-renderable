@@ -1,6 +1,11 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-trait StylingPropertiesTrait
+/**
+ * All simple, strict forward options, properties, etc.
+ * 
+ * @author wongyip
+ */
+trait PublicPropTrait
 {
     /**
      * @var string

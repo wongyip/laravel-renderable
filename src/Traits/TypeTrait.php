@@ -2,6 +2,9 @@
 
 use Wongyip\Laravel\Renderable\ModelRenderable;
 
+/**
+ * @author wongyip
+ */
 trait TypeTrait
 {
     /**

@@ -3,7 +3,9 @@
 use Illuminate\Database\Eloquent\Model;
 use Wongyip\PHPHelpers\Format;
 
-
+/**
+ * @author wongyip
+ */
 trait LabelsTrait
 {
     /**

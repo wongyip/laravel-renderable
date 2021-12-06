@@ -2,13 +2,18 @@
 
 use Wongyip\Laravel\Renderable\Traits\LabelsTrait;
 use Wongyip\Laravel\Renderable\Traits\OptionsTrait;
+use Wongyip\Laravel\Renderable\Traits\PublicPropTrait;
 use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
-use Wongyip\Laravel\Renderable\Traits\StylingPropertiesTrait;
 use Wongyip\Laravel\Renderable\Traits\TypeTrait;
 
+/**
+ * The base implementation of RenderableInterface.
+ * 
+ * @author wongyip
+ */
 class Renderable implements RenderableInterface
 {
-    use LabelsTrait, OptionsTrait, RenderableTrait, StylingPropertiesTrait, TypeTrait;
+    use LabelsTrait, OptionsTrait, PublicPropTrait, RenderableTrait, TypeTrait;
     
     /**
      * @var string
@@ -176,40 +181,35 @@ class Renderable implements RenderableInterface
      */
     public function value($column)
     {
-        // No model no take larr.
-        if ($this->model) {
-            
-            // Value from model.
-            $value = $this->_value($column);
-            
-            // Type defined locally.
-            $type = $this->type($column);
-            $options = $this->options($column);
-            
-            // These type should be array.
-            switch ($type) {
-                case 'boolean':
-                    // In case of null and there is a null-replacement.
-                    if (is_null($value) && key_exists('valueNull', $options)) {
-                        return $options['valueNull'];
-                    }
-                    // NULL as false now.
-                    return boolval($value) ? $options['valueTrue'] : $options['valueFalse'];
-                case 'csv':
-                    return is_array($value) ? implode($options['glue'], $value) : $value;
-                    // Must be array, so the view could handle it corretly.
-                case 'ol':
-                case 'ul':
-                    return is_array($value) ? $value : [$value];
-                default:
-                    // DateTime to string
-                    if ($value instanceof \DateTime) {
-                        return $value->format(MODEL_RENDERABLE_DATETIME_FORMAT);
-                    }
-            }
-            // GIGO
-            return $value;
+        // Value from model.
+        $value = $this->_value($column);
+        
+        // Type defined locally.
+        $type = $this->type($column);
+        $options = $this->options($column);
+        
+        // These type should be array.
+        switch ($type) {
+            case 'boolean':
+                // In case of null and there is a null-replacement.
+                if (is_null($value) && key_exists('valueNull', $options)) {
+                    return $options['valueNull'];
+                }
+                // NULL as false now.
+                return boolval($value) ? $options['valueTrue'] : $options['valueFalse'];
+            case 'csv':
+                return is_array($value) ? implode($options['glue'], $value) : $value;
+                // Must be array, so the view could handle it corretly.
+            case 'ol':
+            case 'ul':
+                return is_array($value) ? $value : [$value];
+            default:
+                // DateTime to string
+                if ($value instanceof \DateTime) {
+                    return $value->format(MODEL_RENDERABLE_DATETIME_FORMAT);
+                }
         }
-        return null;
+        // GIGO
+        return $value;
     }
 }
