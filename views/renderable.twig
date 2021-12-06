@@ -1,3 +1,7 @@
+{#
+	Param(s):
+		\Wongyip\Laravel\Renderable\RenderableInterface  Renderable
+#}
 {% macro handle(renderable) %}
 
     {% import renderable.view() as renderer %}

@@ -1,26 +1,28 @@
-{% macro handle(R) %}
+{#
+	Param(s):
+		\Wongyip\Laravel\Renderable\ModelRenderable  MR
+#}
+{% macro handle(MR) %}
 
-	{% if R.columns()|length %}
+	{% if MR.columns()|length %}
 	
-		{% import  as valueRenderer %}
+		{% import 'renderable::value' as valueRenderer %}
 	
-		<table class="model-renderable-table">
+		<table class="model-renderable-table {{ MR.tableClass }}" style="{{ MR.tableStyle }}">
 			<thead>
 				<tr>
-					<th class="{{ R.fieldHeaderClass }}" style="{{ R.fieldHeaderStyle }}">{{ R.captionField }}</th>
-					<th class="{{ R.valueHeaderClass }}" style="{{ R.valueHeaderStyle }}">{{ R.captuibValue }}</th>
+					<th class="{{ MR.fieldHeaderClass }}" style="{{ MR.fieldHeaderStyle }}">{{ MR.captionField }}</th>
+					<th class="{{ MR.valueHeaderClass }}" style="{{ MR.valueHeaderStyle }}">{{ MR.captionValue }}</th>
 				</tr>
 			</thead>
 			<tbody>
-			{% for R in R.renderables() %}
+			{% for CR in MR.renderables() %}
 				<tr>
-					<td class="renderable-label">
-						{{ C.labelHTML ? C.labelHTML|raw : C.label }}
-					</td>
+					<th class="renderable-label">
+						{{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
+					</th>
 					<td class="renderable-value">
-						
-						{{ valueRenderer.handle(R) }}
-						
+						{{ valueRenderer.handle(CR) }}
 					</td>
 				</tr>
 			{% endfor %}

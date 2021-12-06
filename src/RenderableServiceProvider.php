@@ -25,6 +25,11 @@ class RenderableServiceProvider extends ServiceProvider
     {
         // [Pinnd] DO NOT invoke DB in service provider's boot() method.
         
+        // Const
+        if (!defined('MODEL_RENDERABLE_DATETIME_FORMAT')) {
+            define('MODEL_RENDERABLE_DATETIME_FORMAT', 'Y-m-d H:i:s');
+        }
+        
         /**
          * Package views, referenced using a double-colon package::view syntax.
          * @see https://laravel.com/docs/5.2/packages#views

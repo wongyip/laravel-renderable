@@ -1,13 +1,13 @@
 {#
 	Param(s):
-		\Wongyip\Laravel\Renderable\ColumnRenderable  R
+		\Wongyip\Laravel\Renderable\ColumnRenderable  CR
 #}
-{% macro handle(R) %}
+{% macro handle(CR) %}
 
-	{% if R.type == 'ol' %}
+	{% if CR.type == 'ol' %}
 	
 		<ol>
-		{% for li in R.value %}
+		{% for li in CR.value %}
 			<li>{{ isHTML ? li|raw : li }}</li>
 		{% endfor %}
 		</ol>
@@ -15,14 +15,14 @@
 	{% elseif type == 'ul' %}
 	
 		<ul>
-		{% for li in R.value %}
+		{% for li in CR.value %}
 			<li>{{ isHTML ? li|raw : li }}</li>
 		{% endfor %}
 		</ul>
 		
 	{% else %}
 	
-		{{ R.isHTML ? R.value|raw : R.value }}
+		{{ CR.isHTML ? CR.value|raw : CR.value }}
 		
 	{% endif %}
 

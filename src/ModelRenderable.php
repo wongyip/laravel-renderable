@@ -6,7 +6,7 @@ use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
 use Wongyip\Laravel\Renderable\Traits\StylingPropertiesTrait;
 use Wongyip\Laravel\Renderable\Traits\TypeTrait;
 
-class ModelRenderable
+class ModelRenderable implements RenderableInterface
 {
     use LabelsTrait, RenderableTrait, StylingPropertiesTrait, TypeTrait;
     
@@ -34,7 +34,7 @@ class ModelRenderable
     /**
      * @var string
      */
-    protected $_viewPrefix = 'renderable::model-renderable-';
+    protected $_viewPrefix = 'renderable::model-';
     /**
      * @var array
      */
@@ -293,6 +293,11 @@ class ModelRenderable
                 case 'ul':
                     // Must be array, so the view could handle it corretly.
                     return is_array($value) ? $value : [$value];
+            }
+            
+            // DateTime to string
+            if ($value instanceof \DateTime) {
+                return $value->format(MODEL_RENDERABLE_DATETIME_FORMAT);
             }
             
             // GIGO
