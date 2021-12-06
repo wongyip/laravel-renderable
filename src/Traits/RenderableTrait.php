@@ -2,7 +2,7 @@
 
 
 trait RenderableTrait
-{
+{   
     /**
      * @return string
      */

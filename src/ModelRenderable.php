@@ -74,6 +74,9 @@ class ModelRenderable implements RenderableInterface
      */
     public function __construct(Model $model, $columns = true, $excluded = null, $autoLabels = true, $layout = null)
     {
+        // Defaults
+        $this->containerId = uniqid('mr-');
+        
         // Take params
         $this->model = $model;
         $this->columns($columns);

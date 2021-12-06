@@ -17,6 +17,10 @@ trait StylingPropertiesTrait
     /**
      * @var string
      */
+    public $containerId;
+    /**
+     * @var string
+     */
     public $containerStyle;
     /**
      * @var string

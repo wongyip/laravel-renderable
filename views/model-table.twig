@@ -17,11 +17,11 @@
 			</thead>
 			<tbody>
 			{% for CR in MR.renderables() %}
-				<tr>
-					<th class="renderable-label">
+				<tr class="renderable-column renderable-column-{{ CR.name }}">
+					<th class="renderable-label renderable-label-{{ CR.name }}">
 						{{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
 					</th>
-					<td class="renderable-value">
+					<td class="renderable-value renderable-value-{{ CR.name }}">
 						{{ valueRenderer.handle(CR) }}
 					</td>
 				</tr>

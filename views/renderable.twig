@@ -6,7 +6,7 @@
 
     {% import renderable.view() as renderer %}
     
-    <div class="model-renderable">    
+    <div id="{{ renderable.containerId }}" class="model-renderable {{ renderable.containerClass }}" style="{{ renderable.containerStyle }}">    
         {{ renderer.handle(renderable) }}
     </div>
 

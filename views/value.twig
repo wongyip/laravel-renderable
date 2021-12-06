@@ -10,7 +10,7 @@
     
         {{ CR.isHTML ? CR.value|raw : CR.value }}
 
-	{% elseif CR.type = 'text' %}
+	{% elseif CR.type == 'text' %}
 		
 		{{ CR.isHTML ? CR.value|raw : CR.value|nl2br }}
 		
