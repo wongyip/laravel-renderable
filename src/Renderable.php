@@ -118,7 +118,7 @@ class Renderable implements RenderableInterface
     {
         // Automation
         if ($columns === true) {
-            $columns = array_keys($this->model->toArray());
+            $columns = array_keys($this->attributes());
         }
         // Actual setter.
         $this->getSetColumnsProp('columns', $columns, $replace);
