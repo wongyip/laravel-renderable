@@ -3,32 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 
 class ModelRenderable extends Renderable
-{
-    /**
-     * @var string
-     */
-    const DEFAULT_COLUMN_TYPE = 'string';
-    /**
-     * @var string
-     */
-    const DEFAULT_LAYOUT      = 'table';
-    /**
-     * Simple single table layout, with two columns (Field & Value).
-     *
-     * @var string
-     */
-    const LAYOUT_TABLE = 'table';
-    /**
-     * Columnes-rows based grid system, like Bootstrap.
-     *
-     * @var string
-     */
-    const LAYOUT_GRID  = 'grid';
-    
-    /**
-     * @var string
-     */
-    protected $_viewPrefix = 'renderable::model-';
+{   
     /**
      * @var Model
      */
@@ -44,20 +19,17 @@ class ModelRenderable extends Renderable
      * @param string          $layout
      */
     public function __construct(Model $model, $columns = true, $excluded = null, $autoLabels = true, $layout = null)
-    {
-        // Defaults
-        $this->containerId = uniqid('mr-');
-        
+    {   
         // Take params
-        $this->model = $model;
-        $this->columns($columns);
-        $this->exclude($excluded);
-        $this->layout($layout = is_string($layout) ? $layout : self::DEFAULT_LAYOUT);
+        $this->model = $model; 
         
-        // Automation
-        if ($autoLabels) {
-            $this->autoLabels();
-        }
+        // Note here, use toArray() instead of getAttributes() since the former
+        // returns mutated/casted attributes, while the latter returns original
+        // values from schema.
+        $attributes = $model->toArray();
+     
+        // Init
+        parent::__construct($attributes, $columns, $excluded, $autoLabels, $layout);
         
         // Integration
         if (method_exists($model, 'getLabels')) {
@@ -69,27 +41,10 @@ class ModelRenderable extends Renderable
             }
         }
     }
-        
-    /**
-     * [The actual method that] Get value of a column. (NO SETTER)
-     *
-     * @param string $column
-     * @return mixed|NULL
-     */
-    protected function _value($column)
-    {
-        // No model no take larr.
-        if ($this->model) {
-            // Value from model.
-            return $this->model->getAttribute($column);
-        }
-        return null;
-    }
     
     /**
-     * Get all attributes as an associative array.
-     *
-     * @return array
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attributes()
      */
     public function attributes()
     {

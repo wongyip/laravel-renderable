@@ -18,7 +18,24 @@ class Renderable implements RenderableInterface
     /**
      * @var string
      */
-    protected $_viewPrefix = 'renderable::model-';
+    const DEFAULT_COLUMN_TYPE = 'string';
+    /**
+     * @var string
+     */
+    const DEFAULT_LAYOUT      = 'table';
+    /**
+     * Simple single table layout, with two columns (Field & Value).
+     *
+     * @var string
+     */
+    const LAYOUT_TABLE = 'table';
+    /**
+     * Columnes-rows based grid system, like Bootstrap.
+     *
+     * @var string
+     */
+    const LAYOUT_GRID  = 'grid';
+    
     /**
      * @var array
      */
@@ -47,33 +64,46 @@ class Renderable implements RenderableInterface
     protected $attributes;
     
     /**
-     * @param array $attributes
+     * Instantiate a Renderable object (in 'table' layout by default).
+     * 
+     * @param array           $attributes
+     * @param string[]|string $columns
+     * @param string[]|string $excluded
+     * @param boolean         $autoLabels
+     * @param string          $layout
      */
-    public function __construct($attributes)
+    public function __construct($attributes, $columns = true, $excluded = null, $autoLabels = true, $layout = null)
     {
+        // Defaults
+        $this->containerId = uniqid('mr-');
+        
+        // Take params
         $this->attributes = $attributes;
+        $this->columns($columns);
+        $this->exclude($excluded);
+        $this->layout($layout = is_string($layout) ? $layout : self::DEFAULT_LAYOUT);
+        
+        // Automation
+        if ($autoLabels) {
+            $this->autoLabels();
+        }
     }
     
     /**
-     * [The actual method that] Get value of a column. (NO SETTER)
-     *
-     * @param string $column
-     * @return mixed|NULL
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attribute()
      */
-    protected function _value($column)
+    public function attribute($column)
     {
-        if (is_array($this->attributes)) {
-            if (key_exists($column, $this->attributes)) {
-                return $this->attributes[$column];
-            }
+        if (is_array($this->attributes) && key_exists($column, $this->attributes)) {
+            return $this->attributes[$column];
         }
         return null;
     }
     
     /**
-     * Get all attributes as an associative array. 
-     * 
-     * @return array
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attributes()
      */
     public function attributes()
     {
@@ -81,15 +111,8 @@ class Renderable implements RenderableInterface
     }
     
     /**
-     * Get or set columns that should be rendered (unless specified excluded).
-     *
-     * Setter:
-     *   1. will take all columns of $model->toArray() if $columns is set to TRUE,
-     *   2. will merge the columns into existing $columns unless $replace is TRUE.
-     *
-     * @param string[]|string $columns
-     * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::columns()
      */
     public function columns($columns = null, $replace = false)
     {
@@ -109,15 +132,8 @@ class Renderable implements RenderableInterface
     }
     
     /**
-     * Get or set columns that should be rendered with the |raw filter..
-     *
-     * Setter:
-     *   1. will take all columns of $model->toArray() if $columns is set to TRUE,
-     *   2. will merge the columns into existing $columns unless $replace is TRUE.
-     *
-     * @param string[]|string $columns
-     * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::columnsHTML()
      */
     public function columnsHTML($columns = null, $replace = false)
     {
@@ -126,15 +142,8 @@ class Renderable implements RenderableInterface
     }
     
     /**
-     * Get or set columns that should be excluded from rendering.
-     *
-     * Setter:
-     *   1. will merge the columns into existing $columns unless $replace is TRUE.
-     *   2. put an empty array as $excluded and set $replace to TRUE empty the list.
-     *
-     * @param string[]|string $excluded
-     * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::exclude()
      */
     public function exclude($excluded = null, $replace = false)
     {
@@ -150,10 +159,8 @@ class Renderable implements RenderableInterface
     }
     
     /**
-     * Get or set the layout.
-     *
-     * @param string $layout
-     * @return string|\Wongyip\Laravel\Renderable\ModelRenderable
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::layout()
      */
     public function layout($layout = null)
     {
@@ -161,9 +168,8 @@ class Renderable implements RenderableInterface
     }
     
     /**
-     * Get an array of compiled ColumnRederable objects for rendering.
-     *
-     * @return \Wongyip\Laravel\Renderable\ColumnRenderable[]
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::renderables()
      */
     public function renderables()
     {
@@ -184,15 +190,22 @@ class Renderable implements RenderableInterface
     }
     
     /**
-     * Get value of a column. (NO SETTER)
-     *
-     * @param string $column
-     * @return mixed|NULL
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::view()
+     */
+    public function view()
+    {
+        return LARAVEL_RENDERABLE_VIEW_NAMESPACE . '::' . $this->layout();
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::value()
      */
     public function value($column)
     {
-        // Value from model.
-        $value = $this->_value($column);
+        // The original value.
+        $value = $this->attribute($column);
         
         // Type defined locally.
         $type = $this->type($column);
@@ -216,7 +229,7 @@ class Renderable implements RenderableInterface
             default:
                 // DateTime to string
                 if ($value instanceof \DateTime) {
-                    return $value->format(MODEL_RENDERABLE_DATETIME_FORMAT);
+                    return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
                 }
         }
         // GIGO

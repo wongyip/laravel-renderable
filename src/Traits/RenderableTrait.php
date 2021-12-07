@@ -4,15 +4,7 @@
  * @author wongyip
  */
 trait RenderableTrait
-{   
-    /**
-     * @return string
-     */
-    public function view()
-    {
-        return $this->_viewPrefix . $this->layout();
-    }
-    
+{
     /**
      * Get or set a "columns" property.
      *
