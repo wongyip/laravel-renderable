@@ -1,6 +1,5 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use Wongyip\PHPHelpers\Format;
 
 /**
@@ -27,10 +26,8 @@ trait LabelsTrait
     public function autoLabels()
     {
         $labels = [];
-        if (is_object($this->model) && $this->model instanceof Model) {
-            foreach (array_keys($this->model->getAttributes()) as $column) {
-                $labels[$column] = Format::smartCaps($column);
-            }
+        foreach (array_keys($this->attributes()) as $column) {
+            $labels[$column] = Format::smartCaps($column);
         }
         return $this->labels($labels);
     }

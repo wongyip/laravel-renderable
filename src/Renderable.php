@@ -71,6 +71,16 @@ class Renderable implements RenderableInterface
     }
     
     /**
+     * Get all attributes as an associative array. 
+     * 
+     * @return array
+     */
+    public function attributes()
+    {
+        return is_array($this->attributes) ? $this->attributes : [];
+    }
+    
+    /**
      * Get or set columns that should be rendered (unless specified excluded).
      *
      * Setter:

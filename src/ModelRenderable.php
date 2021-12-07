@@ -87,6 +87,19 @@ class ModelRenderable extends Renderable
     }
     
     /**
+     * Get all attributes as an associative array.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        if (is_object($this->model) && $this->model instanceof Model) {
+            return $this->model->getAttributes();
+        }
+        return [];
+    }
+    
+    /**
      * Get the model. (NO SETTER)
      *
      * @param Model $model

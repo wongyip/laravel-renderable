@@ -2,6 +2,7 @@
 
 interface RenderableInterface
 {
+    public function attributes();
     public function columns($columns = null, $replace = false);
     public function columnsHTML($columns = null, $replace = false);
     public function exclude($excluded = null, $replace = false);
