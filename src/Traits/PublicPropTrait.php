@@ -46,11 +46,27 @@ trait PublicPropTrait
     /**
      * @var string
      */
-    public $tableClass = 'table table-bordered table-striped';
+    public $tableCaption;
+    /**
+     * @var string
+     */
+    public $tableClass = 'table table-bordered table-hover';
     /**
      * @var string
      */
     public $tableStyle;
+    /**
+     * @var string
+     */
+    public $tableHeadClass = 'thead-light';
+    /**
+     * @var string
+     */
+    public $tableResponsive;
+    /**
+     * @var string
+     */
+    public $tableHeadStyle;
     /**
      * @var string
      */

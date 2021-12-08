@@ -1,5 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\LabelsTrait;
 use Wongyip\Laravel\Renderable\Traits\OptionsTrait;
 use Wongyip\Laravel\Renderable\Traits\PublicPropTrait;
@@ -13,7 +14,7 @@ use Wongyip\Laravel\Renderable\Traits\TypeTrait;
  */
 class Renderable implements RenderableInterface
 {
-    use LabelsTrait, OptionsTrait, PublicPropTrait, RenderableTrait, TypeTrait;
+    use Bootstrap4Trait, LabelsTrait, OptionsTrait, PublicPropTrait, RenderableTrait, TypeTrait;
     
     /**
      * @var string

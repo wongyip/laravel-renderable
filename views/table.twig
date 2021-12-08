@@ -1,40 +1,50 @@
 {#
-    This marco render a ModelRenderable object in 'table' layout.
-    See ModelRenderable::table() method for details. 
+    This marco render a Renderable object in 'table' layout.
     
     Param(s):
-        \Wongyip\Laravel\Renderable\ModelRenderable  MR
+        \Wongyip\Laravel\Renderable\Renderable  R
 #}
-{% macro handle(MR) %}
+{% macro handle(R) %}
 
-    {% if MR.columns()|length %}
+    {% if R.columns()|length %}
     
         {% import 'renderable::value' as valueRenderer %}
     
-        <table class="model-renderable-table {{ MR.tableClass }}" style="{{ MR.tableStyle }}">
-            <thead>
-                <tr>
-                    <th class="{{ MR.fieldHeaderClass }}" style="{{ MR.fieldHeaderStyle }}">
-                        {{ MR.captionField }}
-                    </th>
-                    <th class="{{ MR.valueHeaderClass }}" style="{{ MR.valueHeaderStyle }}">
-                        {{ MR.captionValue }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for CR in MR.renderables() %}
-                <tr class="renderable-column renderable-column-{{ CR.name }}">
-                    <th class="renderable-label renderable-label-{{ CR.name }}">
-                        {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
-                    </th>
-                    <td class="renderable-value renderable-value-{{ CR.name }}">
-                        {{ valueRenderer.handle(CR) }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        {% if R.tableResponsive %}
+        <div class="{{ R.tableResponsive }}">
+        {% endif %}
+    
+            <table class="{{ R.tableClass }} model-renderable-table" style="{{ R.tableStyle }}">
+                {% if R.tableCaption %}
+                <caption>{{ R.tableCaption }}</caption>
+                {% endif %}
+                <thead class="{{ R.tableHeadClass }}" style="{{ R.tableHeadStyle }}">
+                    <tr>
+                        <th class="{{ R.fieldHeaderClass }}" style="{{ R.fieldHeaderStyle }}">
+                            {{ R.captionField }}
+                        </th>
+                        <th class="{{ R.valueHeaderClass }}" style="{{ R.valueHeaderStyle }}">
+                            {{ R.captionValue }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for CR in R.renderables() %}
+                    <tr class="renderable-column renderable-column-{{ CR.name }}">
+                        <th class="renderable-label renderable-label-{{ CR.name }}">
+                            {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
+                        </th>
+                        <td class="renderable-value renderable-value-{{ CR.name }}">
+                            {{ valueRenderer.handle(CR) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            
+        {% if R.tableResponsive %}
+        </div>
+        {% endif %}
     
     {% else %}
     

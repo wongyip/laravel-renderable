@@ -13,10 +13,10 @@ class ModelRenderable extends Renderable
      * Note to $columns: default true to render all columns retrieved by $model->toArray() method.
      *
      * @param Model           $model
-     * @param string[]|string $columns
-     * @param string[]|string $excluded
-     * @param boolean         $autoLabels
-     * @param string          $layout
+     * @param string[]|string $columns     Default true for all columns.
+     * @param string[]|string $excluded    Default null for none.
+     * @param boolean         $autoLabels  Default true.
+     * @param string          $layout      Default null to repect Renderable::DEFAULT_LAYOUT.
      */
     public function __construct(Model $model, $columns = true, $excluded = null, $autoLabels = true, $layout = null)
     {   
@@ -70,9 +70,9 @@ class ModelRenderable extends Renderable
      * Instantiate a ModelRenderable object in 'table' layout.
      * 
      * @param Model           $model
-     * @param string[]|string $columns
-     * @param string[]|string $excluded
-     * @param boolean         $autoLabels
+     * @param string[]|string $columns     Default true for all columns.
+     * @param string[]|string $excluded    Default null for none.
+     * @param boolean         $autoLabels  Default true.
      * @return \Wongyip\Laravel\Renderable\ModelRenderable
      */
     static function table(Model $model, $columns = true, $excluded = null, $autoLabels = true)
