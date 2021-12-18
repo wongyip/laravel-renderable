@@ -70,6 +70,18 @@ trait PublicPropTrait
     /**
      * @var string
      */
+    public $tableLabelCellTag = 'th';
+    /**
+     * @var string
+     */
+    public $labelClass;
+    /**
+     * @var string
+     */
+    public $labelStyle;
+    /**
+     * @var string
+     */
     public $valueClass;
     /**
      * @var string

@@ -18,6 +18,7 @@
                 {% if R.tableCaption %}
                 <caption>{{ R.tableCaption }}</caption>
                 {% endif %}
+                {% if R.renderTableHead %}
                 <thead class="{{ R.tableHeadClass }}" style="{{ R.tableHeadStyle }}">
                     <tr>
                         <th class="{{ R.fieldHeaderClass }}" style="{{ R.fieldHeaderStyle }}">
@@ -28,12 +29,13 @@
                         </th>
                     </tr>
                 </thead>
+                {% endif %}
                 <tbody>
                 {% for CR in R.renderables() %}
                     <tr class="renderable-column renderable-column-{{ CR.name }}">
-                        <th class="renderable-label renderable-label-{{ CR.name }}">
+                        <{{ R.tableLabelCellTag }} class="renderable-label renderable-label-{{ CR.name }} {{ R.labelClass }}" style="{{ R.labelStyle }}">
                             {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
-                        </th>
+                        </{{ R.tableLabelCellTag }}>
                         <td class="renderable-value renderable-value-{{ CR.name }}">
                             {{ valueRenderer.handle(CR) }}
                         </td>
