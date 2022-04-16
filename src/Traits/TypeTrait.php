@@ -1,6 +1,7 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
 use Wongyip\Laravel\Renderable\ModelRenderable;
+use Wongyip\Laravel\Renderable\Renderable;
 
 /**
  * @author wongyip
@@ -32,20 +33,21 @@ trait TypeTrait
             // @todo assumed $column is string here
             return key_exists($column, $this->types) ? $this->types[$column] : ModelRenderable::DEFAULT_COLUMN_TYPE;
         }
-        // Set type
         $cols = is_array($column) ? $column : [$column];
-        foreach ($cols as $col) {
-            $this->types[$col] = $type;
+        
+        // Validate options
+        if (!is_null($options) && !is_array($options)) {
+            throw new \Exception('Input $options must be an array.');
         }
-        // Set options
-        if (!is_null($options)) {
+        
+        foreach ($cols as $col) {
+            // Set type
+            $this->types[$col] = $type;
+            // Set options
             if (is_array($options)) {
                 $this->options($col, $options);
             }
-            else {
-                throw new \Exception('Input $options must be an array.');
-            }
-        }   
+        }
         return $this;
     }
     
@@ -60,10 +62,17 @@ trait TypeTrait
      */
     public function typeBoolean($column, $valueTrue = null, $valueFalse = null, $valueNull = null)
     {
-        $valueTrue  = is_null($valueTrue)  ? 'Yes' : $valueTrue;
-        $valueFalse = is_null($valueFalse) ? 'No' : $valueFalse;
+        $valueTrue  = is_null($valueTrue)  ? Renderable::DEFAULT_VALUE_BOOL_TRUE : $valueTrue;
+        $valueFalse = is_null($valueFalse) ? Renderable::DEFAULT_VALUE_BOOL_FALSE : $valueFalse;
         $valueNull  = is_null($valueNull)  ? $valueFalse : $valueNull;
         $options = compact('valueTrue', 'valueFalse', 'valueNull');
+        
+        
+        
+        // dd(__FILE__, __LINE__, $options);
+        
+        
+        
         return $this->type($column, 'boolean', $options);
     }
     
@@ -76,7 +85,7 @@ trait TypeTrait
      */
     public function typeCSV($column, $glue = null)
     {
-        $glue = is_string($glue) ? $glue : ', ';
+        $glue = is_string($glue) ? $glue : Renderable::DEFAULT_CSV_GLUE;
         $options = compact('glue');
         return $this->type($column, 'csv', $options);
     }

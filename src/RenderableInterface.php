@@ -3,19 +3,19 @@
 interface RenderableInterface
 {
     /**
-     * Get all original attributes as an associative array. (NO SETTER)
-     *
-     * @return array
-     */
-    public function attributes();
-    
-    /**
      * Get original value of a column. (NO SETTER)
      *
      * @param string $column
      * @return mixed|NULL
      */
     public function attribute($column);
+    
+    /**
+     * Get all original attributes as an associative array. (NO SETTER)
+     *
+     * @return array
+     */
+    public function attributes();
     
     /**
      * Get or set columns that should be rendered (unless specified excluded).

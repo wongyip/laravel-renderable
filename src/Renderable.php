@@ -24,7 +24,19 @@ class Renderable implements RenderableInterface
     /**
      * @var string
      */
+    const DEFAULT_CSV_GLUE = ', ';
+    /**
+     * @var string
+     */
     const DEFAULT_LAYOUT      = 'table';
+    /**
+     * @var string
+     */
+    const DEFAULT_VALUE_BOOL_TRUE = 'Yes';
+    /**
+     * @var string
+     */
+    const DEFAULT_VALUE_BOOL_FALSE = 'No';
     /**
      * Simple single table layout, with two columns (Field & Value).
      *
@@ -230,8 +242,17 @@ class Renderable implements RenderableInterface
                 return is_array($value) ? $value : [$value];
             default:
                 // DateTime to string
-                if ($value instanceof \DateTime) {
-                    return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
+                if (is_object($value)) {
+                    if ($value instanceof \DateTime) {
+                        return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
+                    }
+                }
+                if (is_array($value)) {
+                    // Output array values as CSV by default.
+                    return implode(Renderable::DEFAULT_CSV_GLUE, array_values($value));
+                }
+                if (is_bool($value)) {
+                    return $value ? Renderable::DEFAULT_VALUE_BOOL_TRUE : Renderable::DEFAULT_VALUE_BOOL_FALSE;
                 }
         }
         // GIGO
