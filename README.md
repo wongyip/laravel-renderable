@@ -1,2 +1,2 @@
 # Laravel Renderable
-Compose generic renderable objects with the bundled Twig view tmeplates.
+A set of objects working with the bundled Twig views for rendering an array or object in web view.
