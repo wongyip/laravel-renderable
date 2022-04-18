@@ -24,7 +24,7 @@ trait OptionsTrait
      * @param string|string[] $column
      * @param array           $options
      * @param boolean $replace
-     * @return array|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return array|static
      */
     public function options($column, $options = null, $replace = false)
     {

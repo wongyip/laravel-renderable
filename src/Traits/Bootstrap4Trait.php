@@ -9,7 +9,7 @@ trait Bootstrap4Trait
 {
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableBordered($switch)
     {
@@ -18,7 +18,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableBorderless($switch)
     {
@@ -27,7 +27,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableDark()
     {
@@ -36,7 +36,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableHover($switch)
     {
@@ -45,7 +45,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableLight()
     {
@@ -56,7 +56,7 @@ trait Bootstrap4Trait
      * Make the talbe scrollable horizontally across every breakpoint while x-overflow.
      *
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableResponsive($switch)
     {
@@ -72,7 +72,7 @@ trait Bootstrap4Trait
      * Responsive table at maximum breakpoint SM.
      *
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableResponsiveSM($switch)
     {
@@ -88,7 +88,7 @@ trait Bootstrap4Trait
      * Responsive table at maximum breakpoint MD.
      *
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableResponsiveMD($switch)
     {
@@ -104,7 +104,7 @@ trait Bootstrap4Trait
      * Responsive table at maximum breakpoint LG.
      *
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableResponsiveLG($switch)
     {
@@ -120,7 +120,7 @@ trait Bootstrap4Trait
      * Responsive table at maximum breakpoint XL.
      *
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableResponsiveXL($switch)
     {
@@ -134,7 +134,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableSM($switch)
     {
@@ -143,7 +143,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTableStriped($switch)
     {
@@ -152,7 +152,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTHeadDark()
     {
@@ -163,7 +163,7 @@ trait Bootstrap4Trait
     
     /**
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     public function bsTHeadLight()
     {
@@ -176,7 +176,7 @@ trait Bootstrap4Trait
      * @param string  $property
      * @param string  $class
      * @param boolean $switch
-     * @return \Wongyip\Laravel\Renderable\Renderable
+     * @return static
      */
     protected function modifyClass($property, $class, $switch)
     {

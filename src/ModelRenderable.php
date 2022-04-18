@@ -41,24 +41,12 @@ class ModelRenderable extends Renderable
             }
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attributes()
-     */
-    public function attributes()
-    {
-        if (is_object($this->model) && $this->model instanceof Model) {
-            return $this->model->getAttributes();
-        }
-        return [];
-    }
-    
+
     /**
      * Get the model. (NO SETTER)
      *
      * @param Model $model
-     * @return \Illuminate\Database\Eloquent\Model|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function model()
     {
@@ -73,9 +61,9 @@ class ModelRenderable extends Renderable
      * @param string[]|string $columns     Default true for all columns.
      * @param string[]|string $excluded    Default null for none.
      * @param boolean         $autoLabels  Default true.
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return static
      */
-    static function table(Model $model, $columns = true, $excluded = null, $autoLabels = true)
+    static function table($model, $columns = true, $excluded = null, $autoLabels = true)
     {
         return new static($model, $columns, $excluded, $autoLabels, self::LAYOUT_TABLE);
     }

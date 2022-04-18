@@ -26,7 +26,7 @@ interface RenderableInterface
      *
      * @param string[]|string $columns
      * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string[]|static
      */
     public function columns($columns = null, $replace = false);
     
@@ -39,7 +39,7 @@ interface RenderableInterface
      *
      * @param string[]|string $columns
      * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string[]|static
      */
     public function columnsHTML($columns = null, $replace = false);
     
@@ -52,7 +52,7 @@ interface RenderableInterface
      *
      * @param string[]|string $excluded
      * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string[]|static
      */
     public function exclude($excluded = null, $replace = false);
     
@@ -60,7 +60,7 @@ interface RenderableInterface
      * Get or set the layout.
      *
      * @param string $layout
-     * @return string|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string|static
      */
     public function layout($layout = null);
     
@@ -76,7 +76,7 @@ interface RenderableInterface
      * @param string|string[] $column
      * @param array           $options
      * @param boolean $replace
-     * @return array|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return array|static
      */
     public function options($column, $options = null, $replace = false);
     
@@ -86,6 +86,16 @@ interface RenderableInterface
      * @return \Wongyip\Laravel\Renderable\ColumnRenderable[]
      */
     public function renderables();
+    
+    /**
+     * Get or set data type of a column, where setter support an array of columns as input.
+     *
+     * @param string|string[] $column
+     * @param string          $type
+     * @param mixed           $options
+     * @return string|static
+     */
+    public function type($column, $type = null, $options = null);
     
     /**
      * Get the parsed value of a column. (NO SETTER)

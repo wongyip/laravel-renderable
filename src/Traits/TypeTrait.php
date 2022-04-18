@@ -1,6 +1,5 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-use Wongyip\Laravel\Renderable\ModelRenderable;
 use Wongyip\Laravel\Renderable\Renderable;
 
 /**
@@ -17,21 +16,21 @@ trait TypeTrait
     
     /**
      * Get or set data type of a column, where setter support an array of columns as input.
-     * 
-     * Note that certain setter methods, e.g. typeBoolean(), is recommended to
-     * use when settting data type if there are options bound to that data type.
+     *
+     * Implementation note: Certain setter methods, e.g. typeBoolean(), is recommended when
+     * settting data type if there are options bound to that data type.
      *
      * @param string|string[] $column
      * @param string          $type
      * @param mixed           $options
-     * @return string|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string|static
      */
     public function type($column, $type = null, $options = null)
     {
         // Get
         if (is_null($type)) {
             // @todo assumed $column is string here
-            return key_exists($column, $this->types) ? $this->types[$column] : ModelRenderable::DEFAULT_COLUMN_TYPE;
+            return key_exists($column, $this->types) ? $this->types[$column] : Renderable::DEFAULT_COLUMN_TYPE;
         }
         $cols = is_array($column) ? $column : [$column];
         
@@ -40,10 +39,9 @@ trait TypeTrait
             throw new \Exception('Input $options must be an array.');
         }
         
+        // Apply
         foreach ($cols as $col) {
-            // Set type
             $this->types[$col] = $type;
-            // Set options
             if (is_array($options)) {
                 $this->options($col, $options);
             }
@@ -58,7 +56,7 @@ trait TypeTrait
      * @param string          $valueTrue  Default 'Yes'
      * @param string          $valueFalse Default 'No'
      * @param string          $valueNull  Default to $valueFalse
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return static
      */
     public function typeBoolean($column, $valueTrue = null, $valueFalse = null, $valueNull = null)
     {
@@ -66,13 +64,6 @@ trait TypeTrait
         $valueFalse = is_null($valueFalse) ? Renderable::DEFAULT_VALUE_BOOL_FALSE : $valueFalse;
         $valueNull  = is_null($valueNull)  ? $valueFalse : $valueNull;
         $options = compact('valueTrue', 'valueFalse', 'valueNull');
-        
-        
-        
-        // dd(__FILE__, __LINE__, $options);
-        
-        
-        
         return $this->type($column, 'boolean', $options);
     }
     
@@ -81,7 +72,7 @@ trait TypeTrait
      *
      * @param string|string[] $column
      * @param string          $glue
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return static
      */
     public function typeCSV($column, $glue = null)
     {
@@ -94,7 +85,7 @@ trait TypeTrait
      * Type column(s) as Ordered List.
      *
      * @param string|string[] $column
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return static
      */
     public function typeOL($column)
     {
@@ -107,7 +98,7 @@ trait TypeTrait
      * Note: no effect if column is declared as HTML.
      *
      * @param string|string[] $column
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return static
      */
     public function typeText($column)
     {
@@ -118,7 +109,7 @@ trait TypeTrait
      * Type column(s) as Unordered List.
      *
      * @param string|string[] $column
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return static
      */
     public function typeUL($column)
     {

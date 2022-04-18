@@ -28,7 +28,7 @@ class Renderable implements RenderableInterface
     /**
      * @var string
      */
-    const DEFAULT_LAYOUT      = 'table';
+    const DEFAULT_LAYOUT = 'table';
     /**
      * @var string
      */
@@ -76,6 +76,12 @@ class Renderable implements RenderableInterface
      * @var array
      */
     protected $attributes;
+    /**
+     * Types of columns.
+     *
+     * @var string[]
+     */
+    protected $types = [];
     
     /**
      * Instantiate a Renderable object (in 'table' layout by default).
@@ -204,6 +210,20 @@ class Renderable implements RenderableInterface
     }
     
     /**
+     * Instantiate a Renderable object in 'table' layout.
+     *
+     * @param array           $attributes
+     * @param string[]|string $columns     Default true for all columns.
+     * @param string[]|string $excluded    Default null for none.
+     * @param boolean         $autoLabels  Default true.
+     * @return static
+     */
+    static function table($attributes, $columns = true, $excluded = null, $autoLabels = true)
+    {
+        return new static($attributes, $columns, $excluded, $autoLabels, self::LAYOUT_TABLE);
+    }
+    
+    /**
      * {@inheritDoc}
      * @see \Wongyip\Laravel\Renderable\RenderableInterface::view()
      */
@@ -235,10 +255,11 @@ class Renderable implements RenderableInterface
                 // NULL as false now.
                 return boolval($value) ? $options['valueTrue'] : $options['valueFalse'];
             case 'csv':
+                // @todo what if $value is not scalar?
                 return is_array($value) ? implode($options['glue'], $value) : $value;
-                // Must be array, so the view could handle it corretly.
             case 'ol':
             case 'ul':
+                // Must be array, so the view could handle it corretly.
                 return is_array($value) ? $value : [$value];
             default:
                 // DateTime to string

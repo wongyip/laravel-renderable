@@ -11,7 +11,7 @@ trait RenderableTrait
      * @param string          $property
      * @param string[]|string $columns
      * @param boolean         $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string[]|static
      */
     protected function getSetColumnsProp($property, $columns = null, $replace = false)
     {
@@ -30,7 +30,7 @@ trait RenderableTrait
      *
      * @param string $property
      * @param mixed  $value
-     * @return mixed|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return mixed|static
      */
     protected function getSetProp($property, $value = null)
     {
@@ -48,7 +48,7 @@ trait RenderableTrait
      *
      * @param string $property
      * @param mixed  $value
-     * @return mixed|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return mixed|static
      */
     protected function getSetPropAssoc($property, $key, $value)
     {
