@@ -23,23 +23,26 @@ trait TypeTrait
      * @param string|string[] $column
      * @param string          $type
      * @param mixed           $options
+     * @throws \Exception
      * @return string|static
      */
     public function type($column, $type = null, $options = null)
     {
         // Get
         if (is_null($type)) {
-            // @todo assumed $column is string here
+            if (!is_string($column)) {
+                throw new \Exception('Input "column" must be string when getting data-type of a column.');
+            }
             return key_exists($column, $this->types) ? $this->types[$column] : Renderable::DEFAULT_COLUMN_TYPE;
         }
-        $cols = is_array($column) ? $column : [$column];
         
         // Validate options
         if (!is_null($options) && !is_array($options)) {
-            throw new \Exception('Input $options must be an array.');
+            throw new \Exception('Input "options" must be an array.');
         }
         
-        // Apply
+        // Set
+        $cols = is_array($column) ? $column : [$column];
         foreach ($cols as $col) {
             $this->types[$col] = $type;
             if (is_array($options)) {
