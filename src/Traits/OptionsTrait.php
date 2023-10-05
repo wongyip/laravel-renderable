@@ -13,11 +13,11 @@ trait OptionsTrait
     protected $options = [];
     
     /**
-     * Get or set the options array data type of a column, where setter supports
+     * Get or set the options array datatype of a column, where setter supports
      * an array of columns as input.
      * 
      * Note that certain setter methods, e.g. typeBoolean(), is recommended to
-     * use when settting data type if there are options bound to that data type.
+     * use when setting data type if there are options bound to that data type.
      *
      * Setter will merge $options into existing options array unless $replace is TRUE.
      * 
