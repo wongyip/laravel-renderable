@@ -20,19 +20,56 @@
     {% elseif CR.type == 'ol' %}
     
         <ol>
-        {% for val in CR.value %}
-            <li>{{ CR.options.html ? val|raw : val }}</li>
-        {% endfor %}
+        {% if CR.options.html %}
+
+            {% for val in CR.value %}
+            <li>{{ val|raw }}</li>
+            {% endfor %}
+
+        {% else %}
+
+            {% for val in CR.value %}
+            <li>{{ val }}</li>
+            {% endfor %}
+
+        {% endif %}
         </ol>
         
     {% elseif CR.type == 'ul' %}
     
         <ul>
-        {% for val in CR.value %}
-            <li>{{ CR.options.html ? val|raw : val }}</li>
-        {% endfor %}
+        {% if CR.options.html %}
+
+            {% for val in CR.value %}
+            <li>{{ val|raw }}</li>
+            {% endfor %}
+
+        {% else %}
+
+            {% for val in CR.value %}
+            <li>{{ val }}</li>
+            {% endfor %}
+
+        {% endif %}
         </ul>
 
+    {% elseif CR.type == 'lines' %}
+
+        {% if CR.options.html %}
+
+            {% for val in CR.value %}
+                {{ val|raw }}<br/>
+            {% endfor %}
+
+        {% else %}
+
+            {% for val in CR.value %}
+                {{ val }}<br/>
+            {% endfor %}
+
+        {% endif %}
+
+    {# Boolean, CSV and DateTime are parsed to string already. #}
     {% else %}
     
         {{ CR.options.html ? CR.value|raw : CR.value }}

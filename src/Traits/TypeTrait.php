@@ -1,5 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
+use Exception;
 use Wongyip\Laravel\Renderable\Renderable;
 
 /**
@@ -15,32 +16,32 @@ trait TypeTrait
     protected $types = [];
     
     /**
-     * Get or set data type of a column, where setter support an array of columns as input.
+     * Get or set data type of column, where setter support an array of columns
+     * as input.
      *
-     * Implementation note: Certain setter methods, e.g. typeBoolean(), is recommended when
-     * settting data type if there are options bound to that data type.
+     * Implementation note: Certain setter methods, e.g. typeBoolean(), is
+     * recommended when setting data type if there are options bound to that
+     * data type.
      *
      * @param string|string[] $column
      * @param string          $type
-     * @param mixed           $options
-     * @throws \Exception
+     * @param array|null      $options
      * @return string|static
      */
-    public function type($column, $type = null, $options = null)
+    public function type($column, $type = null, array $options = null)
     {
         // Get
         if (is_null($type)) {
+            /*
+             * Strict mode
+             *
             if (!is_string($column)) {
-                throw new \Exception('Input "column" must be string when getting data-type of a column.');
+                throw new Exception('Input "column" must be string when getting data-type of a column.');
             }
-            return key_exists($column, $this->types) ? $this->types[$column] : Renderable::DEFAULT_COLUMN_TYPE;
+            */
+            return (is_string($column) && key_exists($column, $this->types)) ? $this->types[$column] : Renderable::DEFAULT_COLUMN_TYPE;
         }
-        
-        // Validate options
-        if (!is_null($options) && !is_array($options)) {
-            throw new \Exception('Input "options" must be an array.');
-        }
-        
+
         // Set
         $cols = is_array($column) ? $column : [$column];
         foreach ($cols as $col) {
@@ -69,7 +70,7 @@ trait TypeTrait
         $options = compact('valueTrue', 'valueFalse', 'valueNull');
         return $this->type($column, 'boolean', $options);
     }
-    
+
     /**
      * Type column(s) as CSV.
      *
@@ -82,6 +83,17 @@ trait TypeTrait
         $glue = is_string($glue) ? $glue : Renderable::DEFAULT_CSV_GLUE;
         $options = compact('glue');
         return $this->type($column, 'csv', $options);
+    }
+
+    /**
+     * Type column(s) as lines of values.
+     *
+     * @param string|string[] $column
+     * @return static
+     */
+    public function typeLines($column)
+    {
+        return $this->type($column, 'lines');
     }
     
     /**

@@ -1,5 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+use DateTime;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\LabelsTrait;
 use Wongyip\Laravel\Renderable\Traits\OptionsTrait;
@@ -244,35 +245,35 @@ class Renderable implements RenderableInterface
         // Type defined locally.
         $type = $this->type($column);
         $options = $this->options($column);
-        
-        // These type should be array.
+
         switch ($type) {
+            // These types must be an array, so the view could handle it correctly.
+            case 'ol':
+            case 'ul':
+            case 'lines':
+                return is_array($value) ? $value : [$value];
             case 'boolean':
                 // In case of null and there is a null-replacement.
                 if (is_null($value) && key_exists('valueNull', $options)) {
                     return $options['valueNull'];
                 }
                 // NULL as false now.
-                return boolval($value) ? $options['valueTrue'] : $options['valueFalse'];
+                return $value ? $options['valueTrue'] : $options['valueFalse'];
             case 'csv':
                 // @todo what if $value is not scalar?
                 return is_array($value) ? implode($options['glue'], $value) : $value;
-            case 'ol':
-            case 'ul':
-                // Must be array, so the view could handle it corretly.
-                return is_array($value) ? $value : [$value];
             default:
-                // DateTime to string
-                if (is_object($value)) {
-                    if ($value instanceof \DateTime) {
-                        return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
-                    }
-                }
+                // Array to default format.
                 if (is_array($value)) {
                     // Output array values as CSV by default.
                     return implode(Renderable::DEFAULT_CSV_GLUE, array_values($value));
                 }
-                if (is_bool($value)) {
+                // DateTime to string
+                elseif ($value instanceof DateTime) {
+                    return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
+                }
+                // Boolean to example 'Yes', 'No', etc.
+                elseif (is_bool($value)) {
                     return $value ? Renderable::DEFAULT_VALUE_BOOL_TRUE : Renderable::DEFAULT_VALUE_BOOL_FALSE;
                 }
         }
