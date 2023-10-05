@@ -88,15 +88,17 @@ interface RenderableInterface
     public function renderables();
     
     /**
-     * Get or set data type of a column, where setter support an array of columns as input.
+     * Get or set data type of column, where setter support an array of columns
+     * as input.
      *
      * @param string|string[] $column
      * @param string          $type
-     * @param mixed           $options
+     * @param array|null      $options
      * @return string|static
      */
-    public function type($column, $type = null, $options = null);
-    
+    public function type($column, string $type = null, array $options = null);
+
+
     /**
      * Get the parsed value of a column. (NO SETTER)
      *

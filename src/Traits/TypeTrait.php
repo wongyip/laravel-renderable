@@ -28,7 +28,7 @@ trait TypeTrait
      * @param array|null      $options
      * @return string|static
      */
-    public function type($column, $type = null, array $options = null)
+    public function type($column, string $type = null, array $options = null)
     {
         // Get
         if (is_null($type)) {
