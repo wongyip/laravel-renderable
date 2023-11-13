@@ -1,6 +1,8 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
 use DateTime;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\LabelsTrait;
 use Wongyip\Laravel\Renderable\Traits\OptionsTrait;
@@ -197,16 +199,27 @@ class Renderable implements RenderableInterface
         $renderables = [];
         if ($columns = $this->columns()) {
             foreach ($columns as $column) {
-                $renderable = new ColumnRenderable();
-                $renderable->name      = $column;
-                $renderable->label     = $this->label($column);
-                $renderable->labelHTML = $this->labelHTML($column);
-                $renderable->options   = $this->options($column);
-                $renderable->type      = $this->type($column);
-                $renderable->value     = $this->value($column);
-                $renderables[] = $renderable;
+
+                $renderable = ColumnRenderable::make(
+                    $column,
+                    $this->attribute($column),
+                    $this->type($column),
+                    $this->label($column),
+                    $this->labelHTML($column),
+                    $this->options($column)
+                );
+
+                if ($renderable->isRenderable()) {
+                    $renderables[] = $renderable;
+                }
+                else {
+                    Log::warning(
+                        sprintf('ColumnRenderable composed for column [%s] is not renderable (possible nested array).', $column)
+                    );
+                }
             }
         }
+
         return $renderables;
     }
     
@@ -239,9 +252,11 @@ class Renderable implements RenderableInterface
      */
     public function value($column)
     {
+        Log::warning('Deprecated method called: Renderable.value()');
+
         // The original value.
         $value = $this->attribute($column);
-        
+
         // Type defined locally.
         $type = $this->type($column);
         $options = $this->options($column);

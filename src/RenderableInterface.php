@@ -83,7 +83,7 @@ interface RenderableInterface
     /**
      * Get an array of compiled ColumnRederable objects for rendering.
      *
-     * @return \Wongyip\Laravel\Renderable\ColumnRenderable[]
+     * @return ColumnRenderable[]
      */
     public function renderables();
     
@@ -102,6 +102,8 @@ interface RenderableInterface
     /**
      * Get the parsed value of a column. (NO SETTER)
      *
+     * @see ColumnRenderable::valueRenderable()
+     * @deprecated Too confused, replaced with ColumnRenderable::valueRenderable().
      * @param string $column
      * @return mixed|NULL
      */

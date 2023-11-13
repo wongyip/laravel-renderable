@@ -7,28 +7,31 @@
 #}
 {% macro handle(CR) %}
 
+    {# Check it out! #}
+    {% set VR = CR.valueRenderable() %}
+
     {# The default type on top. #}
-    
+
     {% if CR.type == 'string' %}
     
-        {{ CR.options.html ? CR.value|raw : CR.value }}
+        {{ CR.options.html ? VR|raw : VR }}
 
     {% elseif CR.type == 'text' %}
         
-        {{ CR.options.html ? CR.value|raw : CR.value|nl2br }}
+        {{ CR.options.html ? VR|raw : VR|nl2br }}
         
     {% elseif CR.type == 'ol' %}
     
         <ol>
         {% if CR.options.html %}
 
-            {% for val in CR.value %}
+            {% for val in VR %}
             <li>{{ val|raw }}</li>
             {% endfor %}
 
         {% else %}
 
-            {% for val in CR.value %}
+            {% for val in VR %}
             <li>{{ val }}</li>
             {% endfor %}
 
@@ -40,13 +43,13 @@
         <ul>
         {% if CR.options.html %}
 
-            {% for val in CR.value %}
+            {% for val in VR %}
             <li>{{ val|raw }}</li>
             {% endfor %}
 
         {% else %}
 
-            {% for val in CR.value %}
+            {% for val in VR %}
             <li>{{ val }}</li>
             {% endfor %}
 
@@ -57,13 +60,13 @@
 
         {% if CR.options.html %}
 
-            {% for val in CR.value %}
+            {% for val in VR %}
                 {{ val|raw }}<br/>
             {% endfor %}
 
         {% else %}
 
-            {% for val in CR.value %}
+            {% for val in VR %}
                 {{ val }}<br/>
             {% endfor %}
 
@@ -72,7 +75,7 @@
     {# Boolean, CSV and DateTime are parsed to string already. #}
     {% else %}
     
-        {{ CR.options.html ? CR.value|raw : CR.value }}
+        {{ CR.options.html ? VR|raw : VR }}
         
     {% endif %}
 

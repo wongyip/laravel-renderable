@@ -27,7 +27,9 @@ class ModelRenderable extends Renderable
         // returns mutated/casted attributes, while the latter returns original
         // values from schema.
         $attributes = $model->toArray();
-     
+
+        // dd($attributes);
+
         // Init
         parent::__construct($attributes, $columns, $excluded, $autoLabels, $layout);
         

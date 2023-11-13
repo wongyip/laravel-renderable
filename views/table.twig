@@ -7,13 +7,13 @@
 {% macro handle(R) %}
 
     {% if R.columns()|length %}
-    
+
         {% import 'renderable::value' as valueRenderer %}
-    
+
         {% if R.tableResponsive %}
         <div class="{{ R.tableResponsive }}">
         {% endif %}
-    
+
             <table class="{{ R.tableClass }} model-renderable-table" style="{{ R.tableStyle }}">
                 {% if R.tableCaption %}
                 <caption>{{ R.tableCaption }}</caption>
@@ -43,13 +43,13 @@
                 {% endfor %}
                 </tbody>
             </table>
-            
+
         {% if R.tableResponsive %}
         </div>
         {% endif %}
-    
+
     {% else %}
-    
+
         <p><em>Empty record.</em></p>
     
     {% endif %}

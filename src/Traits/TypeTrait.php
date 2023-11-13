@@ -39,7 +39,9 @@ trait TypeTrait
                 throw new Exception('Input "column" must be string when getting data-type of a column.');
             }
             */
-            return (is_string($column) && key_exists($column, $this->types)) ? $this->types[$column] : Renderable::DEFAULT_COLUMN_TYPE;
+            return (is_string($column) && key_exists($column, $this->types))
+                ? $this->types[$column]
+                : Renderable::DEFAULT_COLUMN_TYPE;
         }
 
         // Set

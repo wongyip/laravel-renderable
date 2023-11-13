@@ -9,7 +9,7 @@
 {% macro handle(renderable) %}
 
     {% import renderable.view() as renderer %}
-    
+
     <div id="{{ renderable.containerId }}" class="model-renderable {{ renderable.containerClass }}" style="{{ renderable.containerStyle }}">    
         {{ renderer.handle(renderable) }}
     </div>
