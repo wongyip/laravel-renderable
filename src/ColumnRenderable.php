@@ -3,6 +3,7 @@
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Compiled output for the views.

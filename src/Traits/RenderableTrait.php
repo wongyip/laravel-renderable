@@ -44,7 +44,8 @@ trait RenderableTrait
     }
     
     /**
-     * Get or set a property that is an assoc. array.
+     * Get or set a property that is an assoc. array, where getter return value
+     * while setter returns static.
      *
      * @param string $property
      * @param mixed  $value

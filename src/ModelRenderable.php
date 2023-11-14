@@ -1,6 +1,10 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Wongyip\PHPHelpers\Format;
 
 class ModelRenderable extends Renderable
 {   
@@ -38,10 +42,51 @@ class ModelRenderable extends Renderable
             try {
                 $this->labels($model->getLabels());
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 // Let it be...
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attribute()
+     */
+    public function attribute($column)
+    {
+        if (is_array($this->attributes) && key_exists($column, $this->attributes)) {
+            return $this->attributes[$column];
+
+        }
+        else {
+            // dd($this->model->$column, $this->labels, $this->model->getAttributes());
+            return $this->model->$column;
+        }
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function label($column, $label = null)
+    {
+        $returns = $this->getSetPropAssoc('labels', $column, $label);
+        if (!is_null($returns)) {
+            return $returns;
+        }
+        // Not set.
+        try {
+            if ($this->model && method_exists($this->model, 'getLabel')) {
+                $output = $this->model->getLabel($column);
+                if (is_string($output) && !empty($output)) {
+                    return $output;
+                }
+            }
+        }
+        catch (Exception $e) {
+            Log::error('ModelRenderable.label() exception: ' . $e->getMessage());
+        }
+        return Format::smartCaps($column);
     }
 
     /**

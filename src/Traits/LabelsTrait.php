@@ -1,5 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
+use Wongyip\Laravel\Renderable\ModelRenderable;
 use Wongyip\PHPHelpers\Format;
 
 /**
@@ -21,7 +22,7 @@ trait LabelsTrait
     protected $labelsHTML = [];
     
     /**
-     * @return \Wongyip\Laravel\Renderable\ModelRenderable
+     * @return ModelRenderable
      */
     public function autoLabels()
     {
@@ -31,20 +32,20 @@ trait LabelsTrait
         }
         return $this->labels($labels);
     }
-    
+
     /**
      * Get or set the label of a column.
      *
-     * N.B. This method return the input $column if no label is defined.
+     * N.B. This method return the input smartCaps($column) if no label is defined.
      *
      * @param string $column
      * @param string $label
-     * @return string|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string|ModelRenderable
      */
     public function label($column, $label = null)
     {
         $returns = $this->getSetPropAssoc('labels', $column, $label);
-        return is_null($returns) ? $column: $returns;
+        return is_null($returns) ? Format::smartCaps($label): $returns;
     }
     
     /**
@@ -54,7 +55,7 @@ trait LabelsTrait
      *
      * @param string $column
      * @param string $labelhtml
-     * @return string|\Wongyip\Laravel\Renderable\ModelRenderable|false
+     * @return string|ModelRenderable|false
      */
     public function labelHTML($column, $labelHTML = null)
     {
@@ -69,7 +70,7 @@ trait LabelsTrait
      *
      * @param array   $labels
      * @param boolean $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string[]|ModelRenderable
      */
     public function labels($labels = null, $replace = false)
     {
@@ -83,7 +84,7 @@ trait LabelsTrait
      *
      * @param array   $labels
      * @param boolean $replace
-     * @return string[]|\Wongyip\Laravel\Renderable\ModelRenderable
+     * @return string[]|ModelRenderable
      */
     public function labelsHTML($labelsHTML = null, $replace = false)
     {
