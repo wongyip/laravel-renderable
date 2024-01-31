@@ -45,7 +45,7 @@ trait LabelsTrait
     public function label($column, $label = null)
     {
         $returns = $this->getSetPropAssoc('labels', $column, $label);
-        return is_null($returns) ? Format::smartCaps($label): $returns;
+        return is_null($returns) ? Format::smartCaps($column): $returns;
     }
     
     /**
