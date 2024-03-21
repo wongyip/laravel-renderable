@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=8.2.0",
         "laravel/framework": "*",
         "rcrowe/twigbridge": "*",
         "wongyip/phphelpers": "*"
@@ -29,5 +29,10 @@
         }
     },
     "minimum-stability": "dev",
-	"prefer-stable" : true
+	"prefer-stable" : true,
+    "config": {
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
+    }
 }

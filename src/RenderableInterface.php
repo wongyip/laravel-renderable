@@ -1,118 +1,111 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
+
 interface RenderableInterface
 {
     /**
-     * Get original value of a column. (NO SETTER)
+     * Get single attribute value by column name. (NO SETTER)
      *
      * @param string $column
-     * @return mixed|NULL
+     * @return mixed|null
      */
-    public function attribute($column);
-    
+    public function attribute(string $column): mixed;
+
     /**
-     * Get all original attributes as an associative array. (NO SETTER)
+     * Get or set attributes for rendering.
      *
-     * @return array
+     * @param array|null $attributes
+     * @return array|static
      */
-    public function attributes();
+    public function attributes(array $attributes = null): array|static;
     
     /**
-     * Get or set columns that should be rendered (unless specified excluded).
+     * Get or set columns to be rendered as plain text.
      *
      * Setter:
-     *   1. will take all columns of $model->toArray() if $columns is set to TRUE,
-     *   2. will merge the columns into existing $columns unless $replace is TRUE.
+     *  1. Take all keys in $this->attributes if $columns is TRUE.
+     *  2. Merge into existing $this->columns unless $replace is TRUE.
+     *  3. N.B. Getter respect excluded columns.
      *
-     * @param string[]|string $columns
-     * @param boolean         $replace
-     * @return string[]|static
+     * @param string|array|string[]|bool|null $columns
+     * @param bool $replace
+     * @return array|string[]|static
      */
-    public function columns($columns = null, $replace = false);
+    public function columns(string|array|bool $columns = null, bool $replace = false): array|static;
     
     /**
-     * Get or set columns that should be rendered with the |raw filter..
+     * Get or set columns to be rendered as HTML.
      *
      * Setter:
-     *   1. will take all columns of $model->toArray() if $columns is set to TRUE,
-     *   2. will merge the columns into existing $columns unless $replace is TRUE.
+     *  1. Take all keys in $this->attributes if $columns is TRUE.
+     *  2. Merge into existing $this->columnsHTML unless $replace is TRUE.
+     *  3. N.B. Getter respect excluded columns.
      *
-     * @param string[]|string $columns
-     * @param boolean         $replace
-     * @return string[]|static
+     * @param string|array|string[]|bool|null $columns
+     * @param bool $replace
+     * @return array|string[]|static
      */
-    public function columnsHTML($columns = null, $replace = false);
+    public function columnsHTML(string|array|bool $columns = null, bool $replace = false): array|static;
     
     /**
      * Get or set columns that should be excluded from rendering.
      *
      * Setter:
-     *   1. will merge the columns into existing $columns unless $replace is TRUE.
-     *   2. put an empty array as $excluded and set $replace to TRUE empty the list.
+     *  1. Merge into existing $this->excluded unless $replace is TRUE.
+     *  2. To clear $this->excluded, input an empty array for $excluded and TRUE for $replace.
      *
-     * @param string[]|string $excluded
-     * @param boolean         $replace
-     * @return string[]|static
+     * @param string|array|string[] $columns
+     * @param bool $replace
+     * @return array|string[]|static
      */
-    public function exclude($excluded = null, $replace = false);
+    public function exclude(string|array $columns = null, bool $replace = false): array|static;
     
     /**
      * Get or set the layout.
      *
-     * @param string $layout
+     * @param string|null $layout
      * @return string|static
      */
-    public function layout($layout = null);
+    public function layout(string $layout = null): string|static;
     
     /**
-     * Get or set the options array data type of a column, where setter supports
+     * Get or set the options array of a column, where setter supports
      * an array of columns as input.
      *
-     * Note that certain setter methods, e.g. typeBoolean(), is recommended to
-     * use when settting data type if there are options bound to that data type.
+     * Note that certain setter methods, e.g. typebool(), is recommended to
+     * use when setting data type if there are options bound to that data type.
      *
      * Setter will merge $options into existing options array unless $replace is TRUE.
      *
-     * @param string|string[] $column
-     * @param array           $options
-     * @param boolean $replace
-     * @return array|static
+     * @param string $column
+     * @param string|null $type
+     * @return array|null|static
      */
-    public function options($column, $options = null, $replace = false);
+    public function options(string $column, string $type = null): array|null|static;
     
     /**
-     * Get an array of compiled ColumnRederable objects for rendering.
+     * Get an array of ColumnRenderable objects compiled base on the current
+     * state of the Renderable class.
      *
-     * @return ColumnRenderable[]
+     * @return array|ColumnRenderable[]
      */
-    public function renderables();
+    public function renderables(): array;
     
     /**
      * Get or set data type of column, where setter support an array of columns
      * as input.
      *
-     * @param string|string[] $column
-     * @param string          $type
-     * @param array|null      $options
-     * @return string|static
-     */
-    public function type($column, string $type = null, array $options = null);
-
-
-    /**
-     * Get the parsed value of a column. (NO SETTER)
-     *
-     * @see ColumnRenderable::valueRenderable()
-     * @deprecated Too confused, replaced with ColumnRenderable::valueRenderable().
      * @param string $column
-     * @return mixed|NULL
+     * @param string|null $type
+     * @return string|null|static
      */
-    public function value($column);
-    
+    public function type(string $column, string $type = null): string|null|static;
+
     /**
      * Get the view with the renderable marco, e.g. 'renderable::table'.
      *
      * @return string
      */
-    public function view();
+    public function view(): string;
 }

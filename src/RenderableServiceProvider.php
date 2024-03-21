@@ -12,7 +12,8 @@ class RenderableServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // $this->mergeConfigFrom(__DIR__ . '/../config/config_name.php', 'config_name');
+        // Configs
+        $this->mergeConfigFrom(__DIR__ . '/../config/renderable.php', 'renderable');
     }
     
     /**

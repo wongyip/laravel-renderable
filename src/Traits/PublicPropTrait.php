@@ -1,5 +1,7 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
+use Wongyip\Laravel\Renderable\Renderable;
+
 /**
  * All simple, strict forward options, properties, etc.
  * 
@@ -10,89 +12,125 @@ trait PublicPropTrait
     /**
      * @var string
      */
-    public $captionField = 'Field';
+    public string $captionField = 'Field';
     /**
      * @var string
      */
-    public $captionValue = 'Value';
+    public string $captionValue = 'Value';
     /**
      * @var string
      */
-    public $containerClass;
+    public string $containerClass = '';
     /**
      * @var string
      */
-    public $containerId;
+    public string $containerId = '';
     /**
      * @var string
      */
-    public $containerStyle;
+    public string $containerStyl = '';
     /**
      * @var string
      */
-    public $fieldClass;
+    public string $fieldClass = '';
     /**
      * @var string
      */
-    public $fieldHeaderClass;
+    public string $fieldHeaderClass = '';
     /**
      * @var string
      */
-    public $fieldHeaderStyle;
+    public string $fieldHeaderStyle = '';
     /**
      * @var string
      */
-    public $fieldStyle;
+    public string $fieldStyle = '';
     /**
      * @var string
      */
-    public $tableCaption;
+    public string $tableCaption = '';
     /**
      * @var string
      */
-    public $tableClass = 'table table-bordered table-hover';
+    public string $tableClass = 'table table-bordered table-hover';
     /**
      * @var string
      */
-    public $tableStyle;
+    public string $tableStyle = '';
     /**
      * @var string
      */
-    public $tableHeadClass = 'thead-light';
+    public string $tableHeadClass = 'thead-light';
     /**
      * @var string
      */
-    public $tableResponsive;
+    public string $tableResponsive = '';
     /**
      * @var string
      */
-    public $tableHeadStyle;
+    public string $tableHeadStyle = '';
     /**
      * @var string
      */
-    public $tableLabelCellTag = 'th';
+    public string $tableLabelCellTag = 'th';
     /**
      * @var string
      */
-    public $labelClass;
+    public string $labelClass = '';
     /**
      * @var string
      */
-    public $labelStyle;
+    public string $labelStyle = '';
     /**
      * @var string
      */
-    public $valueClass;
+    public string $valueClass = '';
     /**
      * @var string
      */
-    public $valueHeaderClass;
+    public string $valueHeaderClass = '';
     /**
      * @var string
      */
-    public $valueHeaderStyle;
+    public string $valueHeaderStyle = '';
     /**
      * @var string
      */
-    public $valueStyle;
+    public string $valueStyle = '';
+
+    /**
+     * Get or set the field header style.
+     *
+     * @param string|null $setter
+     * @param bool|null $append
+     * @return string|null|Renderable
+     */
+    public function fieldHeaderStyle(string $setter = null, bool $append = null): string|null|Renderable
+    {
+        if ($setter) {
+            $this->fieldHeaderStyle = $append
+                ? ltrim(str_replace(';;', ';', implode(';', [$this->fieldHeaderStyle, $setter])), ';')
+                : $setter;
+            return $this;
+        }
+        return $this->fieldHeaderStyle;
+    }
+
+    /**
+     * Get or set the field header's width in pixels.
+     *
+     * @param int|null $setter
+     * @return int|null|Renderable
+     */
+    public function fieldHeaderWidth(int $setter = null): int|null|Renderable
+    {
+        if ($setter) {
+            $rule = sprintf('width: %dpx', $setter);
+            $this->fieldHeaderStyle = ltrim(str_replace(';;', ';', implode(';', [$this->fieldHeaderStyle, $rule])), ';');
+            return $this;
+        }
+        return preg_match("/width:(\s+)?(\d+)px/", $this->fieldHeaderStyle, $matches)
+            ? (int) $matches[2]
+            : null;
+    }
 }

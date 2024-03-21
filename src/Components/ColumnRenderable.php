@@ -1,9 +1,9 @@
-<?php namespace Wongyip\Laravel\Renderable;
+<?php namespace Wongyip\Laravel\Renderable\Components;
 
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use Wongyip\Laravel\Renderable\Renderable;
 
 /**
  * Compiled output for the views.
@@ -12,6 +12,10 @@ use Illuminate\Support\Str;
  */
 class ColumnRenderable
 {
+    /**
+     * @var string
+     */
+    private string $defaultType;
     /**
      * @var string
      */
@@ -38,7 +42,7 @@ class ColumnRenderable
     protected $value;
 
     /**
-     * @param string $column
+     * @param string $name
      * @param mixed|$value
      * @param mixed|string|null $type
      * @param mixed|string|null $label
@@ -46,13 +50,13 @@ class ColumnRenderable
      * @param mixed|array|null $options
      * @return ColumnRenderable
      */
-    public static function make(string $column, $value, string $type = null, $label = null, $labelHTML = null, $options = null): ColumnRenderable
+    public static function make(string $name, mixed $value, string $type = null, $label = null, $labelHTML = null, $options = null): ColumnRenderable
     {
         $cr = new ColumnRenderable();
-        $cr->name      = $column;
+        $cr->name      = $name;
         $cr->value     = $value;
-        $cr->type      = (is_string($type) && !empty($type)) ? $type : Renderable::DEFAULT_COLUMN_TYPE;
-        $cr->label     = (is_string($label)  && !empty($label)) ? $label : $column;
+        $cr->type      = (is_string($type) && !empty($type)) ? $type : config('renderable.default.type');
+        $cr->label     = (is_string($label)  && !empty($label)) ? $label : $name;
         $cr->labelHTML = (is_string($labelHTML)  && !empty($labelHTML)) ? $labelHTML : null;
         $cr->options   = is_array($options) ? $options : [];
         return $cr;
@@ -86,7 +90,7 @@ class ColumnRenderable
                 // @todo what if $value is not scalar?
                 return is_array($value) ? implode($options['glue'], $value) : $value;
             // Default of Untyped
-            case Renderable::DEFAULT_COLUMN_TYPE:
+            case config('renderable.default.type'):
             default:
                 $formatted = ColumnRenderable::valueToString($value, $error);
                 return $error ? false: $formatted;

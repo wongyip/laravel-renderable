@@ -3,43 +3,24 @@
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use ReflectionClass;
+use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
-use Wongyip\Laravel\Renderable\Traits\LabelsTrait;
-use Wongyip\Laravel\Renderable\Traits\OptionsTrait;
 use Wongyip\Laravel\Renderable\Traits\PublicPropTrait;
+use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
+use Wongyip\Laravel\Renderable\Traits\RenderableSetters;
 use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
 use Wongyip\Laravel\Renderable\Traits\RenderingOptionsTrait;
-use Wongyip\Laravel\Renderable\Traits\TypeTrait;
+use Wongyip\Laravel\Renderable\Traits\RenderableTypes;
 
 /**
- * The base implementation of RenderableInterface.
- * 
- * @author wongyip
+ * The basic implementation of RenderableInterface.
  */
-class Renderable implements RenderableInterface
+class Renderable extends RenderableAbstract
 {
-    use Bootstrap4Trait, LabelsTrait, OptionsTrait, PublicPropTrait, RenderableTrait, RenderingOptionsTrait, TypeTrait;
-    
-    /**
-     * @var string
-     */
-    const DEFAULT_COLUMN_TYPE = 'string';
-    /**
-     * @var string
-     */
-    const DEFAULT_CSV_GLUE = ', ';
-    /**
-     * @var string
-     */
-    const DEFAULT_LAYOUT = 'table';
-    /**
-     * @var string
-     */
-    const DEFAULT_VALUE_BOOL_TRUE = 'Yes';
-    /**
-     * @var string
-     */
-    const DEFAULT_VALUE_BOOL_FALSE = 'No';
+    use Bootstrap4Trait, PublicPropTrait, RenderableTrait, RenderingOptionsTrait, RenderableSetters;
+    use RenderableMacros, RenderableTypes;
+
     /**
      * Simple single table layout, with two columns (Field & Value).
      *
@@ -47,166 +28,91 @@ class Renderable implements RenderableInterface
      */
     const LAYOUT_TABLE = 'table';
     /**
-     * Columnes-rows based grid system, like Bootstrap.
+     * Columns-rows based grid system, like Bootstrap.
      *
      * @var string
      */
     const LAYOUT_GRID  = 'grid';
-    
-    /**
-     * @var array
-     */
-    protected $booleanDefault = ['Yes', 'No'];
-    /**
-     * Columns that should be rendered, ***unless specified excluded.
-     * @var string[]
-     */
-    protected $columns = [];
-    /**
-     * @var string[]
-     */
-    protected $excluded = [];
-    /**
-     * Columns that should be rendered in raw HTML.
-     * @var string[]
-     */
-    protected $columnsHTML = [];
-    /**
-     * @var string
-     */
-    protected $layout;
-    /**
-     * @var array
-     */
-    protected $attributes;
-    /**
-     * Types of columns.
-     *
-     * @var string[]
-     */
-    protected $types = [];
-    
+
     /**
      * Instantiate a Renderable object (in 'table' layout by default).
      * 
-     * @param array           $attributes
-     * @param string[]|string $columns
-     * @param string[]|string $excluded
-     * @param boolean         $autoLabels
-     * @param string          $layout
+     * @param array $attributes
+     * @param true|string|string[] $columns
+     * @param string|string[]|null $excluded
+     * @param boolean $autoLabels
+     * @param string|null $layout
      */
-    public function __construct($attributes, $columns = true, $excluded = null, $autoLabels = true, $layout = null)
+    public function __construct(array $attributes, array|true|string $columns = true, array|string $excluded = null, bool $autoLabels = true, string $layout = null)
     {
-        // Defaults
+        // Preset, related to CSS, change with care.
         $this->containerId = uniqid('mr-');
         
         // Take params
-        $this->attributes = $attributes;
+        $this->layout($layout ?? config('renderable.default.layout'));
+        $this->attributes($attributes);
         $this->columns($columns);
         $this->exclude($excluded);
-        $this->layout($layout = is_string($layout) ? $layout : self::DEFAULT_LAYOUT);
-        
+
         // Automation
         if ($autoLabels) {
             $this->autoLabels();
         }
     }
-    
+
     /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attribute()
+     * @note Work in progress.
+     * @param string $name
+     * @param array $arguments
+     * @return Renderable
+     * @throws Exception
      */
-    public function attribute($column)
+    public function __call(string $name, array $arguments)
     {
-        if (is_array($this->attributes) && key_exists($column, $this->attributes)) {
-            return $this->attributes[$column];
+        /**
+         * e.g. $this->setSomeProperty($value) will be handled by $this->setter('someProperty', $value)
+         */
+        if (preg_match("/set([A-Z]*)]/", $name, $matches)) {
+            $property = lcfirst($matches[1]);
+            if (property_exists($this, $property)) {
+                $this->$property = $arguments[1];
+            }
+            else {
+                Log::warning(sprintf('Renderable.%s property does not exists.', $property));
+            }
+            return $this;
         }
-        return null;
+        throw new Exception(sprintf('Not implemented %s.%s()', (new ReflectionClass($this))->getShortName(), $name));
     }
-    
+
     /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attributes()
+     * Alias to $this->columns().
+     *
+     * @param array|string|bool|null $columns
+     * @param bool $replace
+     * @return array|static
      */
-    public function attributes()
-    {
-        return is_array($this->attributes) ? $this->attributes : [];
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::columns()
-     */
-    public function columns($columns = null, $replace = false)
-    {
-        // Automation
-        if ($columns === true) {
-            $columns = array_keys($this->attributes());
-        }
-        // Actual setter.
-        $this->getSetColumnsProp('columns', $columns, $replace);
-        
-        // Get
-        if (is_null($columns)) {
-            return array_diff($this->columns, $this->excluded);
-        }
-        // Set
-        return $this;
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::columnsHTML()
-     */
-    public function columnsHTML($columns = null, $replace = false)
-    {
-        $this->options($columns, ['html' => true]);
-        return $this->getSetColumnsProp('columnsHTML', $columns, $replace);
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::exclude()
-     */
-    public function exclude($excluded = null, $replace = false)
-    {
-        return $this->getSetColumnsProp('excluded', $excluded, $replace);
-    }
-    
-    /**
-     * Alias to the columns() method.
-     */
-    public function include($columns = null, $replace = false)
+    public function include(array|string|bool $columns = null, bool $replace = false): array|static
     {
         return $this->columns($columns, $replace);
     }
-    
+
     /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::layout()
+     * @inheritDoc
      */
-    public function layout($layout = null)
-    {
-        return $this->getSetProp('layout', $layout);
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::renderables()
-     */
-    public function renderables()
+    public function renderables(): array
     {
         $renderables = [];
         if ($columns = $this->columns()) {
             foreach ($columns as $column) {
 
                 $renderable = ColumnRenderable::make(
-                    $column,
-                    $this->attribute($column),
-                    $this->type($column),
-                    $this->label($column),
-                    $this->labelHTML($column),
-                    $this->options($column)
+                    name:      $column,
+                    value:     $this->attribute($column),
+                    type:      $this->type($column),
+                    label:     $this->label($column),
+                    labelHTML: $this->labelHTML($column),
+                    options:   $this->options($column)
                 );
 
                 if ($renderable->isRenderable()) {
@@ -222,30 +128,7 @@ class Renderable implements RenderableInterface
 
         return $renderables;
     }
-    
-    /**
-     * Instantiate a Renderable object in 'table' layout.
-     *
-     * @param array           $attributes
-     * @param string[]|string $columns     Default true for all columns.
-     * @param string[]|string $excluded    Default null for none.
-     * @param boolean         $autoLabels  Default true.
-     * @return static
-     */
-    static function table($attributes, $columns = true, $excluded = null, $autoLabels = true)
-    {
-        return new static($attributes, $columns, $excluded, $autoLabels, self::LAYOUT_TABLE);
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::view()
-     */
-    public function view()
-    {
-        return LARAVEL_RENDERABLE_VIEW_NAMESPACE . '::' . $this->layout();
-    }
-    
+
     /**
      * {@inheritDoc}
      * @see \Wongyip\Laravel\Renderable\RenderableInterface::value()

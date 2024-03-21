@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Wongyip\PHPHelpers\Format;
 
-class ModelRenderable extends Renderable
+class ModelRenderable extends Renderable implements RenderableInterface
 {   
     /**
      * @var Model
@@ -49,10 +49,9 @@ class ModelRenderable extends Renderable
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::attribute()
+     * @inheritDoc
      */
-    public function attribute($column)
+    public function attribute(string $column)
     {
         if (is_array($this->attributes) && key_exists($column, $this->attributes)) {
             return $this->attributes[$column];
