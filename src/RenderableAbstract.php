@@ -1,13 +1,23 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+use Illuminate\Database\Eloquent\Model;
+use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 use Wongyip\Laravel\Renderable\Traits\RenderableGetSetters;
 use Wongyip\Laravel\Renderable\Traits\RenderableLabels;
+use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
+use Wongyip\Laravel\Renderable\Traits\RenderableModel;
 use Wongyip\Laravel\Renderable\Traits\RenderableTypes;
 
 abstract class RenderableAbstract implements RenderableInterface
 {
-    use RenderableLabels, RenderableGetSetters, RenderableTypes;
-    
+    use RenderableGetSetters, RenderableLabels, RenderableModel, RenderableTypes;
+
+    /**
+     * Source Attributes for Rendering
+     *
+     * @var array
+     */
+    protected array $attributes = [];
     /**
      * Columns to be rendered, unless specified in $this->excluded.
      *
@@ -15,17 +25,35 @@ abstract class RenderableAbstract implements RenderableInterface
      */
     protected array $columns = [];
     /**
+     * Columns to be rendered in raw HTML.
+     *
+     * @var array|string[]
+     */
+    protected array $columnsHTML = [];
+    /**
+     * Renderable options of columns.
+     *
+     * @var array|ColumnOptions[]
+     */
+    protected array $columnsOptions = [];
+    /**
      * Columns NOT to be rendered.
      *
      * @var array|string[]
      */
     protected array $excluded = [];
     /**
-     * Columns to be rendered in raw HTML.
+     * Column labels in plain-text.
      *
      * @var array|string[]
      */
-    protected array $columnsHTML = [];
+    protected array $labels = [];
+    /**
+     * Columns labels that should be rendered as HTML (Twig: |raw filter).
+     *
+     * @var array|string[]
+     */
+    protected array $labelsHTML = [];
     /**
      * Layout for view lookup.
      *
@@ -33,11 +61,18 @@ abstract class RenderableAbstract implements RenderableInterface
      */
     protected string $layout = '';
     /**
-     * Source Attributes for Rendering
+     * The input model object.
      *
-     * @var array
+     * @see RenderableMacros::model()
+     * @var Model
      */
-    protected array $attributes = [];
+    protected Model $model;
+    /**
+     * Type of columns.
+     *
+     * @var array|string[]
+     */
+    protected array $types = [];
 
     /**
      * @inheritdoc
@@ -47,7 +82,9 @@ abstract class RenderableAbstract implements RenderableInterface
         if (key_exists($column, $this->attributes)) {
             return $this->attributes[$column];
         }
-        return null;
+        return isset($this->model)
+            ? $this->model->$column
+            : null;
     }
 
     /**

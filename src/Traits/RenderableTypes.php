@@ -1,30 +1,24 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
+use Wongyip\Laravel\Renderable\Components\ColumnOptions;
+
 trait RenderableTypes
 {
-    use RenderableOptions;
-
-    /**
-     * Type of columns.
-     *
-     * @var array|string[]
-     */
-    protected array $types = [];
+    use RenderableColumnOptions;
 
     /**
      * @param string|array $columns
      * @param string $type
-     * @param array|null $options
+     * @param array|ColumnOptions|null $columnOptions
      * @return $this
      */
-    private function __typeAll(string|array $columns, string $type, array $options = null): static
+    private function __typeAll(string|array $columns, string $type, array|ColumnOptions $columnOptions = null): static
     {
         $columns = is_array($columns) ? $columns : [$columns];
         foreach ($columns as $column) {
             $this->type($column, 'boolean');
-            $this->options($column, $options);
-            if ($options) {
-                $this->options($column, $options);
+            if ($columnOptions) {
+                $this->columnOptions($column, $columnOptions);
             }
         }
         return $this;
@@ -60,12 +54,18 @@ trait RenderableTypes
      * @param string|null $valueNull Default to $valueFalse
      * @return static
      */
+    public function typeBool(string|array $columns, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
+    {
+        return $this->__typeAll($columns, 'bool', ColumnOptions::bool($valueTrue, $valueFalse, $valueNull));
+    }
+
+    /**
+     * Alias to typeBool()
+     * @deprecated
+     */
     public function typeBoolean(string|array $columns, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
     {
-        $valueTrue  = is_null($valueTrue)  ? config('renderable.default.bool-true') : $valueTrue;
-        $valueFalse = is_null($valueFalse) ? config('renderable.default.bool-false') : $valueFalse;
-        $valueNull  = is_null($valueNull)  ? $valueFalse : $valueNull;
-        return $this->__typeAll($columns, 'boolean',  compact('valueTrue', 'valueFalse', 'valueNull'));
+        return $this->typeBool($columns, $valueTrue, $valueFalse, $valueNull);
     }
 
     /**
@@ -77,8 +77,7 @@ trait RenderableTypes
      */
     public function typeCSV(array|string $columns, string $glue = null): static
     {
-        $glue = is_string($glue) ? $glue : config('renderable.default.csv-glue');
-        return $this->__typeAll($columns, 'csv', compact('glue'));
+        return $this->__typeAll($columns, 'csv', ColumnOptions::csv($glue));
     }
 
     /**
@@ -91,16 +90,24 @@ trait RenderableTypes
     {
         return $this->__typeAll($columns, 'lines');
     }
-    
+
     /**
      * Type column(s) as Ordered List.
      *
      * @param string|array|string[] $columns
+     * @param string|null $listClass
+     * @param string|null $listStyle
+     * @param string|null $itemClass
+     * @param string|null $itemStyle
      * @return static
      */
-    public function typeOL(array|string $columns): static
+    public function typeOL(array|string $columns, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
-        return $this->__typeAll($columns, 'ol');
+        return $this->__typeAll(
+            $columns,
+            'ol',
+            ColumnOptions::list($listClass, $listStyle, $itemClass, $itemStyle)
+        );
     }
     
     /**
@@ -120,10 +127,18 @@ trait RenderableTypes
      * Type column(s) as Unordered List.
      *
      * @param string|array|string[] $columns
+     * @param string|null $listClass
+     * @param string|null $listStyle
+     * @param string|null $itemClass
+     * @param string|null $itemStyle
      * @return static
      */
-    public function typeUL(array|string $columns): static
+    public function typeUL(array|string $columns, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
-        return $this->__typeAll($columns, 'ul');
+        return $this->__typeAll(
+            $columns,
+            'ul',
+            ColumnOptions::list($listClass, $listStyle, $itemClass, $itemStyle)
+        );
     }
 }

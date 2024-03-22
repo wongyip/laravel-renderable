@@ -1,24 +1,30 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
-use DateTime;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\PublicPropTrait;
 use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
-use Wongyip\Laravel\Renderable\Traits\RenderableSetters;
 use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
 use Wongyip\Laravel\Renderable\Traits\RenderingOptionsTrait;
 use Wongyip\Laravel\Renderable\Traits\RenderableTypes;
 
 /**
  * The basic implementation of RenderableInterface.
+ *
+ * @method Renderable renderAsTable()
+ * @method Renderable renderAsGrid()
  */
 class Renderable extends RenderableAbstract
 {
-    use Bootstrap4Trait, PublicPropTrait, RenderableTrait, RenderingOptionsTrait, RenderableSetters;
+    // @todo Review needed.
+    use Bootstrap4Trait, PublicPropTrait, RenderableTrait, RenderingOptionsTrait;
+
+    // New
     use RenderableMacros, RenderableTypes;
 
     /**
@@ -35,29 +41,34 @@ class Renderable extends RenderableAbstract
     const LAYOUT_GRID  = 'grid';
 
     /**
-     * Instantiate a Renderable object (in 'table' layout by default).
-     * 
-     * @param array $attributes
-     * @param true|string|string[] $columns
-     * @param string|string[]|null $excluded
-     * @param boolean $autoLabels
-     * @param string|null $layout
+     * The Renderable object.
+     *
+     * @param array|Model $attributes Input attributes, also accepts Eloquent Model.
+     * @param array|true|string $columns Default true for all columns.
+     * @param array|string|null $excluded Default null for none.
+     * @param string|null $layout Default to config('renderable.default.layout').
      */
-    public function __construct(array $attributes, array|true|string $columns = true, array|string $excluded = null, bool $autoLabels = true, string $layout = null)
+    public function __construct(array|Model $attributes, array|true|string $columns = true, array|string $excluded = null, string $layout = null)
     {
-        // Preset, related to CSS, change with care.
-        $this->containerId = uniqid('mr-');
-        
-        // Take params
+        // Take attributes.
+        if ($attributes instanceof Model) {
+            $this->model = $attributes;
+            $this->attributes($this->model->toArray());
+        }
+        else {
+            $this->attributes = $attributes;
+        }
+
+        // Take other params.
         $this->layout($layout ?? config('renderable.default.layout'));
-        $this->attributes($attributes);
         $this->columns($columns);
         $this->exclude($excluded);
 
         // Automation
-        if ($autoLabels) {
-            $this->autoLabels();
-        }
+        $this->autoLabels();
+
+        // @todo Related to CSS, make it configurable, later...
+        $this->containerId = uniqid('mr-');
     }
 
     /**
@@ -72,7 +83,7 @@ class Renderable extends RenderableAbstract
         /**
          * e.g. $this->setSomeProperty($value) will be handled by $this->setter('someProperty', $value)
          */
-        if (preg_match("/set([A-Z]*)]/", $name, $matches)) {
+        if (preg_match("/^set([A-Z].*)/", $name, $matches)) {
             $property = lcfirst($matches[1]);
             if (property_exists($this, $property)) {
                 $this->$property = $arguments[1];
@@ -82,7 +93,15 @@ class Renderable extends RenderableAbstract
             }
             return $this;
         }
-        throw new Exception(sprintf('Not implemented %s.%s()', (new ReflectionClass($this))->getShortName(), $name));
+        /**
+         * e.g. $this->setSomeProperty($value) will be handled by $this->setter('someProperty', $value)
+         */
+        elseif (preg_match("/^renderAs([A-Z].*)/", $name, $matches)) {
+            return $this->renderAs(Str::kebab($matches[1]));
+        }
+
+        Log::debug(sprintf('Method %s.%s() is not implemented, return NULL.', (new ReflectionClass($this))->getShortName(), $name));
+        return null;
     }
 
     /**
@@ -106,13 +125,13 @@ class Renderable extends RenderableAbstract
         if ($columns = $this->columns()) {
             foreach ($columns as $column) {
 
-                $renderable = ColumnRenderable::make(
+                $renderable = new ColumnRenderable(
                     name:      $column,
                     value:     $this->attribute($column),
                     type:      $this->type($column),
                     label:     $this->label($column),
                     labelHTML: $this->labelHTML($column),
-                    options:   $this->options($column)
+                    options:   $this->columnOptions($column)
                 );
 
                 if ($renderable->isRenderable()) {
@@ -125,57 +144,6 @@ class Renderable extends RenderableAbstract
                 }
             }
         }
-
         return $renderables;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Wongyip\Laravel\Renderable\RenderableInterface::value()
-     */
-    public function value($column)
-    {
-        Log::warning('Deprecated method called: Renderable.value()');
-
-        // The original value.
-        $value = $this->attribute($column);
-
-        // Type defined locally.
-        $type = $this->type($column);
-        $options = $this->options($column);
-
-        switch ($type) {
-            // These types must be an array, so the view could handle it correctly.
-            case 'ol':
-            case 'ul':
-            case 'lines':
-                return is_array($value) ? $value : [$value];
-            case 'boolean':
-                // In case of null and there is a null-replacement.
-                if (is_null($value) && key_exists('valueNull', $options)) {
-                    return $options['valueNull'];
-                }
-                // NULL as false now.
-                return $value ? $options['valueTrue'] : $options['valueFalse'];
-            case 'csv':
-                // @todo what if $value is not scalar?
-                return is_array($value) ? implode($options['glue'], $value) : $value;
-            default:
-                // Array to default format.
-                if (is_array($value)) {
-                    // Output array values as CSV by default.
-                    return implode(Renderable::DEFAULT_CSV_GLUE, array_values($value));
-                }
-                // DateTime to string
-                elseif ($value instanceof DateTime) {
-                    return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
-                }
-                // Boolean to example 'Yes', 'No', etc.
-                elseif (is_bool($value)) {
-                    return $value ? Renderable::DEFAULT_VALUE_BOOL_TRUE : Renderable::DEFAULT_VALUE_BOOL_FALSE;
-                }
-        }
-        // GIGO
-        return $value;
     }
 }

@@ -3,147 +3,139 @@
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Wongyip\Laravel\Renderable\Renderable;
 
 /**
  * Compiled output for the views.
- * 
- * @author yipli
+ *
+ * Noted that this class is not intended to have any change after instantiation,
+ * it should be keep for presentation use only.
  */
 class ColumnRenderable
 {
     /**
      * @var string
      */
-    private string $defaultType;
+    public string $label;
     /**
      * @var string
      */
-    public $label;
+    public string $labelHTML;
     /**
      * @var string
      */
-    public $labelHTML;
+    public string $name;
+    /**
+     * @var ColumnOptions
+     */
+    public ColumnOptions $options;
     /**
      * @var string
      */
-    public $name;
+    public string $type;
     /**
-     * @var array
+     * @var mixed
      */
-    public $options;
-    /**
-     * @var string
-     */
-    public $type;
-    /**
-     * @var string
-     */
-    protected $value;
+    public mixed $value;
 
     /**
      * @param string $name
-     * @param mixed|$value
-     * @param mixed|string|null $type
-     * @param mixed|string|null $label
-     * @param mixed|string|null $labelHTML
-     * @param mixed|array|null $options
-     * @return ColumnRenderable
+     * @param mixed|null $value
+     * @param string|null $type
+     * @param string|null $label
+     * @param string|null $labelHTML
+     * @param array|ColumnOptions|null $options
      */
-    public static function make(string $name, mixed $value, string $type = null, $label = null, $labelHTML = null, $options = null): ColumnRenderable
+    public function __construct(string $name, mixed $value = null, string $type = null, string $label = null, string $labelHTML = null, array|ColumnOptions $options = null)
     {
-        $cr = new ColumnRenderable();
-        $cr->name      = $name;
-        $cr->value     = $value;
-        $cr->type      = (is_string($type) && !empty($type)) ? $type : config('renderable.default.type');
-        $cr->label     = (is_string($label)  && !empty($label)) ? $label : $name;
-        $cr->labelHTML = (is_string($labelHTML)  && !empty($labelHTML)) ? $labelHTML : null;
-        $cr->options   = is_array($options) ? $options : [];
-        return $cr;
+        $options = $options
+            ? (is_array($options) ? new ColumnOptions($options) : $options)
+            : ColumnOptions::defaults();
+        $this->name      = $name;
+        $this->value     = $value;
+        $this->type      = $type ?? config('renderable.default.type');
+        $this->label     = $label ?? '';
+        $this->labelHTML = $labelHTML ?? '';
+        $this->options   = $options;
     }
 
     /**
-     * Get the formatted output of the $value for the $type, will return FALSE
-     * if the input $value is not renderable as input $type.
+     * Get the formatted / parsed value for rendering based on type and options.
      *
      * @return mixed
      */
-    public function valueRenderable()
+    public function valueRenderable(): mixed
     {
+        // Localize
         $type = $this->type;
         $value = $this->value;
-        $options = is_array($this->options) ? $this->options : [];
         switch ($type) {
             // These types must be an array, so the view could handle it correctly.
             case 'ol':
             case 'ul':
             case 'lines':
-                return is_array($value) ? $value : [$value];
-            case 'boolean':
-                // In case of null and there is a null-replacement.
-                if (is_null($value) && key_exists('valueNull', $options)) {
-                    return $options['valueNull'];
+                if (!is_array($this->value)) {
+                    Log::warning(sprintf('Type %s column with non-array value, patched.', $this->type));
+                    return [$this->value];
                 }
-                // NULL as false now.
-                return $value ? $options['valueTrue'] : $options['valueFalse'];
+                return $this->value;
+            case 'boolean': // @todo To be removed.
+            case 'bool':
+                return is_null($this->value)
+                    ? ($this->options->valueNull ?? $this->options->valueFalse)
+                    : ($this->value ? $this->options->valueTrue : $this->options->valueFalse);
             case 'csv':
-                // @todo what if $value is not scalar?
-                return is_array($value) ? implode($options['glue'], $value) : $value;
-            // Default of Untyped
-            case config('renderable.default.type'):
-            default:
-                $formatted = ColumnRenderable::valueToString($value, $error);
-                return $error ? false: $formatted;
+                if (is_array($this->value)) {
+                    return implode($this->options->glue, array_values($this->value));
+                }
+                Log::info('ColumnRenderable.valueRenderable() Typed csv but value is not array, returning safe value.');
+                return $this->safeValue($this->value);
         }
+        Log::debug('ColumnRenderable.valueRenderable() Untyped column, returning safe value.');
+        return $this->safeValue($value);
     }
 
     /**
      * Convert the given $value to string for output.
      *
-     * N.B. Always returns string for safe output, even if there is conversion
-     * error, you should check the value $error for the conversion status.
-     *
-     * @param mixed $value
-     * @param bool $error
-     * @return string
+     * @param mixed|null $input
+     * @return int|float|string
      */
-    public static function valueToString($value, bool &$error = null): string
+    private function safeValue(mixed $input = null): int|float|string
     {
         try {
-            if (is_scalar($value)) {
+            if (is_scalar($input)) {
                 // Boolean to 'Yes' or 'No' or other strings configured.
-                if (is_bool($value)) {
-                    $value = $value ? Renderable::DEFAULT_VALUE_BOOL_TRUE : Renderable::DEFAULT_VALUE_BOOL_FALSE;
+                if (is_bool($input)) {
+                    return $input ? $this->options->valueTrue : $this->options->valueFalse;
                 }
                 // Unchanged for int, float and string.
+                return $input;
+            }
+            elseif (is_null($input)) {
+                return $this->options->valueNull;
+            }
+            elseif (is_array($input)) {
+                // Array to default format.
+                return  implode($this->options->glue, array_values($input));
+            }
+            // DateTime to string
+            elseif ($input instanceof DateTime) {
+                return $input->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
+            }
+            elseif (is_object($input)) {
+                Log::error(sprintf('ColumnRenderable.safeValue() return empty string: type (%s) has no handler.', get_class($input)));
+            }
+            elseif (is_resource($input)) {
+                Log::notice('ColumnRenderable.safeValue() return empty string as value is a resource.');
             }
             else {
-                // Array to default format.
-                if (is_array($value)) {
-                    $value = implode(Renderable::DEFAULT_CSV_GLUE, array_values($value));
-                }
-                // DateTime to string
-                elseif ($value instanceof DateTime) {
-                    $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
-                }
-                elseif (is_null($value)) {
-                    $value = '';
-                }
-                elseif (is_resource($value)) {
-                    Log::notice('valueToString() conversion ignored as value is a resource, $value is set as en empty string.');
-                    $value = '';
-                }
-                else {
-                    throw new Exception('Unhandled type of value.');
-                }
+                Log::error('ColumnRenderable.safeValue() return empty string: unexpected type.');
             }
         }
         catch (Exception $e) {
-            Log::error(sprintf('valueToString() conversion failure. Exception [%d] %s', $e->getCode(), $e->getMessage()));
-            $value = '[Data Conversion Error]';
-            $error = true;
+            Log::error(sprintf('ColumnRenderable.safeValue() conversion failure: exception [%d] %s', $e->getCode(), $e->getMessage()));
         }
-        return $value;
+        return '';
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
 
 interface RenderableInterface
@@ -13,7 +14,10 @@ interface RenderableInterface
     public function attribute(string $column): mixed;
 
     /**
-     * Get or set attributes for rendering.
+     * Get or set attributes for rendering. You may push additional, customized
+     * attributes for render. Since the input $attributes will be merged into
+     * the existing attributes array, this method may be used to replace one or
+     * more existing attributes.
      *
      * @param array|null $attributes
      * @return array|static
@@ -70,19 +74,13 @@ interface RenderableInterface
     public function layout(string $layout = null): string|static;
     
     /**
-     * Get or set the options array of a column, where setter supports
-     * an array of columns as input.
-     *
-     * Note that certain setter methods, e.g. typebool(), is recommended to
-     * use when setting data type if there are options bound to that data type.
-     *
-     * Setter will merge $options into existing options array unless $replace is TRUE.
+     * Get or set the ColumnOptions of a column.
      *
      * @param string $column
-     * @param string|null $type
-     * @return array|null|static
+     * @param ColumnOptions|null $options
+     * @return ColumnOptions|null|static
      */
-    public function options(string $column, string $type = null): array|null|static;
+    public function columnOptions(string $column, ColumnOptions $options = null): ColumnOptions|null|static;
     
     /**
      * Get an array of ColumnRenderable objects compiled base on the current

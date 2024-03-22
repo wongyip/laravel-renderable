@@ -22,46 +22,31 @@
         
     {% elseif CR.type == 'ol' %}
     
-        <ol>
-        {% if CR.options.html %}
-
+        <ol class="{{ CR.options.listClass }}" style="{{ CR.options.listStyle }}">
             {% for val in VR %}
-            <li>{{ val|raw }}</li>
+            <li class="{{ CR.options.itemClass }}" style="{{ CR.options.itemStyle }}">
+                {{ CR.options.html ? val|raw : val}}
+            </li>
             {% endfor %}
-
-        {% else %}
-
-            {% for val in VR %}
-            <li>{{ val }}</li>
-            {% endfor %}
-
-        {% endif %}
         </ol>
         
     {% elseif CR.type == 'ul' %}
     
-        <ul>
-        {% if CR.options.html %}
-
+        <ul class="{{ CR.options.listClass }}" style="{{ CR.options.listStyle }}">
             {% for val in VR %}
-            <li>{{ val|raw }}</li>
+            <li class="{{ CR.options.itemClass }}" style="{{ CR.options.itemStyle }}">
+                {{ CR.options.html ? val|raw : val}}
+            </li>
             {% endfor %}
-
-        {% else %}
-
-            {% for val in VR %}
-            <li>{{ val }}</li>
-            {% endfor %}
-
-        {% endif %}
         </ul>
 
     {% elseif CR.type == 'lines' %}
 
         {% if CR.options.html %}
 
+            {# Extra <div> wrapper for lines of "html value". #}
             {% for val in VR %}
-                {{ val|raw }}<br/>
+                <div>{{ val|raw }}</div>
             {% endfor %}
 
         {% else %}

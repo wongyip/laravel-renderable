@@ -41,4 +41,13 @@ trait RenderableGetSetters
         $this->$property = $value;
         return $this;
     }
+
+    /**
+     * @param string $layout
+     * @return static
+     */
+    protected function renderAs(string $layout): static
+    {
+        return $this->layout($layout);
+    }
 }
