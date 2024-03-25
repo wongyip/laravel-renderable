@@ -127,7 +127,7 @@ abstract class RenderableAbstract implements RenderableInterface
         $this->columnsHTML = $replace ? $columns : array_merge($this->columnsHTML, $columns);
         return $this;
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -152,9 +152,13 @@ abstract class RenderableAbstract implements RenderableInterface
             return $this->layout;
         }
         // Set
+        $fromLayout = $this->layout;
         $this->layout = $layout;
+        $this->layoutChanged($fromLayout, $layout);
         return $this;
     }
+
+    abstract protected function layoutChanged(string $fromLayout, string $toLayout): void;
 
     /**
      * @inheritdoc

@@ -1,10 +1,7 @@
 <?php namespace Wongyip\Laravel\Renderable\Components;
 
-use DateTime;
-use Exception;
 use Illuminate\Support\Facades\Log;
 use Throwable;
-use Wongyip\Laravel\Renderable\Renderable;
 
 /**
  * Advanced options for rendering a column.

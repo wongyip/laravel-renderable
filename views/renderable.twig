@@ -10,8 +10,8 @@
 
     {% import renderable.view() as renderer %}
 
-    <div id="{{ renderable.containerId }}" class="model-renderable {{ renderable.containerClass }}" style="{{ renderable.containerStyle }}">    
+    <{{ renderable.container.tagName() }} id="{{ renderable.container.id() }}" class="{{ renderable.container.class() }}" style="{{ renderable.container.style() }}">
         {{ renderer.handle(renderable) }}
-    </div>
+    </{{ renderable.container.tagName() }}>
 
 {% endmacro %}

@@ -3,6 +3,8 @@
     
     Param(s):
         \Wongyip\Laravel\Renderable\Renderable  R
+
+    Some elements class are keep in the template for a
 #}
 {% macro handle(R) %}
 
@@ -14,30 +16,32 @@
         <div class="{{ R.tableResponsive }}">
         {% endif %}
 
-            <table class="{{ R.tableClass }} model-renderable-table" style="{{ R.tableStyle }}">
+            {# Selector: .renderable-table #}
+            <table id="{{ R.id() }}" class="{{ R.class() }}" style="{{ R.style() }}">
                 {% if R.tableCaption %}
                 <caption>{{ R.tableCaption }}</caption>
                 {% endif %}
                 {% if R.renderTableHead %}
                 <thead class="{{ R.tableHeadClass }}" style="{{ R.tableHeadStyle }}">
                     <tr>
-                        <th class="{{ R.fieldHeaderClass }}" style="{{ R.fieldHeaderStyle }}">
-                            {{ R.captionField }}
-                        </th>
-                        <th class="{{ R.valueHeaderClass }}" style="{{ R.valueHeaderStyle }}">
-                            {{ R.captionValue }}
-                        </th>
+                        {{ R.fieldHeader.render()|raw }}
+                        {{ R.valueHeader.render()|raw }}
                     </tr>
                 </thead>
                 {% endif %}
                 <tbody>
                 {% for CR in R.renderables() %}
-                    <tr class="renderable-column renderable-column-{{ CR.name }}">
+                    {# Selector: .renderable-column #}
+                    <tr class="{{ CR.class() }}">
+
                         <{{ R.tableLabelCellTag }} class="renderable-label renderable-label-{{ CR.name }} {{ R.labelClass }}" style="{{ R.labelStyle }}">
                             {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
                         </{{ R.tableLabelCellTag }}>
+
                         <td class="renderable-value renderable-value-{{ CR.name }}">
+
                             {{ valueRenderer.handle(CR) }}
+
                         </td>
                     </tr>
                 {% endfor %}

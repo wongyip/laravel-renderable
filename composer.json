@@ -13,6 +13,7 @@
         "php": ">=8.2.0",
         "laravel/framework": "*",
         "rcrowe/twigbridge": "*",
+        "spatie/html-element": "*",
         "wongyip/phphelpers": "*"
     },
     "autoload": {

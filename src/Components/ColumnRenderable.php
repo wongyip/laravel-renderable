@@ -3,15 +3,19 @@
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Wongyip\Laravel\Renderable\Traits\CssClass;
 
 /**
  * Compiled output for the views.
  *
  * Noted that this class is not intended to have any change after instantiation,
- * it should be keep for presentation use only.
+ * it should be kept for presentation use only.
+ *
+ * @todo Add HtmlAttributes trait.
  */
 class ColumnRenderable
 {
+    use CssClass;
     /**
      * @var string
      */
@@ -56,6 +60,20 @@ class ColumnRenderable
         $this->label     = $label ?? '';
         $this->labelHTML = $labelHTML ?? '';
         $this->options   = $options;
+    }
+
+    /**
+     * @inheritdoc
+     * @see CssClass::classesHook()
+     */
+    protected function classesHook(array $classes): array
+    {
+        array_push(
+            $classes,
+            'renderable-column',
+            'renderable-column-' . $this->name
+        );
+        return $classes;
     }
 
     /**
