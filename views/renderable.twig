@@ -10,8 +10,8 @@
 
     {% import renderable.view() as renderer %}
 
-    {{ renderable.container.open() }}
+    {{ renderable.container.open()|raw }}
         {{ renderer.handle(renderable) }}
-    {{ renderable.container.close() }}
+    {{ renderable.container.close()|raw }}
 
 {% endmacro %}

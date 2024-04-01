@@ -17,7 +17,7 @@
         {% endif %}
 
             {# Selector: .renderable-table #}
-            <table id="{{ R.id() }}" class="{{ R.class() }}" style="{{ R.style() }}">
+            <table id="{{ R.body.id() }}" class="{{ R.body.class() }}" style="{{ R.body.style() }}">
                 {% if R.tableCaption %}
                 <caption>{{ R.tableCaption }}</caption>
                 {% endif %}

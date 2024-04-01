@@ -7,15 +7,11 @@ use Illuminate\Support\Str;
 use ReflectionClass;
 use Wongyip\HTML\Tag;
 use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
-use Wongyip\Laravel\Renderable\Components\Container;
-use Wongyip\Laravel\Renderable\Components\FieldHeader;
-use Wongyip\Laravel\Renderable\Components\ValueHeader;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\CommonProperties;
 use Wongyip\Laravel\Renderable\Traits\CssClass;
-use Wongyip\Laravel\Renderable\Traits\HtmlRender;
 use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
-use Wongyip\Laravel\Renderable\Traits\RenderableTable;
+use Wongyip\Laravel\Renderable\Traits\LayoutTable;
 use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
 use Wongyip\Laravel\Renderable\Traits\RenderableTypes;
 use Wongyip\Laravel\Renderable\Traits\RenderingOptionsTrait;
@@ -32,7 +28,7 @@ class Renderable extends RenderableAbstract
     use Bootstrap4Trait, CommonProperties, RenderableTrait, RenderingOptionsTrait;
 
     // New
-    use HtmlRender, RenderableMacros, RenderableTable, RenderableTypes;
+    use LayoutTable, RenderableMacros, RenderableTypes;
 
     /**
      * Simple single table layout, with two columns (Field & Value).
@@ -49,15 +45,19 @@ class Renderable extends RenderableAbstract
     /**
      * @var Tag
      */
+    public Tag $body;
+    /**
+     * @var Tag
+     */
     public Tag $container;
     /**
-     * @var FieldHeader
+     * @var Tag
      */
-    public FieldHeader $fieldHeader;
+    public Tag $fieldHeader;
     /**
-     * @var ValueHeader
+     * @var Tag
      */
-    public ValueHeader $valueHeader;
+    public Tag $valueHeader;
 
     /**
      * The Renderable object.
@@ -70,7 +70,7 @@ class Renderable extends RenderableAbstract
     public function __construct(array|Model $attributes, array|true|string $columns = true, array|string $excluded = null, string $layout = null)
     {
         // Init.
-        $this->id('r' . crc32(uniqid()));
+        $this->body = Tag::make()->id('r' . crc32(uniqid()));
 
         // Take attributes.
         if ($attributes instanceof Model) {
@@ -82,12 +82,9 @@ class Renderable extends RenderableAbstract
         }
 
         // Components
-        $this->container = Tag::make('div')
-            ->id($this->id() . '-container')
-            ->classAdd('renderable-object-container');
-
-        $this->fieldHeader = new FieldHeader($this->layout);
-        $this->valueHeader = new ValueHeader($this->layout);
+        $this->container = Tag::make('div')->id($this->body->id() . '-container')->classAdd('renderable-object-container');
+        $this->fieldHeader = Tag::make()->contents('Field');
+        $this->valueHeader = Tag::make()->contents('Value');
 
         // Take other params.
         $this->layout($layout ?? config('renderable.default.layout'));
@@ -134,7 +131,7 @@ class Renderable extends RenderableAbstract
     /**
      * @inheritdoc
      * @see CssClass::classesHook()
-     * @see RenderableTable::classHookTable()
+     * @see LayoutTable::classHookTable()
      */
     protected function classesHook(array $classes): array
     {
@@ -152,22 +149,6 @@ class Renderable extends RenderableAbstract
     public function include(array|string|bool $columns = null, bool $replace = false): array|static
     {
         return $this->columns($columns, $replace);
-    }
-
-    /**
-     * @param string $fromLayout
-     * @param string $toLayout
-     * @return void
-     */
-    protected function layoutChanged(string $fromLayout, string $toLayout): void
-    {
-        if ($fromLayout !== $toLayout) {
-            // Since they instantiated at the same time,
-            if (isset($this->fieldHeader)) {
-                $this->fieldHeader->resetTagName($toLayout);
-                $this->valueHeader->resetTagName($toLayout);
-            }
-        }
     }
 
     /**

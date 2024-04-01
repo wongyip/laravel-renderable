@@ -3,11 +3,11 @@
 
 /**
  * 1. Everything related to table-layout should go here.
- * 2. Only properties with a parsed values are having getter function.
+ * 2. Only properties with a parsed values have their getter function.
  *
  * @see /views/table.twig
  */
-trait RenderableTable
+trait LayoutTable
 {
     /**
      * @var string
@@ -29,7 +29,6 @@ trait RenderableTable
      * @var string
      */
     public string $tableLabelCellTag = 'th';
-
     /**
      * @deprecated
      * @var string
@@ -39,15 +38,16 @@ trait RenderableTable
      * @deprecated
      * @var string
      */
-    public string $tableStyle = 'deprecated: please use R.style();';
+    public string $tableStyle = 'deprecated: please use R.body.style();';
 
     /**
-     * @param array $classes
-     * @return array
+     * @return static
      */
-    public function classHookTable(array $classes): array
+    protected function layoutTable(): static
     {
-        array_push($classes, 'renderable-table', 'table', 'table-bordered', 'table-hover');
-        return $classes;
+        $this->body->tagName('table')->class(['renderable-table', 'table', 'table-bordered', 'table-hover']);
+        $this->fieldHeader->tagName('th');
+        $this->valueHeader->tagName('th');
+        return $this;
     }
 }

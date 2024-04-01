@@ -154,11 +154,15 @@ abstract class RenderableAbstract implements RenderableInterface
         // Set
         $fromLayout = $this->layout;
         $this->layout = $layout;
-        $this->layoutChanged($fromLayout, $layout);
+        // Changed?
+        if ($fromLayout !== $layout) {
+            $layoutMethod = 'layout' . ucfirst($layout);
+            if (method_exists($this, $layoutMethod)) {
+                return $this->$layoutMethod();
+            }
+        }
         return $this;
     }
-
-    abstract protected function layoutChanged(string $fromLayout, string $toLayout): void;
 
     /**
      * @inheritdoc
