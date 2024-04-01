@@ -14,7 +14,8 @@
         "laravel/framework": "*",
         "rcrowe/twigbridge": "*",
         "spatie/html-element": "*",
-        "wongyip/phphelpers": "*"
+        "wongyip/phphelpers": "*",
+        "wongyip/html-tags": "^1.0"
     },
     "autoload": {
         "psr-4": {

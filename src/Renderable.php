@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use Wongyip\HTML\Tag;
 use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
 use Wongyip\Laravel\Renderable\Components\Container;
 use Wongyip\Laravel\Renderable\Components\FieldHeader;
@@ -46,9 +47,9 @@ class Renderable extends RenderableAbstract
      */
     const LAYOUT_GRID  = 'grid';
     /**
-     * @var Container
+     * @var Tag
      */
-    public Container $container;
+    public Tag $container;
     /**
      * @var FieldHeader
      */
@@ -81,7 +82,10 @@ class Renderable extends RenderableAbstract
         }
 
         // Components
-        $this->container = new Container($this->id() . '-container');
+        $this->container = Tag::make('div')
+            ->id($this->id() . '-container')
+            ->classAdd('renderable-object-container');
+
         $this->fieldHeader = new FieldHeader($this->layout);
         $this->valueHeader = new ValueHeader($this->layout);
 

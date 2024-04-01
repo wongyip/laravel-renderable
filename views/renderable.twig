@@ -10,8 +10,8 @@
 
     {% import renderable.view() as renderer %}
 
-    <{{ renderable.container.tagName() }} id="{{ renderable.container.id() }}" class="{{ renderable.container.class() }}" style="{{ renderable.container.style() }}">
+    {{ renderable.container.open() }}
         {{ renderer.handle(renderable) }}
-    </{{ renderable.container.tagName() }}>
+    {{ renderable.container.close() }}
 
 {% endmacro %}
