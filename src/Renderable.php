@@ -9,7 +9,6 @@ use Wongyip\HTML\Tag;
 use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\CommonProperties;
-use Wongyip\Laravel\Renderable\Traits\CssClass;
 use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
 use Wongyip\Laravel\Renderable\Traits\LayoutTable;
 use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
@@ -19,8 +18,8 @@ use Wongyip\Laravel\Renderable\Traits\RenderingOptionsTrait;
 /**
  * The basic implementation of RenderableInterface.
  *
- * @method Renderable renderAsTable()
- * @method Renderable renderAsGrid()
+ * @method Renderable asTable()
+ * @method Renderable asGrid()
  */
 class Renderable extends RenderableAbstract
 {
@@ -118,25 +117,15 @@ class Renderable extends RenderableAbstract
             return $this;
         }
         /**
-         * e.g. $this->setSomeProperty($value) will be handled by $this->setter('someProperty', $value)
+         * @see Renderable::asGrid()
+         * @see Renderable::asTable();
          */
-        elseif (preg_match("/^renderAs([A-Z].*)/", $name, $matches)) {
+        elseif (preg_match("/^as([A-Z].*)/", $name, $matches)) {
             return $this->renderAs(Str::kebab($matches[1]));
         }
 
         Log::debug(sprintf('Method %s.%s() is not implemented, return NULL.', (new ReflectionClass($this))->getShortName(), $name));
         return null;
-    }
-
-    /**
-     * @inheritdoc
-     * @see CssClass::classesHook()
-     * @see LayoutTable::classHookTable()
-     */
-    protected function classesHook(array $classes): array
-    {
-        $classHookMethod = 'classHook' . ucfirst($this->layout);
-        return method_exists($this, $classHookMethod) ? $this->$classHookMethod($classes) : $classes;
     }
 
     /**
