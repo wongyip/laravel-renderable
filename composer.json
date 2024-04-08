@@ -15,7 +15,8 @@
         "rcrowe/twigbridge": "*",
         "spatie/html-element": "*",
         "wongyip/phphelpers": "*",
-        "wongyip/html-tags": "^1.0"
+        "wongyip/html-tags": "*",
+        "wongyip/html-beautify": "^1.0"
     },
     "autoload": {
         "psr-4": {

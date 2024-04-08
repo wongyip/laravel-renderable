@@ -1,0 +1,58 @@
+{#
+    This marco render a Renderable object in 'table' layout.
+    
+    Param(s):
+        \Wongyip\Laravel\Renderable\Renderable  R
+
+    Some elements class are keep in the template for a
+#}
+{% macro handle(R) %}
+
+    {% if R.columns()|length %}
+
+        {% import 'renderable::value' as valueRenderer %}
+
+        {{ R.rTest()|raw }}
+
+        {{ dump(R.table) }}
+
+        {# Note: this is wrapped by the .renderable-container tag. #}
+
+        {# .renderable-table #}
+        {{ R.table.open()|raw }}
+
+            {% if R.table.hasCaption() %}{{ R.table.caption.render()|raw }}{% endif %}
+
+            {# thead>tr>th*2 #}
+            {% if R.renderTableHead %}{{ R.table.head.render()|raw }}{% endif %}
+
+            {{ R.table.body.open()|raw }}
+            {% for CR in R.renderables() %}
+
+                {# Selector: .renderable-column #}
+                {{ R.table.body.row.open({ class: CR.class() })|raw }}
+
+                    {# .renderable-label #}
+                    {{ R.table.body.row.labelCell.open({ class: 'renderable-label-' ~ CR.name })|raw }}
+                        {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
+                    {{ R.table.body.row.labelCell.close()|raw }}
+
+                    {# .renderable-value #}
+                    {{ R.table.body.row.valueCell.open({ class: 'renderable-value-' ~ CR.name })|raw }}
+                        {{ valueRenderer.handle(CR) }}
+                    {{ R.table.body.row.valueCell.close()|raw }}
+
+                {{ R.table.body.row.close()|raw }}
+
+            {% endfor %}
+            {{ R.table.body.close()|raw }}
+
+        {{ R.table.close()|raw }}
+
+    {% else %}
+
+        <p><em>Empty record.</em></p>
+
+    {% endif %}
+
+{% endmacro %}

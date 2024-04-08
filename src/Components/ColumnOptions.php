@@ -1,5 +1,7 @@
 <?php namespace Wongyip\Laravel\Renderable\Components;
 
+use Exception;
+use Exception as ExceptionAlias;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -15,7 +17,7 @@ class ColumnOptions
      */
     public string $glue;
     /**
-     *
+     * Whether the value is raw HTML.
      *
      * @var bool
      */
@@ -45,13 +47,20 @@ class ColumnOptions
      */
     public string $listStyle;
     /**
+     * Expected data-type of the value.
+     *
+     * @var string
+     */
+    public string $type;
+    /**
      * Used by type: bool.
      *
      * @var string
      */
     public string $valueFalse;
     /**
-     * Used by type: bool.
+     * String to replace null value for output. When used in bool columns, all
+     * non-boolean values are replaced with this string.
      *
      * @var string
      */
@@ -64,18 +73,26 @@ class ColumnOptions
     public string $valueTrue;
 
     /**
-     * @param array $options
+     * @param array|null $options
      */
-    public function __construct(array $options)
+    public function __construct(array $options = null)
     {
-        foreach ($options as $key => $value) {
+        $defaults = config('renderable.default.options');
+        $defaults = is_array($defaults) ? $defaults : [];
+        $options = $options ?? [];
+        $this->update($options);
+        foreach ($defaults as $key => $value) {
             try {
-                if (!is_null($value)) {
-                    $this->$key = $value;
+                $set = key_exists($key, $options) ? $options[$key] : null;
+                if (property_exists($this, $key)) {
+                    $this->$key = $set ?? $value;
+                }
+                else {
+                    throw new Exception('Invalid option key: ' . $key);
                 }
             }
             catch (Throwable $e) {
-                Log::warning(sprintf('ColumnOptions: Unable to set property, possibly type mismatch, error/exception: %s', $e->getMessage()));
+                Log::warning(sprintf('ColumnOptions.error: %s', $e->getMessage()));
             }
         }
     }
@@ -101,12 +118,7 @@ class ColumnOptions
      */
     public static function defaults(): static
     {
-        return new ColumnOptions([
-            'glue'       => ', ',
-            'valueTrue'  => 'Yes',
-            'valueFalse' => 'No',
-            'valueNull'  => '',
-        ]);
+        return new static();
     }
 
     /**
@@ -115,7 +127,6 @@ class ColumnOptions
      */
     public static function csv(string $glue = null): static
     {
-        $glue = is_string($glue) ? $glue : config('renderable.default.csv-glue');
         return new static(compact('glue'));
     }
 
@@ -129,5 +140,28 @@ class ColumnOptions
     public static function list(string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
         return new static(compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
+    }
+
+    /**
+     * @param array $options
+     * @return static
+     */
+    public function update(array $options): static
+    {
+        try {
+            foreach ($options as $key => $value) {
+                if (isset($value)) {
+                    if (property_exists($this, $key)) {
+                        $this->$key = $value;
+                    } else {
+                        throw new Exception('Invalid option key: ' . $key);
+                    }
+                }
+            }
+        }
+        catch (Exception $e) {
+            Log::warning('ColumnOptions.update.warning: ' . $e->getMessage());
+        }
+        return $this;
     }
 }

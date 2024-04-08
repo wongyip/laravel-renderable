@@ -5,10 +5,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use Wongyip\HTML\Beautify;
 use Wongyip\HTML\Tag;
-use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
-use Wongyip\Laravel\Renderable\Traits\CommonProperties;
+use Wongyip\Laravel\Renderable\Traits\LayoutGrid;
 use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
 use Wongyip\Laravel\Renderable\Traits\LayoutTable;
 use Wongyip\Laravel\Renderable\Traits\RenderableTrait;
@@ -24,27 +24,33 @@ use Wongyip\Laravel\Renderable\Traits\RenderingOptionsTrait;
 class Renderable extends RenderableAbstract
 {
     // @todo Review needed.
-    use Bootstrap4Trait, CommonProperties, RenderableTrait, RenderingOptionsTrait;
+    use Bootstrap4Trait, RenderableTrait, RenderingOptionsTrait;
 
     // New
-    use LayoutTable, RenderableMacros, RenderableTypes;
+    use LayoutGrid, LayoutTable, RenderableMacros, RenderableTypes;
 
+    const CSS_CLASS_BODY       = 'renderable-body';
+    const CSS_CLASS_CONTAINER  = 'renderable-container';
+    const CSS_CLASS_LABEL      = 'renderable-label';
+    const CSS_CLASS_TABLE_HEAD = 'thead-light';
+    const CSS_CLASS_VALUE      = 'renderable-value';
     /**
      * Simple single table layout, with two columns (Field & Value).
      *
      * @var string
      */
     const LAYOUT_TABLE = 'table';
+    const DEFAULT_VALUE_TYPE = 'string';
+    /**
+     * @var string
+     */
+    protected string $id;
     /**
      * Columns-rows based grid system, like Bootstrap.
      *
      * @var string
      */
     const LAYOUT_GRID  = 'grid';
-    /**
-     * @var Tag
-     */
-    public Tag $body;
     /**
      * @var Tag
      */
@@ -69,7 +75,7 @@ class Renderable extends RenderableAbstract
     public function __construct(array|Model $attributes, array|true|string $columns = true, array|string $excluded = null, string $layout = null)
     {
         // Init.
-        $this->body = Tag::make()->id('r' . crc32(uniqid()));
+        $this->id = 'r' . crc32(uniqid());
 
         // Take attributes.
         if ($attributes instanceof Model) {
@@ -81,9 +87,9 @@ class Renderable extends RenderableAbstract
         }
 
         // Components
-        $this->container = Tag::make('div')->id($this->body->id() . '-container')->classAdd('renderable-object-container');
-        $this->fieldHeader = Tag::make()->contents('Field');
-        $this->valueHeader = Tag::make()->contents('Value');
+        $this->container = Tag::make('div')->id($this->id . '-container')->classAdd(static::CSS_CLASS_CONTAINER);
+//        $this->fieldHeader = Tag::make()->contents('Field');
+//        $this->valueHeader = Tag::make()->contents('Value');
 
         // Take other params.
         $this->layout($layout ?? config('renderable.default.layout'));
@@ -141,33 +147,19 @@ class Renderable extends RenderableAbstract
     }
 
     /**
-     * @inheritDoc
+     * Render as HTML, should output in raw HTML as the returned value is already
+     * processed by htmlspecialchars() when necessary.
+     *
+     * @return string
+     * @see Renderable::tablePrepared()
      */
-    public function renderables(): array
+    public function render(): string
     {
-        $renderables = [];
-        if ($columns = $this->columns()) {
-            foreach ($columns as $column) {
-
-                $renderable = new ColumnRenderable(
-                    name:      $column,
-                    value:     $this->attribute($column),
-                    type:      $this->type($column),
-                    label:     $this->label($column),
-                    labelHTML: $this->labelHTML($column),
-                    options:   $this->columnOptions($column)
-                );
-
-                if ($renderable->isRenderable()) {
-                    $renderables[] = $renderable;
-                }
-                else {
-                    Log::warning(
-                        sprintf('ColumnRenderable composed for column [%s] is not renderable (possible nested array).', $column)
-                    );
-                }
-            }
-        }
-        return $renderables;
+        // Get the contents tag(s) prepared by the layout-trait.
+        $method = $this->layout() . 'Prepared';
+        $contents = $this->$method();
+        // Wrap it with the common container and render the output.
+        $html = $this->container->contents($contents)->render();
+        return "\n" . Beautify::init()->beautify($html) . "\n";
     }
 }

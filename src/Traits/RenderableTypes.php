@@ -7,42 +7,49 @@ trait RenderableTypes
     use RenderableColumnOptions;
 
     /**
+     * Set or update type and related options of multiple columns.
+     * N.B. $type take precedence over $columnOptions->type or $columnOptions['type'].
+     *
      * @param string|array $columns
      * @param string $type
-     * @param array|ColumnOptions|null $columnOptions
+     * @param array|ColumnOptions|null $options
      * @return $this
      */
-    private function __typeAll(string|array $columns, string $type, array|ColumnOptions $columnOptions = null): static
+    private function __typeColumns(string|array $columns, string $type, array|ColumnOptions $options = null): static
     {
-        $columns = is_array($columns) ? $columns : [$columns];
-        foreach ($columns as $column) {
-            $this->type($column, 'boolean');
-            if ($columnOptions) {
-                $this->columnOptions($column, $columnOptions);
-            }
+        foreach ((is_array($columns) ? $columns : [$columns]) as $column) {
+            $this->type($column, $type, $options);
         }
         return $this;
     }
 
     /**
-     * Get or set the label of a column, getter returns smartCaps($column) if no
-     * label is set.
+     * Set or update type and related options of a single column.
+     * N.B. $type take precedence over $columnOptions->type or $columnOptions['type'].
      *
      * @param string $column
      * @param string|null $type
+     * @param array|ColumnOptions|null $options
      * @return string|null|static
      */
-    public function type(string $column, string $type = null): string|null|static
+    public function type(string $column, string $type = null, array|ColumnOptions $options = null): string|null|static
     {
         // Get
         if (is_null($type)) {
-            return key_exists($column, $this->types)
-                ? $this->types[$column]
-                : null;
+            // A default type is returned if options is not defined.
+            return $this->columnOptions($column)->type;
         }
         // Set
-        $this->types = array_merge($this->types, [$column => $type]);
-        return $this;
+        if ($options instanceof ColumnOptions) {
+            $options->type = $type;
+        }
+        elseif (is_array($options)) {
+            $options['type'] = $type;
+        }
+        else {
+            $options = compact('type');
+        }
+        return $this->columnOptions($column, $options);
     }
 
     /**
@@ -56,16 +63,7 @@ trait RenderableTypes
      */
     public function typeBool(string|array $columns, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
     {
-        return $this->__typeAll($columns, 'bool', ColumnOptions::bool($valueTrue, $valueFalse, $valueNull));
-    }
-
-    /**
-     * Alias to typeBool()
-     * @deprecated
-     */
-    public function typeBoolean(string|array $columns, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
-    {
-        return $this->typeBool($columns, $valueTrue, $valueFalse, $valueNull);
+        return $this->__typeColumns($columns, 'bool', compact('valueTrue', 'valueFalse', 'valueNull'));
     }
 
     /**
@@ -77,7 +75,7 @@ trait RenderableTypes
      */
     public function typeCSV(array|string $columns, string $glue = null): static
     {
-        return $this->__typeAll($columns, 'csv', ColumnOptions::csv($glue));
+        return $this->__typeColumns($columns, 'csv', compact('glue'));
     }
 
     /**
@@ -88,7 +86,7 @@ trait RenderableTypes
      */
     public function typeLines(array|string $columns): static
     {
-        return $this->__typeAll($columns, 'lines');
+        return $this->__typeColumns($columns, 'lines');
     }
 
     /**
@@ -103,11 +101,7 @@ trait RenderableTypes
      */
     public function typeOL(array|string $columns, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
-        return $this->__typeAll(
-            $columns,
-            'ol',
-            ColumnOptions::list($listClass, $listStyle, $itemClass, $itemStyle)
-        );
+        return $this->__typeColumns($columns, 'ol', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }
     
     /**
@@ -120,7 +114,7 @@ trait RenderableTypes
      */
     public function typeText(array|string $columns): static
     {
-        return $this->__typeAll($columns, 'text');
+        return $this->__typeColumns($columns, 'text');
     }
 
     /**
@@ -135,10 +129,6 @@ trait RenderableTypes
      */
     public function typeUL(array|string $columns, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
-        return $this->__typeAll(
-            $columns,
-            'ul',
-            ColumnOptions::list($listClass, $listStyle, $itemClass, $itemStyle)
-        );
+        return $this->__typeColumns($columns, 'ul', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }
 }

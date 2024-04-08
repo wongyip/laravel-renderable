@@ -2,10 +2,19 @@
 
 return [
     'default' => [
-        'bool-true' => 'Yes',
-        'bool-false' => 'No',
-        'csv-glue' => ', ',
-        'type' => 'string',
         'layout' => 'table',
+        'emptyRecord' => 'Empty record.',
+        'options' => [
+            'glue'       => ', ',
+            'html'       => false,
+            'itemClass'  => '',
+            'itemStyle'  => '',
+            'listClass'  => '',
+            'listStyle'  => '',
+            'valueTrue'  => 'Yes',
+            'valueFalse' => 'No',
+            'valueNull'  => '-',
+            'type'       => 'string',
+        ],
     ],
 ];

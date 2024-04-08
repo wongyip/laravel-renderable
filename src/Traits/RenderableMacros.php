@@ -6,7 +6,11 @@ use Wongyip\Laravel\Renderable\Renderable;
 trait RenderableMacros
 {
     /**
-     * Get or set the field header style.
+     * Get or set the field header style. Setter default replace existing unless
+     * $keepExisting is true.
+     *
+     * Although it could be done by $this->fieldHeader->styleAppend($setter), the
+     * advantage of this method is that it returns the Renderable for chaining.
      *
      * @param string|null $setter
      * @param bool|null $keepExisting
@@ -16,29 +20,12 @@ trait RenderableMacros
     {
         if ($setter) {
             if (!$keepExisting) {
-                $this->fieldHeader->styleEmpty();
+                $this->table->head->row(0)->cell(0)->styleEmpty();
             }
-            $this->fieldHeader->styleAdd($setter);
+            $this->table->head->row(0)->cell(0)->styleAppend($setter);
             return $this;
         }
-        return $this->fieldHeader->style();
-    }
-
-    /**
-     * Get or set the field header's width in pixels.
-     *
-     * @param int|null $setter
-     * @return int|null|Renderable
-     */
-    public function fieldHeaderWidth(int $setter = null): int|null|Renderable
-    {
-        if ($setter) {
-            $this->fieldHeader->styleAdd('width', $setter . 'px');
-            return $this;
-        }
-        return preg_match("/^(\d+)px/",  $this->fieldHeader->style('width'), $matches)
-            ? (int) $matches[1]
-            : null;
+        return $this->table->head->row(0)->cell(0)->style();
     }
 
     /**
@@ -85,6 +72,7 @@ trait RenderableMacros
 
     /**
      * Instantiate a Renderable object in 'table' layout.
+     *
      * @param array|Model $attributes Input attributes, also accepts Eloquent Model.
      * @param array|true|string $columns Default true for all columns.
      * @param array|string|null $excluded Default null for none.

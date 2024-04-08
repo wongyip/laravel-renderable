@@ -4,58 +4,7 @@
     Param(s):
         \Wongyip\Laravel\Renderable\Renderable  R
 
-    Some elements class are keep in the template for a
 #}
 {% macro handle(R) %}
-
-    {% if R.columns()|length %}
-
-        {% import 'renderable::value' as valueRenderer %}
-
-        {% if R.tableResponsive %}
-        <div class="{{ R.tableResponsive }}">
-        {% endif %}
-
-            {# Selector: .renderable-table #}
-            <table id="{{ R.body.id() }}" class="{{ R.body.class() }}" style="{{ R.body.style() }}">
-                {% if R.tableCaption %}
-                <caption>{{ R.tableCaption }}</caption>
-                {% endif %}
-                {% if R.renderTableHead %}
-                <thead class="{{ R.tableHeadClass }}" style="{{ R.tableHeadStyle }}">
-                    <tr>
-                        {{ R.fieldHeader.render()|raw }}
-                        {{ R.valueHeader.render()|raw }}
-                    </tr>
-                </thead>
-                {% endif %}
-                <tbody>
-                {% for CR in R.renderables() %}
-                    {# Selector: .renderable-column #}
-                    <tr class="{{ CR.class() }}">
-
-                        <{{ R.tableLabelCellTag }} class="renderable-label renderable-label-{{ CR.name }} {{ R.labelClass }}" style="{{ R.labelStyle }}">
-                            {{ CR.labelHTML ? CR.labelHTML|raw : CR.label }}
-                        </{{ R.tableLabelCellTag }}>
-
-                        <td class="renderable-value renderable-value-{{ CR.name }}">
-
-                            {{ valueRenderer.handle(CR) }}
-
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-        {% if R.tableResponsive %}
-        </div>
-        {% endif %}
-
-    {% else %}
-
-        <p><em>Empty record.</em></p>
-
-    {% endif %}
-
+{{ R.render()|raw }}
 {% endmacro %}

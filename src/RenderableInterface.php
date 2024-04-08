@@ -1,7 +1,7 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
 use Wongyip\Laravel\Renderable\Components\ColumnOptions;
-use Wongyip\Laravel\Renderable\Components\ColumnRenderable;
+use Wongyip\Laravel\Renderable\Components\LegacyColumnRenderable;
 
 interface RenderableInterface
 {
@@ -76,19 +76,19 @@ interface RenderableInterface
     /**
      * Get or set the ColumnOptions of a column.
      *
-     * @param string $column
+     * @param string $name
      * @param ColumnOptions|null $options
      * @return ColumnOptions|null|static
      */
-    public function columnOptions(string $column, ColumnOptions $options = null): ColumnOptions|null|static;
+    public function columnOptions(string $name, ColumnOptions $options = null): ColumnOptions|null|static;
     
     /**
-     * Get an array of ColumnRenderable objects compiled base on the current
-     * state of the Renderable class.
+     * Render the data-model according to the current settings, output sanitized
+     * HTML ready to output in ram format (e.g. with the |raw filter of Twig).
      *
-     * @return array|ColumnRenderable[]
+     * @return string
      */
-    public function renderables(): array;
+    public function render(): string;
     
     /**
      * Get or set data type of column, where setter support an array of columns

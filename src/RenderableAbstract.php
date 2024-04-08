@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Wongyip\Laravel\Renderable\Components\ColumnOptions;
+use Wongyip\Laravel\Renderable\Traits\LayoutTable;
 use Wongyip\Laravel\Renderable\Traits\RenderableGetSetters;
 use Wongyip\Laravel\Renderable\Traits\RenderableLabels;
 use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
@@ -70,6 +71,7 @@ abstract class RenderableAbstract implements RenderableInterface
     /**
      * Type of columns.
      *
+     * @deprecated Absorbed by $options
      * @var array|string[]
      */
     protected array $types = [];
@@ -157,6 +159,9 @@ abstract class RenderableAbstract implements RenderableInterface
         // Changed?
         if ($fromLayout !== $layout) {
             $layoutMethod = 'layout' . ucfirst($layout);
+            /**
+             * @see LayoutTable::layoutTable()
+             */
             if (method_exists($this, $layoutMethod)) {
                 return $this->$layoutMethod();
             }
@@ -167,7 +172,7 @@ abstract class RenderableAbstract implements RenderableInterface
     /**
      * @inheritdoc
      */
-    public abstract function renderables(): array;
+    public abstract function render(): string;
 
     /**
      * @inheritdoc

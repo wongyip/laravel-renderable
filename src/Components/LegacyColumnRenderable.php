@@ -3,6 +3,7 @@
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Traits\CssClass;
 
 /**
@@ -13,7 +14,7 @@ use Wongyip\Laravel\Renderable\Traits\CssClass;
  *
  * @todo Add HtmlAttributes trait.
  */
-class ColumnRenderable
+class LegacyColumnRenderable extends TagAbstract
 {
     use CssClass;
     /**
@@ -162,5 +163,10 @@ class ColumnRenderable
     public function isRenderable(): bool
     {
         return $this->valueRenderable() !== false;
+    }
+
+    public function addAttrs(): array
+    {
+        return [];
     }
 }
