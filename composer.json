@@ -1,6 +1,6 @@
 {
     "name": "wongyip/laravel-renderable",
-    "description": "Laravel model rendering simplified.",
+    "description": "Render Eloquent model with ease.",
     "homepage": "https://github.com/wongyip/laravel-renderable",
     "authors": [
         {
@@ -13,7 +13,6 @@
         "php": ">=8.2.0",
         "laravel/framework": "*",
         "rcrowe/twigbridge": "*",
-        "spatie/html-element": "*",
         "wongyip/phphelpers": "*",
         "wongyip/html-tags": "*",
         "wongyip/html-beautify": "^1.0",
@@ -21,8 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Wongyip\\Laravel\\Renderable\\": "src",
-            "Test\\": "test"
+            "Wongyip\\Laravel\\Renderable\\": "src"
         }
     },
     "extra": {
@@ -33,10 +31,5 @@
         }
     },
     "minimum-stability": "dev",
-	"prefer-stable" : true,
-    "config": {
-        "allow-plugins": {
-            "kylekatarnls/update-helper": true
-        }
-    }
+	"prefer-stable" : true
 }
