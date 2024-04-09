@@ -9,6 +9,21 @@ use Wongyip\PHPHelpers\Format;
  */
 trait RenderableLabels
 {
+    use RenderableGetSetters;
+
+    /**
+     * Column labels in plain-text.
+     *
+     * @var array|string[]
+     */
+    protected array $labels = [];
+    /**
+     * Columns labels that should be rendered as HTML.
+     *
+     * @var array|string[]
+     */
+    protected array $labelsHTML = [];
+
     /**
      * Extract or generate labels automatically.
      *
@@ -32,7 +47,7 @@ trait RenderableLabels
                 }
             }
             catch (Throwable $e) {
-                Log::error('Renderable.labelFromModel() error: ' . $e->getMessage());
+                Log::error(sprintf('Renderable.autoLabels(): Unable to set model label (%s).', $e->getMessage()));
             }
         }
 

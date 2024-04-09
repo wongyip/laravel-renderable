@@ -1,7 +1,7 @@
 {
     "name": "wongyip/laravel-renderable",
     "description": "Laravel model rendering simplified.",
-    "homepage": "https://www.lib.polyu.edu.hk",
+    "homepage": "https://github.com/wongyip/laravel-renderable",
     "authors": [
         {
             "name": "Wongyip",
@@ -16,7 +16,8 @@
         "spatie/html-element": "*",
         "wongyip/phphelpers": "*",
         "wongyip/html-tags": "*",
-        "wongyip/html-beautify": "^1.0"
+        "wongyip/html-beautify": "^1.0",
+        "ezyang/htmlpurifier": "^4.17"
     },
     "autoload": {
         "psr-4": {

@@ -1,43 +1,47 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-
+use Illuminate\Database\Eloquent\Model;
+use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\Table;
-use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
 use Wongyip\HTML\TBody;
 use Wongyip\HTML\TH;
 use Wongyip\HTML\THead;
 use Wongyip\HTML\TR;
-use Wongyip\Laravel\Renderable\Components\RawHTML;
 use Wongyip\Laravel\Renderable\Components\Column;
+use Wongyip\Laravel\Renderable\Components\RenderableOptions;
 use Wongyip\Laravel\Renderable\Renderable;
 
 /**
- * 1. Everything related to table-layout should go here.
- * 2. Only properties with a parsed values have their getter function.
+ * Everything related to table-layout should go here.
  *
  * @see /views/table.twig
  */
 trait LayoutTable
 {
     /**
+     * The main tag of the Renderable object. Note that runtime value of the ID
+     * attribute is ignored by the render() method.
+     *
      * @var Table
      */
     public Table $table;
 
     /**
+     * Set up table layout, on instantiate or layout changed by calling the
+     * layout() method.
+     *
+     * @see Renderable::layout()
      * @return static
      */
     protected function layoutTable(): static
     {
+        $fieldHeader = $this->options->fieldHeader;
+        $valueHeader = $this->options->valueHeader;
         $this->table = Table::create(
-                THead::create(TR::create(TH::create('Field'), TH::create('Value')))
-                    ->class(Renderable::CSS_CLASS_TABLE_HEAD),
-                TBody::create()
-                    ->class(Renderable::CSS_CLASS_BODY),
-                'Details'
+                THead::create(TR::create(TH::create($fieldHeader), TH::create($valueHeader)))->class(Renderable::CSS_CLASS_TABLE_HEAD),
+                TBody::create()->class(Renderable::CSS_CLASS_BODY)
             )
-            ->id($this->id)
             ->class('renderable-table', 'table', 'table-bordered', 'table-hover');
 
 //        $this->table->fieldHeader->contents('Field');
@@ -45,8 +49,21 @@ trait LayoutTable
 
         // @todo Broken now, border glitch at bottom-left corner.
         // $this->container->classAdd(Bootstrap::classTableResponsive());
-
         return $this;
+    }
+
+    /**
+     * Instantiate a Renderable object in table layout.
+     *
+     * @param array|Model $attributes Source attributes array or Eloquent Model.
+     * @param array|string[]|string|bool|null $included Default true for all columns.
+     * @param array|string[]|string|null $excluded Default null for none.
+     * @param array|RenderableOptions|null $options Custom options, skip to taking values from config('renderable.options').
+     * @return static
+     */
+    static function table(array|Model $attributes, array|string|bool $included = null, array|string $excluded = null, array|RenderableOptions $options = null): static
+    {
+        return new static($attributes, $included, $excluded, $options, Renderable::LAYOUT_TABLE);
     }
 
     /**
@@ -56,9 +73,24 @@ trait LayoutTable
      */
     public function tablePrepared(): TagAbstract
     {
-        if ($columns = $this->columns()) {
-            $this->table->body->contentsEmpty();
-            foreach ($columns as $name) {
+        if ($included = $this->include()) {
+            /**
+             * Clone the table tag for preparation, assign ID to the cloned tag
+             * and empty its body.
+             */
+            $table = clone $this->table;
+            $table->id($this->id);
+            $table->body->contentsEmpty();
+
+            // Fill up its body with columns to be rendered.
+            foreach ($included as $name) {
+
+
+                // Position the caption if set.
+                if ($table->hasCaption()) {
+                    $table->caption->style('caption-side: ' . $this->options->tableCaptionSide);
+                }
+                // Label and value tags.
                 $column = Column::init(
                     name:      $name,
                     value:     $this->attribute($name),
@@ -68,11 +100,21 @@ trait LayoutTable
                 );
                 $labelCell = $column->labelTag('th');
                 $valueCell = $column->valueTag('td');
-                $this->table->body->addRows(TR::create($labelCell, $valueCell));
+                $row = TR::create($labelCell, $valueCell)->class('field-' . $name);
+                $table->body->addRows($row);
             }
-            return $this->table;
+
+            /**
+             * Apply rendering options
+             * @see RenderingOptionsTrait
+             */
+            if (!$this->options->renderTableHead) {
+                unset($table->head);
+            }
+
+            return $table;
         }
-        $html = sprintf('<p><em>%s</em></p>', htmlspecialchars(config('renderable.default.emptyRecord', 'Empty Records.')));
+        $html = sprintf('<p><em>%s</em></p>', htmlspecialchars($this->options->emptyRecord));
         return RawHTML::create($html);
     }
 }

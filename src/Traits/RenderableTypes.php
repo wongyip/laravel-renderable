@@ -4,7 +4,7 @@ use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 
 trait RenderableTypes
 {
-    use RenderableColumnOptions;
+    use RenderableColumns;
 
     /**
      * Set or update type and related options of multiple columns.
@@ -27,17 +27,17 @@ trait RenderableTypes
      * Set or update type and related options of a single column.
      * N.B. $type take precedence over $columnOptions->type or $columnOptions['type'].
      *
-     * @param string $column
+     * @param string $name
      * @param string|null $type
      * @param array|ColumnOptions|null $options
      * @return string|null|static
      */
-    public function type(string $column, string $type = null, array|ColumnOptions $options = null): string|null|static
+    public function type(string $name, string $type = null, array|ColumnOptions $options = null): string|null|static
     {
         // Get
         if (is_null($type)) {
             // A default type is returned if options is not defined.
-            return $this->columnOptions($column)->type;
+            return $this->columnOptions($name)->type;
         }
         // Set
         if ($options instanceof ColumnOptions) {
@@ -49,7 +49,7 @@ trait RenderableTypes
         else {
             $options = compact('type');
         }
-        return $this->columnOptions($column, $options);
+        return $this->columnOptions($name, $options);
     }
 
     /**
@@ -76,6 +76,17 @@ trait RenderableTypes
     public function typeCSV(array|string $columns, string $glue = null): static
     {
         return $this->__typeColumns($columns, 'csv', compact('glue'));
+    }
+
+    /**
+     * Type column(s) as HTML code.
+     *
+     * @param string|array|string[] $columns
+     * @return static
+     */
+    public function typeHTML(array|string $columns): static
+    {
+        return $this->__typeColumns($columns, 'html');
     }
 
     /**

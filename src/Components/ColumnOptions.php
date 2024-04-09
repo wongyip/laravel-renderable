@@ -1,12 +1,13 @@
 <?php namespace Wongyip\Laravel\Renderable\Components;
 
 use Exception;
-use Exception as ExceptionAlias;
 use Illuminate\Support\Facades\Log;
-use Throwable;
 
 /**
- * Advanced options for rendering a column.
+ * Customizations and options of a renderable column.
+ *
+ * All defaults values are defined in configuration file.
+ * @see /config/renderable.php
  */
 class ColumnOptions
 {
@@ -73,31 +74,28 @@ class ColumnOptions
     public string $valueTrue;
 
     /**
+     * Input of null option value will be ignored.
+     *
      * @param array|null $options
      */
     public function __construct(array $options = null)
     {
-        $defaults = config('renderable.default.options');
-        $defaults = is_array($defaults) ? $defaults : [];
-        $options = $options ?? [];
-        $this->update($options);
-        foreach ($defaults as $key => $value) {
-            try {
-                $set = key_exists($key, $options) ? $options[$key] : null;
-                if (property_exists($this, $key)) {
-                    $this->$key = $set ?? $value;
-                }
-                else {
-                    throw new Exception('Invalid option key: ' . $key);
-                }
+        // Merge input (if set) into defaults.
+        $defaults = config('renderable.columnOptions');
+        $options = array_merge($defaults, $options ?? []);
+        foreach ($options as $prop => $set) {
+            if (property_exists($this, $prop)) {
+                $this->$prop = $set ?? $defaults[$prop];
             }
-            catch (Throwable $e) {
-                Log::warning(sprintf('ColumnOptions.error: %s', $e->getMessage()));
+            else {
+                Log::warning(sprintf('ColumnOptions: property %s does not exists.', $prop));
             }
         }
     }
 
     /**
+     * Make a ColumnOptions with for Boolean column.
+     *
      * @param string|null $valueTrue
      * @param string|null $valueFalse
      * @param string|null $valueNull
@@ -105,14 +103,11 @@ class ColumnOptions
      */
     public static function bool(string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
     {
-        $valueTrue  = is_null($valueTrue)  ? config('renderable.default.bool-true') : $valueTrue;
-        $valueFalse = is_null($valueFalse) ? config('renderable.default.bool-false') : $valueFalse;
-        $valueNull  = is_null($valueNull)  ? $valueFalse : $valueNull;
         return new static(compact('valueTrue', 'valueFalse', 'valueNull'));
     }
 
     /**
-     * Get a ColumnOptions object with all default/preset options.
+     * Make a ColumnOptions with all default/preset options.
      *
      * @return static
      */
@@ -122,6 +117,8 @@ class ColumnOptions
     }
 
     /**
+     * Make a ColumnOptions with for CSV column.
+     *
      * @param string|null $glue
      * @return static
      */
@@ -131,6 +128,8 @@ class ColumnOptions
     }
 
     /**
+     * Make a ColumnOptions with for a list column.
+     *
      * @param string|null $listClass
      * @param string|null $listStyle
      * @param string|null $itemClass
@@ -143,17 +142,20 @@ class ColumnOptions
     }
 
     /**
+     * Batch update of options.
+     *
      * @param array $options
      * @return static
      */
     public function update(array $options): static
     {
         try {
-            foreach ($options as $key => $value) {
-                if (isset($value)) {
+            foreach ($options as $key => $set) {
+                if (isset($set)) {
                     if (property_exists($this, $key)) {
-                        $this->$key = $value;
-                    } else {
+                        $this->$key = $set;
+                    }
+                    else {
                         throw new Exception('Invalid option key: ' . $key);
                     }
                 }

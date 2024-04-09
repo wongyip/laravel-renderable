@@ -5,14 +5,14 @@ namespace Wongyip\Laravel\Renderable\Components;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
-use Wongyip\Laravel\Renderable\Traits\CssClass;
+use Wongyip\Laravel\Renderable\Renderable;
 use Wongyip\PHPHelpers\Format;
 
 class Column
 {
-    use CssClass;
     /**
      * @var string
      */
@@ -55,6 +55,8 @@ class Column
     }
 
     /**
+     * Compose a Column object, usually for
+     *
      * @param string $name
      * @param mixed $value
      * @param string|null $label
@@ -73,7 +75,7 @@ class Column
      */
     public function labelTag(string $tagName): TagAbstract
     {
-        return Tag::make($tagName)->contents(
+        return Tag::make($tagName)->class(Renderable::CSS_CLASS_LABEL)->contents(
             $this->labelHTML
                 ? RawHTML::create($this->labelHTML)
                 : $this->label
@@ -81,6 +83,12 @@ class Column
     }
 
     /**
+     * Export a value tag for render.
+     *
+     * N.B. returned tag may contain unsafe attributes, especially when input
+     * contains user-contributed contents, make sure you sanitize it before
+     * actually output the HTML.
+     *
      * @param string $tagName
      * @return TagAbstract
      */
@@ -92,16 +100,19 @@ class Column
              */
             case 'text';
             case 'string':
-                $content = RawHTML::create(nl2br(htmlspecialchars($this->safeValue($this->value))));
-                return Tag::make($tagName)->contents($content);
+                $content = RawHTML::create(nl2br(htmlspecialchars($this->valueFlattened($this->value))));
+                $tag = Tag::make($tagName)->contents($content);
+                break;
             case 'bool':
                 $value = is_bool($this->value)
                     ? ($this->value ? $this->options->valueTrue : $this->options->valueFalse)
                     : $this->options->valueNull;
-                return Tag::make($tagName)->contents($value);
+                $tag = Tag::make($tagName)->contents($value);
+                break;
             case 'csv':
                 $csv = is_array($this->value) ? implode($this->options->glue, $this->value) : $this->value;
-                return Tag::make($tagName)->contents($this->safeValue($csv));
+                $tag = Tag::make($tagName)->contents($this->valueFlattened($csv));
+                break;
             case 'ol':
             case 'ul':
                 $items = is_array($this->value) ? $this->value : [$this->value];
@@ -111,133 +122,74 @@ class Column
                 foreach ($items as $item) {
                     $ul->contentsAppend(
                         Tag::make('li')
-                            ->contents($this->safeValue($item))
+                            ->contents($this->valueFlattened($item))
                             ->class($this->options->itemClass)
                             ->style($this->options->itemStyle)
                     );
                 }
-                return Tag::make($tagName)->contents($ul);
+                $tag = Tag::make($tagName)->contents($ul);
+                break;
+            case 'html':
+                $tag = Tag::make($tagName)->contents(RawHTML::create($this->valueFlattened($this->value)));
+                break;
             case 'lines':
                 $html = '';
                 foreach ((is_array($this->value) ? $this->value : [$this->value]) as $value) {
-                    $this->prepareValue($value);
-                    $html .= htmlspecialchars($value) . '<br/>';
+                    $html .= htmlspecialchars($this->valueFlattened($value)) . '<br/>';
                 }
-                return Tag::make($tagName)->contents(RawHTML::create($html));
+                $tag = Tag::make($tagName)->contents(RawHTML::create($html));
+                break;
             default:
+                // Oops
                 Log::warning(
-                    sprintf('Column.valueTag: unrecognized data type %s or column %s.',
-                        $this->options->type,
-                        $this->name
-                    )
+                    sprintf('Column.valueTag: unrecognized data type %s or column %s.',$this->options->type, $this->name)
                 );
-                return Tag::make($tagName)->contents($this->safeValue($this->value));
-
+                $tag = Tag::make($tagName)->contents($this->valueFlattened($this->value));
         }
-    }
-
-    private function prepareValues(array &$values): void
-    {
-        foreach ($values as $key => $value) {
-            $values[$key] = $this->safeValue($value);
-        }
-    }
-
-    private function prepareValue(mixed &$value): void
-    {
-        $values = $this->safeValue($value);
+        return $tag->class(Renderable::CSS_CLASS_VALUE);
     }
 
     /**
-     * Get the formatted / parsed value for rendering based on type and options.
+     * Convert the given $value to string/int/float for output.
      *
-     * @return mixed
-     */
-    public function valueRenderable(): mixed
-    {
-        // Localize
-        $type = $this->type;
-        $value = $this->value;
-        switch ($type) {
-            // These types must be an array, so the view could handle it correctly.
-            case 'ol':
-            case 'ul':
-            case 'lines':
-                if (!is_array($this->value)) {
-                    Log::warning(sprintf('Type %s column with non-array value, patched.', $this->type));
-                    return [$this->value];
-                }
-                return $this->value;
-            case 'boolean': // @todo To be removed.
-            case 'bool':
-                return is_null($this->value)
-                    ? ($this->options->valueNull ?? $this->options->valueFalse)
-                    : ($this->value ? $this->options->valueTrue : $this->options->valueFalse);
-            case 'csv':
-                if (is_array($this->value)) {
-                    return implode($this->options->glue, array_values($this->value));
-                }
-                Log::info('Column.valueRenderable() Typed csv but value is not array, returning safe value.');
-                return $this->safeValue($this->value);
-        }
-        Log::debug('Column.valueRenderable() Untyped column, returning safe value.');
-        return $this->safeValue($value);
-    }
-
-    /**
-     * Convert the given $value to string for output.
-     *
-     * @param mixed|null $input
+     * @param mixed|null $value
      * @return int|float|string
      */
-    private function safeValue(mixed $input = null): int|float|string
+    private function valueFlattened(mixed $value = null): int|float|string
     {
         try {
-            if (is_scalar($input)) {
+            if (is_scalar($value)) {
                 // Boolean to 'Yes' or 'No' or other strings configured.
-                if (is_bool($input)) {
-                    return $input ? $this->options->valueTrue : $this->options->valueFalse;
+                if (is_bool($value)) {
+                    return $value ? $this->options->valueTrue : $this->options->valueFalse;
                 }
                 // Unchanged for int, float and string.
-                return $input;
+                return $value;
             }
-            elseif (is_null($input)) {
+            elseif (is_null($value)) {
                 return $this->options->valueNull;
             }
-            elseif (is_array($input)) {
-                // Array to default format.
-                return  implode($this->options->glue, array_values($input));
+            elseif (is_array($value)) {
+                // Array to CSV string
+                return implode($this->options->glue, array_values($value));
             }
             // DateTime to string
-            elseif ($input instanceof DateTime) {
-                return $input->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
+            elseif ($value instanceof DateTime) {
+                return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
             }
-            elseif (is_object($input)) {
-                Log::error(sprintf('Column.safeValue() return empty string: type (%s) has no handler.', get_class($input)));
+            elseif (is_object($value)) {
+                Log::error(sprintf('Column.valueFlattened() return empty string: type (%s) has no handler.', get_class($value)));
             }
-            elseif (is_resource($input)) {
-                Log::notice('Column.safeValue() return empty string as value is a resource.');
+            elseif (is_resource($value)) {
+                Log::notice('Column.valueFlattened() return empty string as value is a resource.');
             }
             else {
-                Log::error('Column.safeValue() return empty string: unexpected type.');
+                Log::error('Column.valueFlattened() return empty string: unexpected type.');
             }
         }
         catch (Exception $e) {
-            Log::error(sprintf('Column.safeValue() conversion failure: exception [%d] %s', $e->getCode(), $e->getMessage()));
+            Log::error(sprintf('Column.valueFlattened() conversion failure: exception [%d] %s', $e->getCode(), $e->getMessage()));
         }
         return '';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRenderable(): bool
-    {
-        return $this->valueRenderable() !== false;
-    }
-
-    public function addAttrs(): array
-    {
-        return [];
     }
 }

@@ -6,13 +6,4 @@
     Param(s):
         \Wongyip\Laravel\Renderable\RenderableInterface  Renderable
 #}
-{% macro handle(renderable) %}
-
-    {% import renderable.view() as renderer %}
-
-    {# .renderable-container #}
-{{ renderable.container.open()|raw }}
-        {{ renderer.handle(renderable) }}
-{{ renderable.container.close()|raw }}
-
-{% endmacro %}
+{% macro handle(renderable) %}{{ renderable.render()|raw }}{% endmacro %}

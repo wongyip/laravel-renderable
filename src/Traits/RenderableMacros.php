@@ -1,6 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Wongyip\Laravel\Renderable\Renderable;
 
 trait RenderableMacros
@@ -12,75 +12,29 @@ trait RenderableMacros
      * Although it could be done by $this->fieldHeader->styleAppend($setter), the
      * advantage of this method is that it returns the Renderable for chaining.
      *
+     * @todo Grid layout support to be added.
+     *
      * @param string|null $setter
      * @param bool|null $keepExisting
-     * @return string|null|Renderable
+     * @return string|null|static
      */
-    public function fieldHeaderStyle(string $setter = null, bool $keepExisting = null): string|null|Renderable
+    public function fieldHeaderStyle(string $setter = null, bool $keepExisting = null): string|null|static
     {
-        if ($setter) {
-            if (!$keepExisting) {
-                $this->table->head->row(0)->cell(0)->styleEmpty();
-            }
-            $this->table->head->row(0)->cell(0)->styleAppend($setter);
-            return $this;
+        if ($this->layout !== Renderable::LAYOUT_TABLE) {
+            Log::warning('RenderableMacros.fieldHeaderStyle() Required table layout.');
+            return is_null($setter) ? null : $this;
         }
-        return $this->table->head->row(0)->cell(0)->style();
-    }
 
-    /**
-     * Shorthand method to instantiate a Renderable object for fast chaining.
-     *
-     * @param array|Model $attributes Input attributes, also accepts Eloquent Model.
-     * @param array|true|string $columns Default true for all columns.
-     * @param array|string|null $excluded Default null for none.
-     * @param string|null $layout Default to config('renderable.default.layout').
-     * @return static
-     */
-    public static function make(array|Model $attributes, array|true|string $columns = true, array|string $excluded = null, string $layout = null): static
-    {
-        return new static($attributes, $columns, $excluded, $layout);
+        // Get
+        if (is_null($setter)) {
+            return $this->table->head->row(0)->cell(0)->style();
+        }
+        // Set
+        if (!$keepExisting) {
+            // Replace
+            $this->table->head->row(0)->cell(0)->styleEmpty();
+        }
+        $this->table->head->row(0)->cell(0)->styleAppend($setter);
+        return $this;
     }
-
-    /**
-     * Instantiate a Renderable object with an Eloquent Model.
-     *
-     * @param Model $model
-     * @param array|true|string $columns Default true for all columns.
-     * @param array|string|null $excluded Default null for none.
-     * @param string|null $layout Default to config('renderable.default.layout').
-     * @return static
-     */
-    static function model(Model $model, array|true|string $columns = true, array|string $excluded = null, string $layout = null): static
-    {
-        $attributes = $model->toArray();
-        return new static($attributes, $columns, $excluded, $layout ?? config('renderable.default.layout'));
-    }
-
-    /**
-     * Instantiate a Renderable object in 'table' layout.
-     *
-     * @param array|Model $attributes Input attributes, also accepts Eloquent Model.
-     * @param array|true|string $columns Default true for all columns.
-     * @param array|string|null $excluded Default null for none.
-     * @return static
-     */
-    static function grid(array|Model $attributes, array|true|string $columns = true, array|string $excluded = null): static
-    {
-        return new static($attributes, $columns, $excluded, Renderable::LAYOUT_TABLE);
-    }
-
-    /**
-     * Instantiate a Renderable object in 'table' layout.
-     *
-     * @param array|Model $attributes Input attributes, also accepts Eloquent Model.
-     * @param array|true|string $columns Default true for all columns.
-     * @param array|string|null $excluded Default null for none.
-     * @return static
-     */
-    static function table(array|Model $attributes, array|true|string $columns = true, array|string $excluded = null): static
-    {
-        return new static($attributes, $columns, $excluded, Renderable::LAYOUT_TABLE);
-    }
-
 }
