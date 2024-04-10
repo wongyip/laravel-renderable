@@ -15,15 +15,17 @@ return [
      * @see \Wongyip\Laravel\Renderable\Components\ColumnOptions
      */
     'columnOptions' => [
-        'glue'       => ', ',
-        'html'       => false,
-        'itemClass'  => '',
-        'itemStyle'  => '',
-        'listClass'  => '',
-        'listStyle'  => '',
-        'type'       => 'string',
-        'valueFalse' => 'No',
-        'valueNull'  => '-',
-        'valueTrue'  => 'Yes',
+        'glue'         => ', ',
+        'html'         => false,
+        'icon'         => '',
+        'iconPosition' => 'before', // or 'after'
+        'itemClass'    => '',
+        'itemStyle'    => '',
+        'listClass'    => '',
+        'listStyle'    => '',
+        'type'         => 'text',
+        'valueFalse'   => 'No',
+        'valueNull'    => '-',
+        'valueTrue'    => 'Yes',
     ],
 ];

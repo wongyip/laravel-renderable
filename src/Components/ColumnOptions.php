@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Log;
  */
 class ColumnOptions
 {
+    const ICON_POSITION_AFTER  = 'after';
+    const ICON_POSITION_BEFORE = 'before';
+    const ICON_DEFAULT_LINK    = 'link';
     /**
      * Used by type: csv.
      *
@@ -23,6 +26,18 @@ class ColumnOptions
      * @var bool
      */
     public bool $html;
+    /**
+     * Name the icon, value depends on icon pack or framework.
+     *
+     * @var string
+     */
+    public string $icon;
+    /**
+     * Placement of icon tag if provided.
+     *
+     * @var string
+     */
+    public string $iconPosition;
     /**
      * Used by type: ol, ul.
      *

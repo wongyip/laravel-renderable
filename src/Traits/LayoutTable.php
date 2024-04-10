@@ -85,13 +85,12 @@ trait LayoutTable
             // Fill up its body with columns to be rendered.
             foreach ($included as $name) {
 
-
                 // Position the caption if set.
                 if ($table->hasCaption()) {
-                    $table->caption->style('caption-side: ' . $this->options->tableCaptionSide);
+                    $table->caption->styleAppend('caption-side: ' . $this->options->tableCaptionSide);
                 }
                 // Label and value tags.
-                $column = Column::init(
+                $column = new Column(
                     name:      $name,
                     value:     $this->attribute($name),
                     label:     $this->label($name),
@@ -105,8 +104,8 @@ trait LayoutTable
             }
 
             /**
-             * Apply rendering options
-             * @see RenderingOptionsTrait
+             * Apply rendering options.
+             * @see RenderingOptionsTra                                                                    it
              */
             if (!$this->options->renderTableHead) {
                 unset($table->head);

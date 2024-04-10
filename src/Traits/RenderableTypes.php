@@ -2,22 +2,26 @@
 
 use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 
+/**
+ * Configure data-type of columns by creating or updating properties of their
+ * ColumnsOptions.
+ */
 trait RenderableTypes
 {
     use RenderableColumns;
 
     /**
-     * Set or update type and related options of multiple columns.
+     * Set or update type and related options of the given column(s).
      * N.B. $type take precedence over $columnOptions->type or $columnOptions['type'].
      *
-     * @param string|array $columns
+     * @param string|array $names
      * @param string $type
      * @param array|ColumnOptions|null $options
      * @return $this
      */
-    private function __typeColumns(string|array $columns, string $type, array|ColumnOptions $options = null): static
+    private function __typeColumns(string|array $names, string $type, array|ColumnOptions $options = null): static
     {
-        foreach ((is_array($columns) ? $columns : [$columns]) as $column) {
+        foreach ((is_array($names) ? $names : [$names]) as $column) {
             $this->type($column, $type, $options);
         }
         return $this;
@@ -55,91 +59,125 @@ trait RenderableTypes
     /**
      * Type column(s) as Boolean.
      *
-     * @param string|array|string[] $columns
+     * @param string|array|string[] $names
      * @param string|null $valueTrue Default 'Yes'
      * @param string|null $valueFalse Default 'No'
      * @param string|null $valueNull Default to $valueFalse
      * @return static
      */
-    public function typeBool(string|array $columns, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
+    public function typeBool(string|array $names, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
     {
-        return $this->__typeColumns($columns, 'bool', compact('valueTrue', 'valueFalse', 'valueNull'));
+        return $this->__typeColumns($names, 'bool', compact('valueTrue', 'valueFalse', 'valueNull'));
     }
 
     /**
      * Type column(s) as CSV.
      *
-     * @param string|string[]|array $columns
+     * @param string|string[]|array $names
      * @param string|null $glue
      * @return static
      */
-    public function typeCSV(array|string $columns, string $glue = null): static
+    public function typeCSV(array|string $names, string $glue = null): static
     {
-        return $this->__typeColumns($columns, 'csv', compact('glue'));
+        return $this->__typeColumns($names, 'csv', compact('glue'));
     }
 
     /**
      * Type column(s) as HTML code.
      *
-     * @param string|array|string[] $columns
+     * @param string|array|string[] $names
      * @return static
      */
-    public function typeHTML(array|string $columns): static
+    public function typeHTML(array|string $names): static
     {
-        return $this->__typeColumns($columns, 'html');
+        return $this->__typeColumns($names, 'html');
     }
 
     /**
      * Type column(s) as lines of values.
      *
-     * @param string|array|string[] $columns
+     * @param string|array|string[] $names
      * @return static
      */
-    public function typeLines(array|string $columns): static
+    public function typeLines(array|string $names): static
     {
-        return $this->__typeColumns($columns, 'lines');
+        return $this->__typeColumns($names, 'lines');
+    }
+
+    /**
+     * Type column(s) as link.
+     *
+     * @param string|array|string[] $names
+     * @param string|bool|null $icon Default null for no icon, set TRUE for default icon, string for icon with matching name.
+     * @param bool|null $iconAfterLink Placement of the icon.
+     * @return static
+     * @see ColumnOptions::ICON_POSITION_AFTER
+     * @see ColumnOptions::ICON_POSITION_BEFORE
+     *
+     */
+    public function typeLink(array|string $names, string|bool $icon = null, bool $iconAfterLink = null): static
+    {
+        $icon = $icon ? ($icon === true ? ColumnOptions::ICON_DEFAULT_LINK : $icon) : '';
+        $iconPosition = $iconAfterLink
+            ? ColumnOptions::ICON_POSITION_AFTER
+            : ColumnOptions::ICON_POSITION_BEFORE;
+        return $this->__typeColumns($names, 'link', compact('icon', 'iconPosition'));
     }
 
     /**
      * Type column(s) as Ordered List.
      *
-     * @param string|array|string[] $columns
+     * @param string|array|string[] $names
      * @param string|null $listClass
      * @param string|null $listStyle
      * @param string|null $itemClass
      * @param string|null $itemStyle
      * @return static
      */
-    public function typeOL(array|string $columns, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
+    public function typeOL(array|string $names, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
-        return $this->__typeColumns($columns, 'ol', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
+        return $this->__typeColumns($names, 'ol', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }
-    
+
     /**
-     * Type column(s) as multi-line text, which will be rendered with |nl2br filter.
-     * 
-     * Note: no effect if column is declared as HTML.
+     * N.B. People usually want 'text' instead of 'string', where text will
+     * be processed with nl2br() and 'string' will not.
      *
-     * @param string|array|string[] $columns
+     * Type column(s) as string, which will be rendered normally as innerText,
+     * which line break is not rendered and looks like a space.
+     *
+     * @param string|array|string[] $names
      * @return static
      */
-    public function typeText(array|string $columns): static
+    public function typeString(array|string $names): static
     {
-        return $this->__typeColumns($columns, 'text');
+        return $this->__typeColumns($names, 'string');
+    }
+
+    /**
+     * Type column(s) as multi-line text, which will be processed with nl2br()
+     * and rendered as innerHTML of the value tag.
+     *
+     * @param string|array|string[] $names
+     * @return static
+     */
+    public function typeText(array|string $names): static
+    {
+        return $this->__typeColumns($names, 'text');
     }
 
     /**
      * Type column(s) as Unordered List.
      *
-     * @param string|array|string[] $columns
+     * @param string|array|string[] $names
      * @param string|null $listClass
      * @param string|null $listStyle
      * @param string|null $itemClass
      * @param string|null $itemStyle
      * @return static
      */
-    public function typeUL(array|string $columns, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
+    public function typeUL(array|string $names, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
     {
-        return $this->__typeColumns($columns, 'ul', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
+        return $this->__typeColumns($names, 'ul', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }
 }
