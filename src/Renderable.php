@@ -5,6 +5,7 @@ use HTMLPurifier_Config;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
 use Wongyip\HTML\Beautify;
+use Wongyip\HTML\RendererInterface;
 use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Components\RenderableOptions;
@@ -22,7 +23,7 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @method string|Renderable id(string $setter = null)
  * @method string|Renderable idPrefix(string $setter = null)
  */
-class Renderable implements RenderableInterface
+class Renderable implements RendererInterface
 {
     use RenderableAttributes, RenderableColumns, RenderableLabels, RenderableTypes;
 
@@ -191,10 +192,12 @@ class Renderable implements RenderableInterface
      * IMPORTANT: be very cautious that the returned value might be output as
      * raw HTML, this method must always sanitize the HTML before returning it.
      *
+     * @param array|null $adHocAttrs
+     * @param array|null $adHocOptions
      * @return string
      * @see Renderable::tablePrepared()
      */
-    public function render(): string
+    public function render(array $adHocAttrs = null, array $adHocOptions = null): string
     {
         // Prepare the container with non-prefixed ID.
         $container = clone $this->container;

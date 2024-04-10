@@ -1,5 +1,8 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
+/**
+ * @deprecated
+ */
 interface RenderableInterface
 {
     /**
