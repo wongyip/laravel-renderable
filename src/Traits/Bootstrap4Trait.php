@@ -3,7 +3,7 @@
 use Wongyip\PHPHelpers\CSS;
 
 /**
- * @author wongyip
+ * @todo Review needed.
  */
 trait Bootstrap4Trait
 {

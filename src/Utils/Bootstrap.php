@@ -2,6 +2,9 @@
 
 namespace Wongyip\Laravel\Renderable\Utils;
 
+/**
+ * @todo Docs.
+ */
 class Bootstrap
 {
     /**

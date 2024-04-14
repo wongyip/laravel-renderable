@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @todo Docs.
+ */
 return [
     /**
      * @see \Wongyip\Laravel\Renderable\Components\RenderableOptions

@@ -38,6 +38,9 @@ class HTML
     }
 
     /**
+     * @todo Make it configurable.
+     * @todo Error report/handle.
+     *
      * @param string|null $path
      * @return bool
      */

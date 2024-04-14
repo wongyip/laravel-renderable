@@ -2,12 +2,11 @@
 
 namespace Wongyip\Laravel\Renderable\Tags;
 
-use Exception;
-use Wongyip\HTML\Anchor;
-use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
-use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 
+/**
+ * Temp implementation.
+ */
 class Icon extends TagAbstract
 {
     protected string $tagName = 'i';

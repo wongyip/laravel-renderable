@@ -36,16 +36,15 @@ trait LayoutTable
      */
     protected function layoutTable(): static
     {
-        $fieldHeader = $this->options->fieldHeader;
-        $valueHeader = $this->options->valueHeader;
         $this->table = Table::create(
-                THead::create(TR::create(TH::create($fieldHeader), TH::create($valueHeader)))->class(Renderable::CSS_CLASS_TABLE_HEAD),
+                THead::create(
+                    TR::create(
+                        TH::create($this->options->fieldHeader),
+                        TH::create($this->options->valueHeader)
+                    )
+                )->class(Renderable::CSS_CLASS_TABLE_HEAD),
                 TBody::create()->class(Renderable::CSS_CLASS_BODY)
-            )
-            ->class('renderable-table', 'table', 'table-bordered', 'table-hover');
-
-//        $this->table->fieldHeader->contents('Field');
-//        $this->table->valueHeader->contents('Value');
+            )->class('renderable-table', 'table', 'table-bordered', 'table-hover');
 
         // @todo Broken now, border glitch at bottom-left corner.
         // $this->container->classAdd(Bootstrap::classTableResponsive());

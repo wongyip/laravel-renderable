@@ -153,7 +153,7 @@ class Renderable implements RendererInterface
      *
      * @return string
      */
-    private function idPrefixed(): string
+    public function idPrefixed(): string
     {
         return $this->idPrefix . $this->id;
     }
@@ -191,6 +191,8 @@ class Renderable implements RendererInterface
      *
      * IMPORTANT: be very cautious that the returned value might be output as
      * raw HTML, this method must always sanitize the HTML before returning it.
+     *
+     * Note: those arguments are inherit form interface, but not used here.
      *
      * @param array|null $adHocAttrs
      * @param array|null $adHocOptions
