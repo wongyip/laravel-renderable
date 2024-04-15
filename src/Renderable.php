@@ -21,7 +21,6 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
 
 /**
  * @method string|Renderable id(string $setter = null)
- * @method string|Renderable idPrefix(string $setter = null)
  */
 class Renderable implements RendererInterface
 {
@@ -33,7 +32,6 @@ class Renderable implements RendererInterface
     // New
     use LayoutGrid, LayoutTable, RenderableMacros;
 
-    const CONTAINER_ID_SUFFIX  = '-container';
     const CSS_CLASS_BODY       = 'renderable-body';
     const CSS_CLASS_CONTAINER  = 'renderable-container';
     const CSS_CLASS_LABEL      = 'renderable-label';
@@ -45,18 +43,11 @@ class Renderable implements RendererInterface
 
     /**
      * The ID attribute of the main renderable HTML tag.
-     * N.B. This ID will be prefixed with $idPrefix on render().
+     * N.B. This ID will be prefixed with $this->options->idPrefix on render().
      *
      * @var string
      */
     protected string $id;
-    /**
-     * The ID Prefix for ALL generated tags having ID attribute.
-     *
-     * @see self::render()
-     * @var string
-     */
-    protected string $idPrefix = 'renderable-';
     /**
      * Layout for view lookup.
      *
@@ -137,7 +128,7 @@ class Renderable implements RendererInterface
     public function __call(string $name, array $arguments)
     {
         // Get-setters
-        if (in_array($name, ['id', 'idPrefix'])) {
+        if ($name === 'id') {
             if (isset($arguments[0])) {
                 $this->$name = $arguments[0];
                 return $this;
@@ -155,7 +146,7 @@ class Renderable implements RendererInterface
      */
     public function idPrefixed(): string
     {
-        return $this->idPrefix . $this->id;
+        return $this->options->idPrefix . $this->id;
     }
 
     /**
@@ -203,14 +194,14 @@ class Renderable implements RendererInterface
     {
         // Prepare the container with non-prefixed ID.
         $container = clone $this->container;
-        $container->id(($this->id . static::CONTAINER_ID_SUFFIX));
+        $container->id(($this->id . $this->options->containerIdSuffix));
 
         // Get the contents tag(s) prepared by the layout-trait.
         $method = $this->layout() . 'Prepared';
         $contents = $this->$method();
 
-        // Wrap it with the common container and render the output.
-        $naughtyHTML = $container->contents($contents)->render();
+        // Wrap everything with the common container and render the output.
+        $naughtyHTML = $container->contents($this->options->prefix, $contents, $this->options->suffix)->render();
 
         /**
          * Sanitize HTML before output, with HTML Purifier (default config).
@@ -219,10 +210,10 @@ class Renderable implements RendererInterface
          */
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Attr.EnableID', true);
-        $config->set('Attr.IDPrefix', $this->idPrefix);
+        $config->set('Attr.IDPrefix', $this->options->idPrefix);
         $purified = HTML::purify($naughtyHTML, $config);
 
         // Here we got the pure and beautiful HTML.
-        return "\n" . Beautify::init()->beautify($purified) . "\n";
+        return Beautify::html($purified) ;
     }
 }

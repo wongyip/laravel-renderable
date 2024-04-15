@@ -11,13 +11,35 @@ use Illuminate\Support\Facades\Log;
 class RenderableOptions
 {
     /**
+     * Suffix to the wrapper container's ID (HTML tag attribute).
+     *
+     * @var string
+     */
+    public string $containerIdSuffix;
+    /**
+     * Message on empty input of attributes.
+     *
      * @var string
      */
     public string $emptyRecord;
     /**
+     * Header of the "Field" column.
+     *
      * @var string
      */
     public string $fieldHeader;
+    /**
+     * The ID Prefix for ALL generated tags having ID attribute.
+     *
+     * @var string
+     */
+    public string $idPrefix;
+    /**
+     * String prepended to the contents HTML.
+     *
+     * @var string
+     */
+    public string $prefix;
     /**
      * Effective for table layout only.
      *
@@ -25,12 +47,20 @@ class RenderableOptions
      */
     public bool $renderTableHead;
     /**
+     * String appended to the contents HTML.
+     *
+     * @var string
+     */
+    public string $suffix;
+    /**
      * Table's caption CSS 'caption-side: bottom|inherit|initial|revert|revert-layer|top|unset'.
      *
      * @var string
      */
     public string $tableCaptionSide;
     /**
+     * Header of the "Value" column.
+     *
      * @var string
      */
     public string $valueHeader;

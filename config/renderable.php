@@ -8,11 +8,15 @@ return [
      * @see \Wongyip\Laravel\Renderable\Components\RenderableOptions
      */
     'options' => [
-        'emptyRecord'      => 'Empty record.',
-        'fieldHeader'      => 'Field',
-        'valueHeader'      => 'Value',
-        'renderTableHead'  => true,
-        'tableCaptionSide' => 'top',
+        'containerIdSuffix' => '-container',
+        'emptyRecord'       => 'Empty record.',
+        'fieldHeader'       => 'Field',
+        'idPrefix'          => 'renderable-',
+        'prefix'            => "\n",
+        'renderTableHead'   => true,
+        'suffix'            => "\n",
+        'tableCaptionSide'  => 'top',
+        'valueHeader'       => 'Value',
     ],
     /**
      * @see \Wongyip\Laravel\Renderable\Components\ColumnOptions

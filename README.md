@@ -92,9 +92,8 @@ echo $r->render();
 ## Output Explained
 - The main output is a `<table>` tag wrapped in a container `<div>` tag.
 - The `Renderable` object generates its own `Renderable.id` randomly on instantiate (`12345678`), which is changeable with the `Renderable.id()` method.
-- The container and main tags will have an `id` attribute derived from the `Renderable.id`.
-  - The main tag's ID is prefixed with `renderable-` by default, changeable by the `Renderable.idPrefix()` method.
-  - The container tag's ID is further suffixed with `-containter`, which is not changeable.
+- The main tag will have an `id` attribute derived from the `Renderable.id`, prefixed with `renderable-` by default, configurable via `/config/renderable.php`) and changeable on run-time by updating the `Renderable.options.idPrefix` property.
+- The container tag's ID is further suffixed with `-containter` by default, configurable via `/config/renderable.php`) and changeable on run-time by updating the `Renderable.options.containerIdSuffix` property.
 - Field labels and values are rendered base on the setup. 
 
 ## Notes
