@@ -42,16 +42,22 @@ class Renderable implements RendererInterface
     const LAYOUT_GRID          = 'grid';
 
     /**
-     * The ID attribute of the main renderable HTML tag.
-     * N.B. This ID will be prefixed with $this->options->idPrefix on render().
+     * The ID attribute of the main renderable HTML tag. Noted that this ID will
+     * be prefixed with $this->options->idPrefix on render().
      *
      * @var string
+     * @see Renderable::idPrefixed()
      */
     protected string $id;
     /**
-     * Layout for view lookup.
+     * Layout to be rendered. Note that this is an empty string by default, so
+     * that the layout() method could detect layout change and run set up the
+     * object accordingly.
      *
      * @var string
+     * @see LayoutGrid
+     * @see LayoutTable
+     * @see Renderable::layout()
      */
     protected string $layout = '';
     /**
@@ -65,13 +71,14 @@ class Renderable implements RendererInterface
      * Options and switches.
      *
      * @var RenderableOptions
+     * @see /config/renderable.php
      */
     public RenderableOptions $options;
 
     /**
      * The Renderable object.
      *
-     * 1. Note to the $options argument:
+     * 1. Note for the $options argument:
      *     - NULL: take all defaults from config('renderable.options').
      *     - RenderableOptions object: ignore defaults.
      *     - Array: merge into default options.
@@ -111,7 +118,6 @@ class Renderable implements RendererInterface
 
         // Take other params.
         $this->layout($layout ?? static::LAYOUT_DEFAULT);
-
         $this->include($included);
         $this->exclude($excluded);
 
