@@ -1,8 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Wongyip\HTML\Beautify;
-use Wongyip\HTML\Comment;
 use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\Table;
 use Wongyip\HTML\TagAbstract;
@@ -12,7 +10,6 @@ use Wongyip\HTML\TR;
 use Wongyip\Laravel\Renderable\Components\Column;
 use Wongyip\Laravel\Renderable\Components\RenderableOptions;
 use Wongyip\Laravel\Renderable\Renderable;
-use Wongyip\Laravel\Renderable\Utils\HTML;
 
 /**
  * Everything related to table-layout should go here.
@@ -88,95 +85,91 @@ trait LayoutTable
     }
 
     /**
-     * Prepare the table tag with child tags of all columns to be rendered.
+     * Get the main tag ready to for rendering.
      *
      * @return TagAbstract
      */
     public function tablePrepared(): TagAbstract
     {
-        if ($included = $this->include()) {
+        // Columns included (names).
+        $included = $this->include();
 
-            /**
-             * Localize and use no $this...
-             */
-            $table = $this->table;
-            $fieldHeader = $this->fieldHeader;
-            $valueHeader = $this->valueHeader;
+        // No?
+        if (empty($included)) {
+            $html = sprintf('<p><em>%s</em></p>', htmlspecialchars($this->options->emptyRecord));
+            return RawHTML::create($html);
+        }
 
-            // Set-up and apply options.
-            $table->id($this->id);
-            $fieldHeader->tagName('th')->contentsEmpty()->contents($this->options->fieldHeader);
-            $valueHeader->tagName('th')->contentsEmpty()->contents($this->options->valueHeader);
+        // Get rid of $this...
+        $options     = $this->options;
+        $table       = $this->table;
+        $fieldHeader = $this->fieldHeader;
+        $valueHeader = $this->valueHeader;
 
-            // Position the caption if set.
-            if ($table->hasCaption()) {
-                $table->caption->styleUnset('caption-side');
-                $table->caption->styleAppend('caption-side: ' . $this->options->tableCaptionSide);
+        // Setting things up
+        $table->id($this->id);
+        $fieldHeader->tagName('th')->contentsEmpty()->contents($options->fieldHeader);
+        $valueHeader->tagName('th')->contentsEmpty()->contents($options->valueHeader);
+
+        // Position the caption if set.
+        if ($table->hasCaption()) {
+            $table->caption->styleProperty('caption-side', $options->tableCaptionSide, true);
+        }
+
+        // Empty before filling.
+        $table->head->contentsEmpty();
+        $table->body->contentsEmpty();
+
+        // Prepare Column objects.
+        $columns = [];
+        foreach ($included as $name) {
+            $columns[$name] = new Column(
+                name:      $name,
+                value:     $this->attribute($name),
+                label:     $this->label($name),
+                labelHTML: $this->labelHTML($name) ?? '',
+                options:   $this->columnOptions($name)
+            );
+        }
+
+        // Vertical (default).
+        if (!$options->tableHorizontal) {
+            // Show or hide table head by option.
+            if ($options->renderTableHead) {
+                if (is_a($table->head, THead::class)) {
+                    $table->head->addRows(
+                        TR::create($fieldHeader, $valueHeader)
+                    );
+                }
+                else {
+                    /**
+                     * While previously prepared with renderTableHead: FALSE.
+                     * @todo To be reviewed.
+                     */
+                    $table->head = THead::create(TR::create($fieldHeader, $valueHeader))
+                        ->class(Renderable::CSS_CLASS_TABLE_HEAD);
+                }
             }
-
-            // Empty before filling.
-            $table->head->contentsEmpty();
-            $table->body->contentsEmpty();
-
-            // Prepare Column objects
-            $columns = [];
-            foreach ($included as $name) {
-                $columns[$name] = new Column(
-                    name:      $name,
-                    value:     $this->attribute($name),
-                    label:     $this->label($name),
-                    labelHTML: $this->labelHTML($name) ?? '',
-                    options:   $this->columnOptions($name)
+            // Fill table body with rows of data-columns.
+            foreach ($columns as $name => $column) {
+                $table->body->addRows(
+                    TR::create($column->labelTag('th'), $column->valueTag('td'))->class('field-' . $name)
                 );
             }
-
-            // Vertical (default).
-            if (!$this->options->tableHorizontal) {
-
-                // Show or hide table head by option.
-                if ($this->options->renderTableHead) {
-                    if (is_a($table->head, THead::class)) {
-                        $table->head->addRows(
-                            TR::create($fieldHeader, $valueHeader)
-                        );
-                    }
-                    else {
-                        /**
-                         * While previously prepared with renderTableHead: FALSE.
-                         * @todo To be reviewed.
-                         */
-                        $table->head = THead::create(TR::create($fieldHeader, $valueHeader))
-                            ->class(Renderable::CSS_CLASS_TABLE_HEAD);
-                    }
-                }
-
-                // Fill up its body with columns to be rendered.
-                foreach ($columns as $name => $column) {
-                    $row = TR::create($column->labelTag('th'), $column->valueTag('td'))->class('field-' . $name);
-                    $table->body->addRows($row);
-                }
-            }
-            // Horizontal
-            else {
-
-                $rowHead = $this->options->tableHorizontalHeaders ? TR::create($fieldHeader) : TR::create();
-                $rowBody = $this->options->tableHorizontalHeaders ? TR::create($valueHeader) : TR::create();
-
-                // dd($rowHead, $rowBody, $fieldHeader, $valueHeader);
-
-                // Fill up its body with columns to be rendered.
-                foreach ($columns as $name => $column) {
-                    $rowHead->addCells($column->labelTag('th')->classAppend('field-' . $name));
-                    $rowBody->addCells($column->valueTag('td')->classAppend('field-' . $name));
-                }
-
-                $table->head->addRows($rowHead);
-                $table->body->addRows($rowBody);
-            }
-
-            return $table;
         }
-        $html = sprintf('<p><em>%s</em></p>', htmlspecialchars($this->options->emptyRecord));
-        return RawHTML::create($html);
+        // Horizontal
+        else {
+            $rowHead = $options->tableHorizontalHeaders ? TR::create($fieldHeader) : TR::create();
+            $rowBody = $options->tableHorizontalHeaders ? TR::create($valueHeader) : TR::create();
+            // Fill table head and body with data-columns.
+            foreach ($columns as $name => $column) {
+                $rowHead->addCells($column->labelTag('th')->classAppend('field-' . $name));
+                $rowBody->addCells($column->valueTag('td')->classAppend('field-' . $name));
+            }
+            $table->head->addRows($rowHead);
+            $table->body->addRows($rowBody);
+        }
+        // Yo
+        return $table;
     }
 }
