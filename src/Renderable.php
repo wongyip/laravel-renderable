@@ -13,8 +13,8 @@ use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\LayoutGrid;
 use Wongyip\Laravel\Renderable\Traits\RenderableAttributes;
 use Wongyip\Laravel\Renderable\Traits\RenderableColumns;
+use Wongyip\Laravel\Renderable\Traits\RenderableHeaders;
 use Wongyip\Laravel\Renderable\Traits\RenderableLabels;
-use Wongyip\Laravel\Renderable\Traits\RenderableMacros;
 use Wongyip\Laravel\Renderable\Traits\LayoutTable;
 use Wongyip\Laravel\Renderable\Traits\RenderableTypes;
 use Wongyip\Laravel\Renderable\Utils\HTML;
@@ -24,22 +24,24 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  */
 class Renderable implements RendererInterface
 {
-    use RenderableAttributes, RenderableColumns, RenderableLabels, RenderableTypes;
+    use RenderableAttributes, RenderableColumns, RenderableHeaders, RenderableLabels, RenderableTypes;
+
+    // Layouts
+    use LayoutGrid, LayoutTable;
 
     // @todo Review needed.
     use Bootstrap4Trait;
 
-    // New
-    use LayoutGrid, LayoutTable, RenderableMacros;
-
-    const CSS_CLASS_BODY       = 'renderable-body';
-    const CSS_CLASS_CONTAINER  = 'renderable-container';
-    const CSS_CLASS_LABEL      = 'renderable-label';
-    const CSS_CLASS_TABLE_HEAD = 'thead-light';
-    const CSS_CLASS_VALUE      = 'renderable-value';
-    const LAYOUT_DEFAULT       = 'table';
-    const LAYOUT_TABLE         = 'table';
-    const LAYOUT_GRID          = 'grid';
+    const CSS_CLASS_BODY         = 'renderable-body';
+    const CSS_CLASS_CONTAINER    = 'renderable-container';
+    const CSS_CLASS_LABEL        = 'renderable-label';
+    const CSS_CLASS_TABLE_HEAD   = 'thead-light';
+    const CSS_CLASS_VALUE        = 'renderable-value';
+    const LAYOUT_DEFAULT         = 'table';
+    const LAYOUT_TABLE           = 'table';
+    const LAYOUT_GRID            = 'grid';
+    const CSS_CLASS_FIELD_HEADER = 'renderable-field-header';
+    const CSS_CLASS_VALUE_HEADER = 'renderable-value-header';
 
     /**
      * The ID attribute of the main renderable HTML tag. Noted that this ID will
@@ -113,8 +115,10 @@ class Renderable implements RendererInterface
             $this->attributes = $attributes;
         }
 
-        // Wrapper (no need to set ID).
+        // Wrapper (no need to set ID), and other components.
         $this->container = Tag::make('div')->classAdd(static::CSS_CLASS_CONTAINER);
+        $this->fieldHeader = Tag::make('span')->class(static::CSS_CLASS_FIELD_HEADER)->contents($this->options->fieldHeader);
+        $this->valueHeader = Tag::make('span')->class(static::CSS_CLASS_VALUE_HEADER)->contents($this->options->valueHeader);
 
         // Take other params.
         $this->layout($layout ?? static::LAYOUT_DEFAULT);
@@ -186,10 +190,14 @@ class Renderable implements RendererInterface
     /**
      * Render the data-model according to the current settings.
      *
-     * IMPORTANT: be very cautious that the returned value might be output as
-     * raw HTML, this method must always sanitize the HTML before returning it.
+     * IMPORTANT NOTES:
      *
-     * Note: those arguments are inherit form interface, but not used here.
+     *  - Be very cautious that the returned value might be output as raw HTML,
+     *    this method must always sanitize the HTML before returning it.
+     *
+     *  - Different internal properties will be updated after rendering.
+     *
+     * (Arguments are inherit form the interface and not used here.)
      *
      * @param array|null $adHocAttrs
      * @param array|null $adHocOptions

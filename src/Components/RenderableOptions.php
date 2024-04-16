@@ -41,7 +41,7 @@ class RenderableOptions
      */
     public string $prefix;
     /**
-     * Effective for table layout only.
+     * Effective for vertical table layout only.
      *
      * @var bool
      */
@@ -58,6 +58,18 @@ class RenderableOptions
      * @var string
      */
     public string $tableCaptionSide;
+    /**
+     * Whether fields are rendered horizontally in table layout.
+     *
+     * @var bool
+     */
+    public bool $tableHorizontal;
+    /**
+     * Whether "Field" and "Value" header cells are rendered in table layout.
+     *
+     * @var bool
+     */
+    public bool $tableHorizontalHeaders;
     /**
      * Header of the "Value" column.
      *
