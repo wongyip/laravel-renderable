@@ -138,21 +138,15 @@ trait LayoutTable
 
         // Vertical (default).
         if (!$options->tableHorizontal) {
-            // Show or hide table head by option.
+            /**
+             * Add header cells, or leave the THead empty for not rendering,
+             * which HTML Purifier in the render() method will remove empty tags
+             * by default.
+             */
             if ($options->renderTableHead) {
-                if (is_a($table->head, THead::class)) {
-                    $table->head->addRows(
-                        TR::create($fieldHeader, $valueHeader)
-                    );
-                }
-                else {
-                    /**
-                     * While previously prepared with renderTableHead: FALSE.
-                     * @todo To be reviewed.
-                     */
-                    $table->head = THead::create(TR::create($fieldHeader, $valueHeader))
-                        ->class(Renderable::CSS_CLASS_TABLE_HEAD);
-                }
+                $table->head->addRows(
+                    TR::create($fieldHeader, $valueHeader)
+                );
             }
             // Fill table body with rows of data-columns.
             foreach ($columns as $name => $column) {
