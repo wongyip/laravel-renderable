@@ -29,6 +29,18 @@ class RenderableOptions
      */
     public string $fieldHeader;
     /**
+     * Grid's CSS class(s) append after Renderable::CSS_CLASS_TABLE.
+     *
+     * @var string
+     */
+    public string $gridClassAppend;
+    /**
+     * Grid's CSS class(s) prepend before Renderable::CSS_CLASS_TABLE.
+     *
+     * @var string
+     */
+    public string $gridClassPrepend;
+    /**
      * The ID Prefix for ALL generated tags having ID attribute.
      *
      * @var string
@@ -58,6 +70,18 @@ class RenderableOptions
      * @var string
      */
     public string $tableCaptionSide;
+    /**
+     * Table's CSS class(s) append after Renderable::CSS_CLASS_TABLE.
+     *
+     * @var string
+     */
+    public string $tableClassAppend;
+    /**
+     * Table's CSS class(s) prepend before Renderable::CSS_CLASS_TABLE.
+     *
+     * @var string
+     */
+    public string $tableClassPrepend;
     /**
      * Whether fields are rendered horizontally in table layout.
      *

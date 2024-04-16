@@ -45,7 +45,11 @@ trait LayoutTable
         $this->table = Table::create(
             THead::create()->class(Renderable::CSS_CLASS_TABLE_HEAD),
             TBody::create()->class(Renderable::CSS_CLASS_BODY)
-        )->class('renderable-table', 'table', 'table-bordered', 'table-hover');
+        )->class(
+            $this->options->tableClassPrepend,
+            Renderable::CSS_CLASS_TABLE,
+            $this->options->tableClassAppend
+        );
 
         // @todo Broken now, border glitch at bottom-left corner.
         // $this->container->classAdd(Bootstrap::classTableResponsive());

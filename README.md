@@ -50,11 +50,11 @@ echo $r->render();
 ### Output
 ```html
 <div id="renderable-12345678-container" class="renderable-container">
-    <table id="renderable-12345678" class="renderable-table table table-bordered table-hover">
+    <table id="renderable-12345678" class="table table-bordered table-strip renderable-table">
         <thead class="thead-light">
             <tr>
-                <th>Field</th>
-                <th>Value</th>
+                <th class="renderable-field-header">Field</th>
+                <th class="renderable-value-header">Value</th>
             </tr>
         </thead>
         <tbody class="renderable-body">

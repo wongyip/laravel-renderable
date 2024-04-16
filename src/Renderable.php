@@ -34,14 +34,16 @@ class Renderable implements RendererInterface
 
     const CSS_CLASS_BODY         = 'renderable-body';
     const CSS_CLASS_CONTAINER    = 'renderable-container';
+    const CSS_CLASS_FIELD_HEADER = 'renderable-field-header';
+    const CSS_CLASS_GRID         = 'renderable-grid';
     const CSS_CLASS_LABEL        = 'renderable-label';
+    const CSS_CLASS_TABLE        = 'renderable-table';
     const CSS_CLASS_TABLE_HEAD   = 'thead-light';
     const CSS_CLASS_VALUE        = 'renderable-value';
+    const CSS_CLASS_VALUE_HEADER = 'renderable-value-header';
     const LAYOUT_DEFAULT         = 'table';
     const LAYOUT_TABLE           = 'table';
     const LAYOUT_GRID            = 'grid';
-    const CSS_CLASS_FIELD_HEADER = 'renderable-field-header';
-    const CSS_CLASS_VALUE_HEADER = 'renderable-value-header';
 
     /**
      * The ID attribute of the main renderable HTML tag. Noted that this ID will

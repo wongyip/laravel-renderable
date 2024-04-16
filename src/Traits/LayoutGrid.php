@@ -31,7 +31,11 @@ trait LayoutGrid
      */
     protected function layoutGrid(): static
     {
-        $this->table->tagName('div')->class(['renderable-grid', 'row']);
+        $this->table->tagName('div')->class(
+            $this->options->gridClassPrepend,
+            Renderable::CSS_CLASS_GRID,
+            $this->options->gridClassAppend
+        );
         $this->fieldHeader->tagName('div');
         $this->valueHeader->tagName('div');
         $this->container->classRemove(Bootstrap::classTableResponsive());
