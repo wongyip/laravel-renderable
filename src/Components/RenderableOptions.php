@@ -106,7 +106,7 @@ class RenderableOptions
      */
     public function __construct(array $options = null)
     {
-        // Merge input (if set) into defaults.
+        // Merge input $options into defaults, and apply if matching property exists.
         $defaults = config('renderable.options');
         $options = array_merge($defaults, $options ?? []);
         foreach ($options as $prop => $set) {
@@ -114,7 +114,7 @@ class RenderableOptions
                 $this->$prop = $set ?? $defaults[$prop];
             }
             else {
-                Log::warning(sprintf('RenderableOptions: property %s does not exists.', $prop));
+                Log::warning(sprintf('RenderableOptions.%s does not exists.', $prop));
             }
         }
     }

@@ -99,3 +99,6 @@ echo $r->render();
 ## Notes
 - Output is formatted with [HTML Beautify](https://github.com/wongyip/html-beautify).
 - Output is sanitized with [HTML Purifier](https://github.com/ezyang/htmlpurifier).
+- The `Renderable` object is designed to render once only, use `clone` keyword to create
+  multiple `Renderable` objects may end up fall into the variable referencing nightmare, do
+  [Deep Copy](https://github.com/myclabs/DeepCopy) if multiple instance is really needed. 

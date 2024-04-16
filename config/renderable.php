@@ -1,7 +1,10 @@
 <?php
 
 /**
- * @todo Docs.
+ * Default options.
+ *
+ * @see https://laravel.com/docs/10.x/packages#configuration
+ * @see https://laravel.com/docs/11.x/packages#configuration
  */
 return [
     /**
