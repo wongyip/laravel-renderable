@@ -86,23 +86,23 @@ class Renderable implements RendererInterface
      * non-null value is provided in the $included argument, this is important
      * to prevent data-leakage.
      *
-     * 1. Note for the $options argument:
+     * 1. Note for the $included argument:
+     *     - NULL: Use default (empty array), so no columns will be rendered.
+     *     - TRUE: include all columns.
+     *     - String: include a single column explicitly.
+     *     - Array: include multiple columns explicitly.
+     *
+     * 2. Note for the $options argument:
      *     - NULL: take all defaults from config('renderable.options').
      *     - RenderableOptions object: ignore defaults.
      *     - Array: merge into default options.
      *
-     * 2. Note for the $attributes argument:
+     * 3. Note for the $attributes argument:
      *     - Array: simply set the $attributes array.
      *     - Eloquent model: takes output of toArray() as $attributes, where
      *       hidden attributes and not appended accessors/mutators are not
      *       taken. However, they WILL BE RENDERED if they're "$included"
      *       and not "$excluded".
-     *
-     * 3. Note for the $included argument:
-     *      - NULL: Use default (empty array), so no columns will be rendered.
-     *      - TRUE: include all columns.
-     *      - String: include a single column explicitly.
-     *      - Array: include multiple columns explicitly.
      *
      * @param array|Model $attributes Source attributes array or Eloquent Model.
      * @param array|string[]|string|null $included Default null for none, set TRUE to include all columns, string or array to include column(s) explicitly.
@@ -239,7 +239,7 @@ class Renderable implements RendererInterface
         $config->set('Attr.IDPrefix', $this->options->idPrefix);
         $purified = HTML::purify($naughtyHTML, $config);
 
-        // Here we got the pure and beautiful HTML.
-        return Beautify::html($purified);
+        // Here we got the pure and maybe beautiful HTML.
+        return $this->options->beautifyHTML ? Beautify::html($purified) : $purified;
     }
 }

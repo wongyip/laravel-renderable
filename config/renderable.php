@@ -11,6 +11,7 @@ return [
      * @see \Wongyip\Laravel\Renderable\Components\RenderableOptions
      */
     'options' => [
+        'beautifyHTML'           => env('RENDERABLE_BEAUTIFY_HTML', false),
         'containerIdSuffix'      => '-container',
         'emptyRecord'            => 'Empty record.',
         'fieldHeader'            => 'Field',

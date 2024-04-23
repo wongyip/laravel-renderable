@@ -8,12 +8,6 @@ use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 trait RenderableColumns
 {
     /**
-     * Columns to be rendered, unless specified in $this->excluded.
-     *
-     * @var array|string[]
-     */
-    protected array $included = [];
-    /**
      * Columns to be rendered in raw HTML.
      *
      * @var array|string[]
@@ -31,6 +25,12 @@ trait RenderableColumns
      * @var array|string[]
      */
     protected array $excluded = [];
+    /**
+     * Columns to be rendered, unless specified in $this->excluded.
+     *
+     * @var array|string[]
+     */
+    protected array $included = [];
 
     /**
      * @deprecated Replaced by include() method.
@@ -134,7 +134,7 @@ trait RenderableColumns
      *
      * Setter:
      *  1. Take all keys in $this->attributes if $columns is TRUE.
-     *  2. Merge into existing $this->columns unless $replace is TRUE.
+     *  2. Merge into existing $included property unless $replace is TRUE.
      *  3. Getter respects $excluded property, ignores $replace argument.
      *
      * @param string|array|string[]|bool|null $names

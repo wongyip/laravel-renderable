@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Log;
 class RenderableOptions
 {
     /**
+     * Whether the output HTML should be formatted.
+     *
+     * @var bool
+     */
+    public bool $beautifyHTML;
+    /**
      * Suffix to the wrapper container's ID (HTML tag attribute).
      *
      * @var string
