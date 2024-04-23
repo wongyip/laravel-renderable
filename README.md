@@ -2,6 +2,7 @@
 Present an Eloquent model or an associative array in HTML table view.
 
 ## Installation
+_Install as a package to a Laravel project_
 ```
 composer require wongyip/laravel-rendetable
 ```

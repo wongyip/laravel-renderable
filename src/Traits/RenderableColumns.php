@@ -34,6 +34,7 @@ trait RenderableColumns
 
     /**
      * @deprecated Replaced by include() method.
+     * @see self::include()
      */
     public function columns(array|string|bool $names = null, bool $replace = false): array|static
     {
@@ -134,7 +135,7 @@ trait RenderableColumns
      * Setter:
      *  1. Take all keys in $this->attributes if $columns is TRUE.
      *  2. Merge into existing $this->columns unless $replace is TRUE.
-     *  3. Getter respect $excluded.
+     *  3. Getter respects $excluded property, ignores $replace argument.
      *
      * @param string|array|string[]|bool|null $names
      * @param bool $replace

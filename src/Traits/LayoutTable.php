@@ -60,7 +60,7 @@ trait LayoutTable
      * Instantiate a Renderable object in table layout.
      *
      * @param array|Model $attributes Source attributes array or Eloquent Model.
-     * @param array|string[]|string|bool|null $included Default true for all columns.
+     * @param array|string[]|string|bool|null $included Default null for none, set TRUE to include all columns, string or array to include column(s) explicitly.
      * @param array|string[]|string|null $excluded Default null for none.
      * @param array|RenderableOptions|null $options Custom options, skip to taking values from config('renderable.options').
      * @return static
@@ -76,7 +76,7 @@ trait LayoutTable
      * unless options.tableHorizontalHeaders is TRUE
      *
      * @param array|Model $attributes Source attributes array or Eloquent Model.
-     * @param array|string[]|string|bool|null $included Default true for all columns.
+     * @param array|string[]|string|bool|null $included Default null for none, set TRUE to include all columns, string or array to include column(s) explicitly.
      * @param array|string[]|string|null $excluded Default null for none.
      * @param array|RenderableOptions|null $options Custom options, skip to taking values from config('renderable.options').
      * @return static

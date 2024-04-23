@@ -82,6 +82,10 @@ class Renderable implements RendererInterface
     /**
      * The Renderable object.
      *
+     * IMPORTANT NOTE: The default behavior is render nothing unless a valid
+     * non-null value is provided in the $included argument, this is important
+     * to prevent data-leakage.
+     *
      * 1. Note for the $options argument:
      *     - NULL: take all defaults from config('renderable.options').
      *     - RenderableOptions object: ignore defaults.
@@ -91,11 +95,17 @@ class Renderable implements RendererInterface
      *     - Array: simply set the $attributes array.
      *     - Eloquent model: takes output of toArray() as $attributes, where
      *       hidden attributes and not appended accessors/mutators are not
-     *       taken. However, they will be rendered if they're "$included"
+     *       taken. However, they WILL BE RENDERED if they're "$included"
      *       and not "$excluded".
      *
+     * 3. Note for the $included argument:
+     *      - NULL: Use default (empty array), so no columns will be rendered.
+     *      - TRUE: include all columns.
+     *      - String: include a single column explicitly.
+     *      - Array: include multiple columns explicitly.
+     *
      * @param array|Model $attributes Source attributes array or Eloquent Model.
-     * @param array|string[]|string|null $included Default true for all columns.
+     * @param array|string[]|string|null $included Default null for none, set TRUE to include all columns, string or array to include column(s) explicitly.
      * @param array|string[]|string|null $excluded Default null for none.
      * @param array|RenderableOptions|null $options Customization and switches options.
      * @param string|null $layout skip for LAYOUT_DEFAULT.
@@ -230,6 +240,6 @@ class Renderable implements RendererInterface
         $purified = HTML::purify($naughtyHTML, $config);
 
         // Here we got the pure and beautiful HTML.
-        return Beautify::html($purified) ;
+        return Beautify::html($purified);
     }
 }
