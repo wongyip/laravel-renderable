@@ -35,13 +35,18 @@ trait RenderableAttributes
      */
     public function attribute(string $name, mixed $value = null): mixed
     {
+        // Get
         if (is_null($value)) {
             if (key_exists($name, $this->attributes)) {
                 return $this->attributes[$name];
             }
-            // Maybe a accessor, which is not in the model's $appends list.
-            return $this->model->getAttribute($name) ?? null;
+            // Maybe an accessor, which is not in the model's $appends list.
+            if (isset($this->model)) {
+                return $this->model->getAttribute($name) ?? null;
+            }
+            return null;
         }
+        // Set
         $this->attributes[$name] = $value;
         return $this;
     }
