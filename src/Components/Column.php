@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Wongyip\HTML\Anchor;
 use Wongyip\HTML\RawHTML;
+use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Renderable;
@@ -118,8 +119,17 @@ class Column
     }
 
     /**
+     * @return string|RendererInterface
+     */
+    public function labelContents(): string|RendererInterface
+    {
+        return $this->labelHTML ? RawHTML::create($this->labelHTML) : $this->label;
+    }
+
+    /**
      * Export a label tag base on options.
      *
+     * @deprecated
      * @param string $tagName
      * @return TagAbstract
      */
@@ -141,6 +151,7 @@ class Column
      *
      * @param string $tagName
      * @return TagAbstract
+     * @deprecated
      */
     public function valueTag(string $tagName): TagAbstract
     {

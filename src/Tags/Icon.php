@@ -2,6 +2,7 @@
 
 namespace Wongyip\Laravel\Renderable\Tags;
 
+use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\TagAbstract;
 
 /**
@@ -22,7 +23,7 @@ class Icon extends TagAbstract
         $styleClass = $iconStyle ? "fa-$iconStyle" : 'fas';
         $utilsClass = $fixedWidth ? 'fa-fw' : '';
         $iconClass = "fa-$iconName";
-        return static::make()->class('fa', $styleClass, $iconClass, $utilsClass);
+        return static::tag(RawHTML::ZWNJ())->class('fa', $styleClass, $iconClass, $utilsClass);
     }
 
     /**

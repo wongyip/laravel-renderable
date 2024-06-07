@@ -5,7 +5,7 @@ use HTMLPurifier_Config;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
 use Wongyip\HTML\Beautify;
-use Wongyip\HTML\RendererInterface;
+use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Components\RenderableOptions;
@@ -129,6 +129,10 @@ class Renderable implements RendererInterface
 
         // Wrapper (no need to set ID), and other components.
         $this->container = Tag::make('div')->classAdd(static::CSS_CLASS_CONTAINER);
+
+        /**
+         * @todo To be moved to layout method, and replace with TH or TD tag for Table.
+         */
         $this->fieldHeader = Tag::make('span')->class(static::CSS_CLASS_FIELD_HEADER)->contents($this->options->fieldHeader);
         $this->valueHeader = Tag::make('span')->class(static::CSS_CLASS_VALUE_HEADER)->contents($this->options->valueHeader);
 
