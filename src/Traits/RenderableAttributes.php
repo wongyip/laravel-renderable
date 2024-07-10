@@ -3,6 +3,7 @@
 namespace Wongyip\Laravel\Renderable\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 trait RenderableAttributes
 {
@@ -44,6 +45,7 @@ trait RenderableAttributes
             if (isset($this->model)) {
                 return $this->model->getAttribute($name) ?? null;
             }
+            Log::debug(sprintf('Renderable.attribute() no such attribute (%s).', $name));
             return null;
         }
         // Set
