@@ -28,9 +28,10 @@ trait RenderableColumns
     /**
      * Columns to be rendered, unless specified in $this->excluded.
      *
-     * @var array|string[]
+     * @note Either array or TRUE.
+     * @var array|string[]|bool
      */
-    protected array $included = [];
+    protected array|bool $included = [];
 
     /**
      * @deprecated Replaced by include() method.
@@ -125,17 +126,22 @@ trait RenderableColumns
         }
         // Set
         $names = is_array($names) ? $names : [$names];
-        $this->excluded = $replace ? $names : array_merge($this->excluded, $names);
+        $this->excluded = array_unique($replace ? $names : array_merge($this->excluded, $names));
         return $this;
     }
 
     /**
      * Get or set columns to be rendered by names.
      *
+     * Getter:
+     *  - Ignores $replace argument.
+     *  - Respect $excluded property.
+     *
      * Setter:
-     *  1. Take all keys in $this->attributes if $columns is TRUE.
-     *  2. Merge into existing $included property unless $replace is TRUE.
-     *  3. Getter respects $excluded property, ignores $replace argument.
+     *  - Input TRUE to include all columns, ignore $replace argument.
+     *  - Input FALSE to clear the list, ignore $replace argument.
+     *  - In case of array is given, only scalars (except boolean) are taken.
+     *  - Merge input into the list unless $replace is TRUE.
      *
      * @param string|array|string[]|bool|null $names
      * @param bool $replace
@@ -145,14 +151,38 @@ trait RenderableColumns
     {
         // Get
         if (is_null($names)) {
-            if ($denied = array_intersect($this->included, $this->excluded)) {
+            // Evaluate the attribute names actually included.
+            $included = is_array($this->included)
+                ? $this->included
+                : ($this->included ? array_keys($this->attributes) : []);
+            // Blame
+            if ($denied = array_intersect($included, $this->excluded)) {
                 Log::debug(sprintf('Renderable.include() attribute(s) [%s] in both $included & $excluded are EXCLUDED.', implode(', ', $denied)));
             }
-            return array_diff($this->included, $this->excluded);
+            return array_unique(array_diff($included, $this->excluded));
         }
         // Set
-        $names = $names === true ? array_keys($this->attributes()) : (is_array($names) ? $names : [$names]);
-        $this->included = $replace ? $names : array_merge($this->included, $names);
+        if (is_bool($names)) {
+            // TRUE denotes all, while FALSE means clear.
+            $this->included = $names ?: [];
+        }
+        else {
+            if ($this->included === true) {
+                Log::debug('Renderable.include() already including all columns.');
+            }
+            else {
+                // Array
+                if (is_array($names)) {
+                    $names = array_filter($names, function ($name) {
+                        return (is_scalar($name) && !is_bool($name));
+                    });
+                } // String
+                else {
+                    $names = [$names];
+                }
+                $this->included = $replace ? $names : array_merge($this->included, $names);
+            }
+        }
         return $this;
     }
 }

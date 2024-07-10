@@ -1,9 +1,9 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\Table;
-use Wongyip\HTML\TagAbstract;
 use Wongyip\HTML\TBody;
 use Wongyip\HTML\THead;
 use Wongyip\HTML\TR;
@@ -91,9 +91,9 @@ trait LayoutTable
     /**
      * Get the main tag ready to for rendering.
      *
-     * @return TagAbstract
+     * @return RendererInterface
      */
-    public function tablePrepared(): TagAbstract
+    public function tablePrepared(): RendererInterface
     {
         // Columns included (names).
         $included = $this->include();
