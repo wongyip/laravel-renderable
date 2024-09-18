@@ -35,6 +35,7 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @method bool|Renderable renderTableHead(bool $set = null)
  * @method string|bool|Renderable suffix(string $set = null)
  * @method bool|Renderable tableBordered(bool $set = null)
+ * @method bool|Renderable tableBorderless(bool $set = null)
  * @method string|bool|Renderable tableCaptionSide(string $set = null)
  * @method string|bool|Renderable tableClassAppend(string $set = null)
  * @method string|bool|Renderable tableClassBase(string $set = null)
