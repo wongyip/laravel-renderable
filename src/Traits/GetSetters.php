@@ -1,6 +1,20 @@
 <?php namespace Wongyip\Laravel\Renderable\Traits;
 
-trait RenderableGetSetters
+
+
+
+
+
+
+
+
+// Migrate
+
+
+
+
+
+trait GetSetters
 {
     /**
      * Get or set an array-type property's value. Setter default merge into
@@ -11,7 +25,7 @@ trait RenderableGetSetters
      * @param bool $replace
      * @return array|null|static
      */
-    protected function __getSetMergeArray(string $property, array $array = null, bool $replace = false): mixed
+    protected function __merge(string $property, array $array = null, bool $replace = false): mixed
     {
         // Get
         if (is_null($array)) {

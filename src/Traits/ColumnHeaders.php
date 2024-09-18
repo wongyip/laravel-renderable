@@ -4,7 +4,7 @@ namespace Wongyip\Laravel\Renderable\Traits;
 
 use Wongyip\HTML\TagAbstract;
 
-trait RenderableHeaders
+trait ColumnHeaders
 {
     /**
      * The header tag of the "Field" column/row for run-time configurations,

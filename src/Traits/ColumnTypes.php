@@ -6,9 +6,9 @@ use Wongyip\Laravel\Renderable\Components\ColumnOptions;
  * Configure data-type of columns by creating or updating properties of their
  * ColumnsOptions.
  */
-trait RenderableTypes
+trait ColumnTypes
 {
-    use RenderableColumns;
+    use Columns;
 
     /**
      * Set or update type and related options of the given column(s).

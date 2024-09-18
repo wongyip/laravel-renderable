@@ -5,7 +5,7 @@ namespace Wongyip\Laravel\Renderable\Traits;
 use Illuminate\Support\Facades\Log;
 use Wongyip\Laravel\Renderable\Components\ColumnOptions;
 
-trait RenderableColumns
+trait Columns
 {
     /**
      * Columns to be rendered in raw HTML.

@@ -2,27 +2,23 @@
 
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use Wongyip\HTML\Interfaces\RendererInterface;
+use Wongyip\Laravel\Renderable\Renderable;
 use Wongyip\PHPHelpers\Format;
 
 /**
  * @author wongyip
  */
-trait RenderableLabels
+trait ColumnLabels
 {
-    use RenderableGetSetters;
+    use GetSetters;
 
     /**
      * Column labels in plain-text.
      *
-     * @var array|string[]
+     * @var array|string[]|RendererInterface[]
      */
     protected array $labels = [];
-    /**
-     * Columns labels that should be rendered as HTML.
-     *
-     * @var array|string[]
-     */
-    protected array $labelsHTML = [];
 
     /**
      * Extract or generate labels automatically.
@@ -62,10 +58,10 @@ trait RenderableLabels
      * Format::smartCaps($column) if both of them are null.
      *
      * @param string $column
-     * @param string|null $label
-     * @return string|static
+     * @param string|RendererInterface|null $label
+     * @return string|RendererInterface|Renderable|static
      */
-    public function label(string $column, string $label = null): string|static
+    public function label(string $column, string|RendererInterface $label = null): string|RendererInterface|Renderable|static
     {
         // Get
         if (is_null($label)) {
@@ -74,7 +70,7 @@ trait RenderableLabels
                 : ($this->labelFromModel($column) ?? Format::smartCaps($column));
         }
         // Set
-        $this->labels = array_merge($this->labels, [$column => $label]);
+        $this->labels[$column] = $label;
         return $this;
     }
 
@@ -104,49 +100,19 @@ trait RenderableLabels
     }
 
     /**
-     * Get or set the label of a column in HTML format, getter returns null if no
-     * HTML label is set.
-     *
-     * @param string $column
-     * @param string|null $labelHTML
-     * @return string|null|static
-     */
-    public function labelHTML(string $column, string $labelHTML = null): string|null|static
-    {
-        // Get
-        if (is_null($labelHTML)) {
-            return key_exists($column, $this->labelsHTML)
-                ? $this->labelsHTML[$column]
-                : null;
-        }
-        // Set
-        $this->labelsHTML = array_merge($this->labelsHTML, [$column => $labelHTML]);
-        return $this;
-    }
-
-    /**
-     * Get or set labels of columns, setter merge into existing $labels unless
-     * $replace is TRUE.
+     * Get or set labels of columns, setter merge into existing $labels.
      *
      * @param array|null $labels
-     * @param bool $replace
-     * @return array|string[]|static
+     * @return array|string[]|RendererInterface[]|Renderable|static
      */
-    public function labels(array $labels = null, bool $replace = false): array|static
+    public function labels(array $labels = null): array|Renderable|static
     {
-        return $this->__getSetMergeArray('labels', $labels, $replace);
-    }
-
-    /**
-     * Get or set labels of columns in HTML format, setter merge into existing
-     * $labelsHHTML $replace is TRUE.
-     *
-     * @param array|null $labelsHTML
-     * @param bool $replace
-     * @return array|string[]|static
-     */
-    public function labelsHTML(array $labelsHTML = null, bool $replace = false): array|static
-    {
-        return $this->__getSetMergeArray('labelsHTML', $labelsHTML, $replace);
+        // Get
+        if (is_null($labels)) {
+            return $this->labels ?? [];
+        }
+        // Set
+        $this->labels = array_merge($this->lables ?? [], $labels);
+        return $this;
     }
 }

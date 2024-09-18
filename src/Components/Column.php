@@ -21,11 +21,7 @@ class Column
     /**
      * @var string
      */
-    public string $label;
-    /**
-     * @var string
-     */
-    public string $labelHTML;
+    public string|RendererInterface $label;
     /**
      * @var string
      */
@@ -46,16 +42,14 @@ class Column
     /**
      * @param string $name
      * @param mixed $value
-     * @param string|null $label
-     * @param string|null $labelHTML
+     * @param string|RendererInterface|null $label
      * @param ColumnOptions|null $options
      */
-    public function __construct(string $name, mixed $value, string $label = null, string $labelHTML = null,  ColumnOptions $options = null)
+    public function __construct(string $name, mixed $value, string|RendererInterface $label = null, ColumnOptions $options = null)
     {
         $this->name      = $name;
         $this->value     = $value;
         $this->label     = $label ?? Format::smartCaps($name);
-        $this->labelHTML = $labelHTML ?? '';
         $this->options   = $options ?? ColumnOptions::defaults();
     }
 
@@ -108,22 +102,13 @@ class Column
      *
      * @param string $name
      * @param mixed $value
-     * @param string|null $label
-     * @param string|null $labelHTML
+     * @param string|RendererInterface|null $label
      * @param ColumnOptions|null $options
      * @return static
      */
-    public static function init(string $name, mixed $value, string $label = null, string $labelHTML = null, ColumnOptions $options = null): static
+    public static function init(string $name, mixed $value, string|RendererInterface $label = null, ColumnOptions $options = null): static
     {
-        return new static($name, $value, $label, $labelHTML, $options);
-    }
-
-    /**
-     * @return string|RendererInterface
-     */
-    public function labelContents(): string|RendererInterface
-    {
-        return $this->labelHTML ? RawHTML::create($this->labelHTML) : $this->label;
+        return new static($name, $value, $label, $options);
     }
 
     /**
@@ -135,11 +120,9 @@ class Column
      */
     public function labelTag(string $tagName): TagAbstract
     {
-        return Tag::make($tagName)->class(Renderable::CSS_CLASS_LABEL)->contents(
-            $this->labelHTML
-                ? RawHTML::create($this->labelHTML)
-                : $this->label
-        );
+        return Tag::make($tagName)
+            ->class(Renderable::CSS_CLASS_LABEL)
+            ->contents($this->label);
     }
 
     /**

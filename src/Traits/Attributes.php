@@ -5,7 +5,7 @@ namespace Wongyip\Laravel\Renderable\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-trait RenderableAttributes
+trait Attributes
 {
     /**
      * Associative array of attribute values. Note that if an Eloquent model is

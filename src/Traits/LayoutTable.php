@@ -19,14 +19,12 @@ use Wongyip\Laravel\Renderable\Renderable;
 trait LayoutTable
 {
     /**
-     * The main tag of the Renderable object. Note that runtime value of the ID
-     * attribute is ignored by the render() method, and body and head will be
-     * emptied on render.
+     * The main tag of the Renderable object.
      *
      * Notes:
-     *
-     *  1. The THead maybe modified on render() depends on the renderTableHead
-     *     option.
+     *  1. Value of the ID attribute is ignored on render.
+     *  2. Table's class list will be emptied on render.
+     *  3. THead will likely be modified on render depends on various options.s
      *
      * @var Table
      */
@@ -45,10 +43,6 @@ trait LayoutTable
         $this->table = Table::create(
             THead::create()->class(Renderable::CSS_CLASS_TABLE_HEAD),
             TBody::create()->class(Renderable::CSS_CLASS_BODY)
-        )->class(
-            $this->options->tableClassPrepend,
-            Renderable::CSS_CLASS_TABLE,
-            $this->options->tableClassAppend
         );
 
         // @todo Broken now, border glitch at bottom-left corner.
@@ -92,6 +86,7 @@ trait LayoutTable
      * Get the main tag ready to for rendering.
      *
      * @return RendererInterface
+     * @see Renderable::render() Caller
      */
     public function tablePrepared(): RendererInterface
     {
@@ -104,14 +99,27 @@ trait LayoutTable
             return RawHTML::create($html);
         }
 
-        // Get rid of $this...
+        // Less $this...
         $options     = $this->options;
         $table       = $this->table;
         $fieldHeader = $this->fieldHeader;
         $valueHeader = $this->valueHeader;
 
         // Setting things up
-        $table->id($this->id);
+        $table
+            ->id($this->id)
+            ->classEmpty()
+            ->class(
+                $options->tableClassPrepend,
+                Renderable::CSS_CLASS_TABLE,
+                $options->tableClassBase,
+                $options->tableBordered ? 'table-bordered' : '',
+                ($options->tableBorderless && !$options->tableBordered) ? 'table-borderless' : '',
+                $options->tableStriped ? 'table-striped' : '',
+                $options->tableHover ? 'table-hover' : '',
+                $options->tableClassAppend
+            );
+
         $fieldHeader->tagName('th')->contentsEmpty()->contents($options->fieldHeader);
         $valueHeader->tagName('th')->contentsEmpty()->contents($options->valueHeader);
 
@@ -128,11 +136,10 @@ trait LayoutTable
         $columns = [];
         foreach ($included as $name) {
             $columns[$name] = new Column(
-                name:      $name,
-                value:     $this->attribute($name),
-                label:     $this->label($name),
-                labelHTML: $this->labelHTML($name) ?? '',
-                options:   $this->columnOptions($name)
+                name:    $name,
+                value:   $this->attribute($name),
+                label:   $this->label($name),
+                options: $this->columnOptions($name)
             );
         }
 

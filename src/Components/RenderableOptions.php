@@ -77,13 +77,32 @@ class RenderableOptions
      */
     public string $tableCaptionSide;
     /**
-     * Table's CSS class(s) append after Renderable::CSS_CLASS_TABLE.
+     * Table's CSS class(s) appended to the class list on render.
      *
      * @var string
      */
     public string $tableClassAppend;
     /**
-     * Table's CSS class(s) prepend before Renderable::CSS_CLASS_TABLE.
+     * Base css class of table renderable.
+     *
+     * @var string
+     */
+    public string $tableClassBase;
+    /**
+     * Add 'table-bordered' class, before $tableClassAppend.
+     *
+     * @var bool
+     */
+    public bool $tableBordered = true;
+    /**
+     * Add 'table-borderless' class, before $tableClassAppend.
+     * Note: Ignored when $tableBordered is TRUE.
+     *
+     * @var bool
+     */
+    public bool $tableBorderless = true;
+    /**
+     * Table's CSS class(s) prepended on render.
      *
      * @var string
      */
@@ -100,6 +119,18 @@ class RenderableOptions
      * @var bool
      */
     public bool $tableHorizontalHeaders;
+    /**
+     * Add 'table-hover' class, before $tableClassAppend.
+     *
+     * @var bool
+     */
+    public bool $tableHover = false;
+    /**
+     * Add 'table-striped' class, before $tableClassAppend.
+     *
+     * @var bool
+     */
+    public bool $tableStriped = false;
     /**
      * Header of the "Value" column.
      *

@@ -21,11 +21,15 @@ return [
         'prefix'                 => "\n",
         'renderTableHead'        => true,
         'suffix'                 => "\n",
+        'tableBordered'          => true,  // table-bordered
         'tableCaptionSide'       => 'top',
         'tableClassAppend'       => '',
-        'tableClassPrepend'      => 'table table-bordered table-strip',
+        'tableClassBase'         => 'table',
+        'tableClassPrepend'      => '',
         'tableHorizontal'        => false,
         'tableHorizontalHeaders' => false,
+        'tableHover'             => false, // table-hover
+        'tableStriped'           => false, // table-striped
         'valueHeader'            => 'Value',
     ],
     /**

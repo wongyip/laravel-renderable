@@ -11,20 +11,43 @@ use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Components\RenderableOptions;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\LayoutGrid;
-use Wongyip\Laravel\Renderable\Traits\RenderableAttributes;
-use Wongyip\Laravel\Renderable\Traits\RenderableColumns;
-use Wongyip\Laravel\Renderable\Traits\RenderableHeaders;
-use Wongyip\Laravel\Renderable\Traits\RenderableLabels;
+use Wongyip\Laravel\Renderable\Traits\Attributes;
+use Wongyip\Laravel\Renderable\Traits\Columns;
+use Wongyip\Laravel\Renderable\Traits\ColumnHeaders;
+use Wongyip\Laravel\Renderable\Traits\ColumnLabels;
 use Wongyip\Laravel\Renderable\Traits\LayoutTable;
-use Wongyip\Laravel\Renderable\Traits\RenderableTypes;
+use Wongyip\Laravel\Renderable\Traits\ColumnTypes;
 use Wongyip\Laravel\Renderable\Utils\HTML;
 
 /**
  * @method string|Renderable id(string $setter = null)
+ *
+ * @see RenderableOptions
+ * @see /config/renderable.php
+ * @method bool|Renderable beautifyHTML(bool $set = null)
+ * @method string|bool|Renderable containerIdSuffix(string $set = null)
+ * @method string|bool|Renderable emptyRecord(string $set = null)
+ * @method string|bool|Renderable fieldHeader(string $set = null)
+ * @method string|bool|Renderable gridClassAppend(string $set = null)
+ * @method string|bool|Renderable gridClassPrepend(string $set = null)
+ * @method string|bool|Renderable idPrefix(string $set = null)
+ * @method string|bool|Renderable prefix(string $set = null)
+ * @method bool|Renderable renderTableHead(bool $set = null)
+ * @method string|bool|Renderable suffix(string $set = null)
+ * @method bool|Renderable tableBordered(bool $set = null)
+ * @method string|bool|Renderable tableCaptionSide(string $set = null)
+ * @method string|bool|Renderable tableClassAppend(string $set = null)
+ * @method string|bool|Renderable tableClassBase(string $set = null)
+ * @method string|bool|Renderable tableClassPrepend(string $set = null)
+ * @method bool|Renderable tableHorizontal(bool $set = null)
+ * @method bool|Renderable tableHorizontalHeaders(bool $set = null)
+ * @method bool|Renderable tableHover(bool $set = null)
+ * @method bool|Renderable tableStriped(bool $set = null)
+ * @method string|bool|Renderable valueHeader(string $set = null)
  */
 class Renderable implements RendererInterface
 {
-    use RenderableAttributes, RenderableColumns, RenderableHeaders, RenderableLabels, RenderableTypes;
+    use Attributes, Columns, ColumnHeaders, ColumnLabels, ColumnTypes;
 
     // Layouts
     use LayoutGrid, LayoutTable;
@@ -44,6 +67,10 @@ class Renderable implements RendererInterface
     const LAYOUT_DEFAULT         = 'table';
     const LAYOUT_TABLE           = 'table';
     const LAYOUT_GRID            = 'grid';
+
+    private array $__exposed = [
+        'id',
+    ];
 
     /**
      * The ID attribute of the main renderable HTML tag. Noted that this ID will
@@ -153,14 +180,26 @@ class Renderable implements RendererInterface
      */
     public function __call(string $name, array $arguments)
     {
-        // Get-setters
-        if ($name === 'id') {
-            if (isset($arguments[0])) {
-                $this->$name = $arguments[0];
-                return $this;
+        // Properties get-setters
+        if (in_array($name, $this->__exposed)) {
+            $set = $arguments[0] ?? null;
+            if (is_null($set)) {
+                return $this->$name ?? null;
             }
-            return $this->$name;
+            $this->$name = $set;
+            return $this;
         }
+
+        // Options get-setters
+        if (property_exists($this->options, $name)) {
+            $set = $arguments[0] ?? null;
+            if (is_null($set)) {
+                return $this->options->$name ?? null;
+            }
+            $this->options->$name = $set;
+            return $this;
+        }
+
         throw new Exception(sprintf('Undefined method "%s.%s()" called.', (new ReflectionClass($this))->getShortName(), $name));
     }
 
@@ -203,6 +242,11 @@ class Renderable implements RendererInterface
         return $this;
     }
 
+    public function options()
+    {
+
+    }
+
     /**
      * Render the data-model according to the current settings.
      *
@@ -226,7 +270,10 @@ class Renderable implements RendererInterface
         $container = clone $this->container;
         $container->id(($this->id . $this->options->containerIdSuffix));
 
-        // Get the contents tag(s) prepared by the layout-trait.
+        /**
+         * Get the contents tag(s) prepared by the layout-trait.
+         * @see
+         */
         $method = $this->layout() . 'Prepared';
         $contents = $this->$method();
 
