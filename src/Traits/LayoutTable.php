@@ -113,8 +113,8 @@ trait LayoutTable
                 $options->tableClassPrepend,
                 Renderable::CSS_CLASS_TABLE,
                 $options->tableClassBase,
+                $options->tableBorderless ? 'table-borderless' : '',
                 $options->tableBordered ? 'table-bordered' : '',
-                ($options->tableBorderless && !$options->tableBordered) ? 'table-borderless' : '',
                 $options->tableStriped ? 'table-striped' : '',
                 $options->tableHover ? 'table-hover' : '',
                 $options->tableClassAppend

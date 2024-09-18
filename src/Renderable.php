@@ -25,26 +25,26 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @see RenderableOptions
  * @see /config/renderable.php
  * @method bool|Renderable beautifyHTML(bool $set = null)
- * @method string|bool|Renderable containerIdSuffix(string $set = null)
- * @method string|bool|Renderable emptyRecord(string $set = null)
- * @method string|bool|Renderable fieldHeader(string $set = null)
- * @method string|bool|Renderable gridClassAppend(string $set = null)
- * @method string|bool|Renderable gridClassPrepend(string $set = null)
- * @method string|bool|Renderable idPrefix(string $set = null)
- * @method string|bool|Renderable prefix(string $set = null)
+ * @method string|Renderable containerIdSuffix(string $set = null)
+ * @method string|Renderable emptyRecord(string $set = null)
+ * @method string|Renderable fieldHeader(string $set = null)
+ * @method string|Renderable gridClassAppend(string $set = null)
+ * @method string|Renderable gridClassPrepend(string $set = null)
+ * @method string|Renderable idPrefix(string $set = null)
+ * @method string|RendererInterface|Renderable prefix(string|RendererInterface $set = null)
  * @method bool|Renderable renderTableHead(bool $set = null)
- * @method string|bool|Renderable suffix(string $set = null)
+ * @method string|RendererInterface|Renderable suffix(string|RendererInterface $set = null)
  * @method bool|Renderable tableBordered(bool $set = null)
  * @method bool|Renderable tableBorderless(bool $set = null)
- * @method string|bool|Renderable tableCaptionSide(string $set = null)
- * @method string|bool|Renderable tableClassAppend(string $set = null)
- * @method string|bool|Renderable tableClassBase(string $set = null)
- * @method string|bool|Renderable tableClassPrepend(string $set = null)
+ * @method string|Renderable tableCaptionSide(string $set = null)
+ * @method string|Renderable tableClassAppend(string $set = null)
+ * @method string|Renderable tableClassBase(string $set = null)
+ * @method string|Renderable tableClassPrepend(string $set = null)
  * @method bool|Renderable tableHorizontal(bool $set = null)
  * @method bool|Renderable tableHorizontalHeaders(bool $set = null)
  * @method bool|Renderable tableHover(bool $set = null)
  * @method bool|Renderable tableStriped(bool $set = null)
- * @method string|bool|Renderable valueHeader(string $set = null)
+ * @method string|Renderable valueHeader(string $set = null)
  */
 class Renderable implements RendererInterface
 {
@@ -194,10 +194,20 @@ class Renderable implements RendererInterface
         // Options get-setters
         if (property_exists($this->options, $name)) {
             $set = $arguments[0] ?? null;
+            // Get
             if (is_null($set)) {
                 return $this->options->$name ?? null;
             }
+            // Set
             $this->options->$name = $set;
+            // Neglect operation.
+            if ($name === 'tableBorderless') {
+                $this->options->tableBordered = !$set;
+            }
+            elseif ($name === 'tableBordered') {
+                $this->options->tableBorderless = !$set;
+            }
+
             return $this;
         }
 
@@ -279,7 +289,11 @@ class Renderable implements RendererInterface
         $contents = $this->$method();
 
         // Wrap everything with the common container and render the output.
-        $naughtyHTML = $container->contents($this->options->prefix, $contents, $this->options->suffix)->render();
+        $naughtyHTML = $container->contents(
+            $this->options->prefix ?? '',
+            $contents,
+            $this->options->suffix ?? '',
+        )->render();
 
         /**
          * Sanitize HTML before output, with HTML Purifier (default config).

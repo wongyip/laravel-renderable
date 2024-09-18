@@ -1,6 +1,7 @@
 <?php namespace Wongyip\Laravel\Renderable\Components;
 
 use Illuminate\Support\Facades\Log;
+use Wongyip\HTML\Interfaces\RendererInterface;
 
 /**
  * Options and switches of the Renderable object.
@@ -55,9 +56,9 @@ class RenderableOptions
     /**
      * String prepended to the contents HTML.
      *
-     * @var string
+     * @var string|RendererInterface
      */
-    public string $prefix;
+    public string|RendererInterface $prefix;
     /**
      * Effective for vertical table layout only.
      *
@@ -67,9 +68,9 @@ class RenderableOptions
     /**
      * String appended to the contents HTML.
      *
-     * @var string
+     * @var string|RendererInterface
      */
-    public string $suffix;
+    public string|RendererInterface $suffix;
     /**
      * Table's caption CSS 'caption-side: bottom|inherit|initial|revert|revert-layer|top|unset'.
      *

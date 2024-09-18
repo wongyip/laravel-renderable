@@ -22,6 +22,7 @@ return [
         'renderTableHead'        => true,
         'suffix'                 => "\n",
         'tableBordered'          => true,  // table-bordered
+        'tableBorderless'        => false,  // table-borderless
         'tableCaptionSide'       => 'top',
         'tableClassAppend'       => '',
         'tableClassBase'         => 'table',
