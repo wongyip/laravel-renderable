@@ -5,6 +5,7 @@ use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\Table;
 use Wongyip\HTML\TBody;
+use Wongyip\HTML\TH;
 use Wongyip\HTML\THead;
 use Wongyip\HTML\TR;
 use Wongyip\Laravel\Renderable\Components\Column;
@@ -102,8 +103,6 @@ trait LayoutTable
         // Less $this...
         $options     = $this->options;
         $table       = $this->table;
-        $fieldHeader = $this->fieldHeader;
-        $valueHeader = $this->valueHeader;
 
         // Setting things up
         $table
@@ -119,9 +118,6 @@ trait LayoutTable
                 $options->tableHover ? 'table-hover' : '',
                 $options->tableClassAppend
             );
-
-        $fieldHeader->tagName('th')->contentsEmpty()->contents($options->fieldHeader);
-        $valueHeader->tagName('th')->contentsEmpty()->contents($options->valueHeader);
 
         // Position the caption if set.
         if ($table->hasCaption()) {
@@ -145,20 +141,23 @@ trait LayoutTable
 
         // Vertical (default).
         if (!$options->tableHorizontal) {
-            /**
-             * Add header cells, or leave the THead empty for not rendering,
-             * which HTML Purifier in the render() method will remove empty tags
-             * by default.
-             */
-            if ($options->renderTableHead) {
-                $table->head->addRows(
-                    TR::create($fieldHeader, $valueHeader)
-                );
+
+            // THead
+            if ($headers = $this->columnHeaders()) {
+                $cells = count($headers) === 1
+                    ? [TH::create($headers[0])->attribute('colspan', 2),]
+                    : [TH::create($headers[0]), TH::create($headers[1])];
+                $table->head->addRows(TR::create(...$cells));
             }
+
             // Fill table body with rows of data-columns.
             foreach ($columns as $name => $column) {
                 $table->body->addRows(
-                    TR::create($column->labelTag('th'), $column->valueTag('td'))->class('field-' . $name)
+                    TR::create(
+                        $column->labelTag('th')->style('width', $this->options->tableLabelCellWidth ?? 'auto'),
+                        $column->valueTag('td')
+                    )
+                    ->class('field-' . $name)
                 );
             }
         }

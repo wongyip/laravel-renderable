@@ -14,24 +14,22 @@ return [
         'beautifyHTML'           => env('RENDERABLE_BEAUTIFY_HTML', false),
         'containerIdSuffix'      => '-container',
         'emptyRecord'            => 'Empty record.',
-        'fieldHeader'            => 'Field',
         'gridClassAppend'        => '',
         'gridClassPrepend'       => 'row',
         'idPrefix'               => 'renderable-',
         'prefix'                 => "\n",
-        'renderTableHead'        => true,
         'suffix'                 => "\n",
         'tableBordered'          => true,  // table-bordered
-        'tableBorderless'        => false,  // table-borderless
+        'tableBorderless'        => false, // table-borderless
         'tableCaptionSide'       => 'top',
         'tableClassAppend'       => '',
         'tableClassBase'         => 'table',
         'tableClassPrepend'      => '',
+        'tableLabelCellWidth'    => 'auto',
         'tableHorizontal'        => false,
         'tableHorizontalHeaders' => false,
         'tableHover'             => false, // table-hover
         'tableStriped'           => false, // table-striped
-        'valueHeader'            => 'Value',
     ],
     /**
      * @see \Wongyip\Laravel\Renderable\Components\ColumnOptions

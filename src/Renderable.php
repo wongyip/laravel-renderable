@@ -7,7 +7,6 @@ use ReflectionClass;
 use Wongyip\HTML\Beautify;
 use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\Tag;
-use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Components\RenderableOptions;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
 use Wongyip\Laravel\Renderable\Traits\LayoutGrid;
@@ -20,19 +19,18 @@ use Wongyip\Laravel\Renderable\Traits\ColumnTypes;
 use Wongyip\Laravel\Renderable\Utils\HTML;
 
 /**
- * @method string|Renderable id(string $setter = null)
+ * @method string|Renderable id(string $id = null)
+ * @method RenderableOptions|Renderable options(RendererInterface $options = null)
  *
  * @see RenderableOptions
  * @see /config/renderable.php
  * @method bool|Renderable beautifyHTML(bool $set = null)
  * @method string|Renderable containerIdSuffix(string $set = null)
  * @method string|Renderable emptyRecord(string $set = null)
- * @method string|Renderable fieldHeader(string $set = null)
  * @method string|Renderable gridClassAppend(string $set = null)
  * @method string|Renderable gridClassPrepend(string $set = null)
  * @method string|Renderable idPrefix(string $set = null)
  * @method string|RendererInterface|Renderable prefix(string|RendererInterface $set = null)
- * @method bool|Renderable renderTableHead(bool $set = null)
  * @method string|RendererInterface|Renderable suffix(string|RendererInterface $set = null)
  * @method bool|Renderable tableBordered(bool $set = null)
  * @method bool|Renderable tableBorderless(bool $set = null)
@@ -43,8 +41,8 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @method bool|Renderable tableHorizontal(bool $set = null)
  * @method bool|Renderable tableHorizontalHeaders(bool $set = null)
  * @method bool|Renderable tableHover(bool $set = null)
+ * @method string|Renderable tableLabelCellWidth(string $set = null)
  * @method bool|Renderable tableStriped(bool $set = null)
- * @method string|Renderable valueHeader(string $set = null)
  */
 class Renderable implements RendererInterface
 {
@@ -58,19 +56,17 @@ class Renderable implements RendererInterface
 
     const CSS_CLASS_BODY         = 'renderable-body';
     const CSS_CLASS_CONTAINER    = 'renderable-container';
-    const CSS_CLASS_FIELD_HEADER = 'renderable-field-header';
     const CSS_CLASS_GRID         = 'renderable-grid';
     const CSS_CLASS_LABEL        = 'renderable-label';
     const CSS_CLASS_TABLE        = 'renderable-table';
     const CSS_CLASS_TABLE_HEAD   = 'thead-light';
     const CSS_CLASS_VALUE        = 'renderable-value';
-    const CSS_CLASS_VALUE_HEADER = 'renderable-value-header';
     const LAYOUT_DEFAULT         = 'table';
     const LAYOUT_TABLE           = 'table';
     const LAYOUT_GRID            = 'grid';
 
     private array $__exposed = [
-        'id',
+        'id', 'options',
     ];
 
     /**
@@ -96,16 +92,16 @@ class Renderable implements RendererInterface
      * The container of the main tag. Note that runtime value of the ID attribute
      * is ignored by the render() method.
      *
-     * @var TagAbstract
+     * @var RendererInterface
      */
-    public TagAbstract $container;
+    protected RendererInterface $container;
     /**
      * Options and switches.
      *
      * @var RenderableOptions
      * @see /config/renderable.php
      */
-    public RenderableOptions $options;
+    protected RenderableOptions $options;
 
     /**
      * The Renderable object.
@@ -158,12 +154,6 @@ class Renderable implements RendererInterface
         // Wrapper (no need to set ID), and other components.
         $this->container = Tag::make('div')->classAdd(static::CSS_CLASS_CONTAINER);
 
-        /**
-         * @todo To be moved to layout method, and replace with TH or TD tag for Table.
-         */
-        $this->fieldHeader = Tag::make('span')->class(static::CSS_CLASS_FIELD_HEADER)->contents($this->options->fieldHeader);
-        $this->valueHeader = Tag::make('span')->class(static::CSS_CLASS_VALUE_HEADER)->contents($this->options->valueHeader);
-
         // Take other params.
         $this->layout($layout ?? static::LAYOUT_DEFAULT);
         $this->include($included);
@@ -200,12 +190,19 @@ class Renderable implements RendererInterface
             }
             // Set
             $this->options->$name = $set;
-            // Neglect operation.
-            if ($name === 'tableBorderless') {
-                $this->options->tableBordered = !$set;
-            }
-            elseif ($name === 'tableBordered') {
-                $this->options->tableBorderless = !$set;
+
+            /**
+             * Disable the opposite option on enabled. Note that they could be
+             * disabled at the same time, so it's not necessary to enable the
+             * opposite one on disabled.
+             */
+            if ($set) {
+                if ($name === 'tableBorderless') {
+                    $this->options->tableBordered = false;
+                }
+                elseif ($name === 'tableBordered') {
+                    $this->options->tableBorderless = false;
+                }
             }
 
             return $this;
@@ -251,11 +248,6 @@ class Renderable implements RendererInterface
             }
         }
         return $this;
-    }
-
-    public function options()
-    {
-
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Wongyip\HTML\Interfaces\RendererInterface;
+use Wongyip\Laravel\Renderable\Traits\ColumnHeaders;
 
 /**
  * Options and switches of the Renderable object.
@@ -33,6 +34,8 @@ class RenderableOptions
      * Header of the "Field" column.
      *
      * @var string
+     * @deprecated
+     * @see ColumnHeaders::$columnHeaders
      */
     public string $fieldHeader;
     /**
@@ -63,6 +66,8 @@ class RenderableOptions
      * Effective for vertical table layout only.
      *
      * @var bool
+     * @deprecated
+     * @see ColumnHeaders::$columnHeaders
      */
     public bool $renderTableHead;
     /**
@@ -127,15 +132,21 @@ class RenderableOptions
      */
     public bool $tableHover = false;
     /**
+     * CSS width value with unit, for 'tbody > tr > td:first-child'.
+     *
+     * @var string
+     */
+    public string $tableLabelCellWidth;
+    /**
      * Add 'table-striped' class, before $tableClassAppend.
      *
      * @var bool
      */
     public bool $tableStriped = false;
     /**
-     * Header of the "Value" column.
-     *
      * @var string
+     * @deprecated
+     * @see ColumnHeaders::$columnHeaders
      */
     public string $valueHeader;
 

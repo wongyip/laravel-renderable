@@ -114,7 +114,6 @@ class Column
     /**
      * Export a label tag base on options.
      *
-     * @deprecated
      * @param string $tagName
      * @return TagAbstract
      */
@@ -134,7 +133,6 @@ class Column
      *
      * @param string $tagName
      * @return TagAbstract
-     * @deprecated
      */
     public function valueTag(string $tagName): TagAbstract
     {

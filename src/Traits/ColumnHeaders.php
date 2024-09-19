@@ -2,74 +2,89 @@
 
 namespace Wongyip\Laravel\Renderable\Traits;
 
-use Wongyip\HTML\TagAbstract;
+use Illuminate\Support\Facades\Log;
+use Wongyip\HTML\Interfaces\RendererInterface;
+use Wongyip\Laravel\Renderable\Components\RenderableOptions;
+use Wongyip\Laravel\Renderable\Renderable;
 
 trait ColumnHeaders
 {
     /**
-     * The header tag of the "Field" column/row for run-time configurations,
-     * where its tag-name and inner contents will be ignored on output.
-     *
-     * @var TagAbstract
+     * @var array|string[]|RendererInterface[]
      */
-    public TagAbstract $fieldHeader;
-    /**
-     * The header tag of the "Value" column/row for run-time configurations,
-     * where its tag-name and inner contents will be ignored on output.
-     *
-     * @var TagAbstract
-     */
-    public TagAbstract $valueHeader;
+    protected array $columnHeaders = [
+        'Field',
+        'Value',
+    ];
 
     /**
-     * Get or set the "Field" header style. Setter default replace existing unless
-     * $keepExisting is true.
+     * Insert FALSE in first argument to disable (skip rendering) of the THead.
+     * Insert on string or RendererInterface to render a THead with one TH cell
+     * spanning across two columns.
      *
-     * Although it could be done by $this->fieldHeader->styleAppend($setter), the
-     * advantage of this method is that it returns the Renderable for chaining.
+     * N.B. Applied to VERTICAL TABLE only.
      *
-     * @todo Grid layout support to be added.
-     *
-     * @param string|null $setter
-     * @param bool|null $keepExisting
-     * @return string|null|static
+     * @param bool|string|RendererInterface ...$headers
+     * @return array|string[]|RendererInterface[]|Renderable|static
      */
-    public function fieldHeaderStyle(string $setter = null, bool $keepExisting = null): string|null|static
+    public function columnHeaders(bool|string|RendererInterface...$headers): array|Renderable|static
     {
-        // Get
-        if (is_null($setter)) {
-            return $this->fieldHeader->style();
+        if (empty($headers)) {
+            return $this->columnHeaders;
         }
-        // Set
-        if (!$keepExisting) {
-            // Replace
-            $this->fieldHeader->styleEmpty();
+
+        if ($headers[0] === false) {
+            $this->columnHeaders = [];
         }
-        $this->fieldHeader->styleAppend($setter);
+        else {
+            $headers = array_filter($headers, function ($header) { return is_string($header) || $header instanceof RendererInterface; });
+            $this->columnHeaders = array_slice($headers, 0, 2);
+        }
         return $this;
     }
 
     /**
-     * Get or set the "Field" header's width in pixels. Getter return null if
-     * CSS width property is not set, or not in "px". Setter replace CSS width
-     * property regardless of unit.
-     *
-     * @param int|null $setter
-     * @return int|null|static
+     * @param string|null $set
+     * @param bool|null $keepExisting
+     * @return string|null|static
+     * @deprecated Keep for compatibility
      */
-    public function fieldHeaderWidth(int $setter = null): int|null|static
+    public function fieldHeaderStyle(string $set = null, bool $keepExisting = null): string|null|static
     {
-        // Get
-        if (is_null($setter)) {
-            if ($value = $this->fieldHeader->styleProperty('width')) {
-                if (preg_match("/(\d+)px/", $value, $match)) {
-                    return (int) $match[1];
-                }
-            }
-            return null;
+        Log::warning('DEPRECATED Renderable::fieldHeaderStyle() called.');
+        return is_null($set) ? '' : $this;
+    }
+
+    /**
+     * @param int|null $set
+     * @return int|null|static
+     * @see RenderableOptions::$tableLabelCellWidth
+     * @deprecated Keep for compatibility
+     */
+    public function fieldHeaderWidth(int $set = null): int|null|static
+    {
+        Log::warning('DEPRECATED Renderable::fieldHeaderWidth() called.');
+        // Make it compatible.
+        if (is_null($set)) {
+            $value = $this->tableLabelCellWidth();
+            return (int) $value;
         }
-        // Set
-        $this->fieldHeader->styleProperty('width', $setter . 'px', true);
+        $this->tableLabelCellWidth("{$set}px");
+        return $this;
+    }
+
+    /**
+     * @param bool|null $set
+     * @return bool|Renderable|static
+     * @deprecated Keep for compatibility
+     */
+    public function renderTableHead(bool $set = null): bool|Renderable|static
+    {
+        Log::warning('DEPRECATED Renderable::renderTableHead() called.');
+        if (is_null($set)) {
+            return !empty($this->columnHeaders());
+        }
+        $this->columnHeaders($set, $set);
         return $this;
     }
 }
