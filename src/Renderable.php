@@ -38,7 +38,6 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @method string|Renderable tableClassAppend(string $set = null)
  * @method string|Renderable tableClassBase(string $set = null)
  * @method string|Renderable tableClassPrepend(string $set = null)
- * @method bool|Renderable tableHorizontal(bool $set = null)
  * @method bool|Renderable tableHorizontalHeaders(bool $set = null)
  * @method bool|Renderable tableHover(bool $set = null)
  * @method string|Renderable tableLabelCellWidth(string $set = null)

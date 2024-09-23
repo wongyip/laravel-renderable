@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Wongyip\HTML\Interfaces\RendererInterface;
+use Wongyip\Laravel\Renderable\Renderable;
 use Wongyip\Laravel\Renderable\Traits\ColumnHeaders;
 
 /**
@@ -117,6 +118,8 @@ class RenderableOptions
      * Whether fields are rendered horizontally in table layout.
      *
      * @var bool
+     * @note This is NOT accessible via the parent Renderable::class.
+     * @see Renderable::tableHorizontal()
      */
     public bool $tableHorizontal;
     /**
