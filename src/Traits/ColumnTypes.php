@@ -110,18 +110,18 @@ trait ColumnTypes
      * @param string|array|string[] $names
      * @param string|bool|null $icon Default null for no icon, set TRUE for default icon, string for icon with matching name.
      * @param bool|null $iconAfterLink Placement of the icon.
+     * @param string|null $linkText
      * @return static
      * @see ColumnOptions::ICON_POSITION_AFTER
      * @see ColumnOptions::ICON_POSITION_BEFORE
-     *
      */
-    public function typeLink(array|string $names, string|bool $icon = null, bool $iconAfterLink = null): static
+    public function typeLink(array|string $names, string|bool $icon = null, bool $iconAfterLink = null, string $linkText = null): static
     {
         $icon = $icon ? ($icon === true ? ColumnOptions::ICON_DEFAULT_LINK : $icon) : '';
         $iconPosition = $iconAfterLink
             ? ColumnOptions::ICON_POSITION_AFTER
             : ColumnOptions::ICON_POSITION_BEFORE;
-        return $this->__typeColumns($names, 'link', compact('icon', 'iconPosition'));
+        return $this->__typeColumns($names, 'link', compact('icon', 'iconPosition', 'linkText'));
     }
 
     /**

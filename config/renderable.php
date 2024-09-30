@@ -41,6 +41,7 @@ return [
         'iconPosition' => 'before', // or 'after'
         'itemClass'    => '',
         'itemStyle'    => '',
+        'linkText'     => null,
         'listClass'    => '',
         'listStyle'    => '',
         'type'         => 'text',

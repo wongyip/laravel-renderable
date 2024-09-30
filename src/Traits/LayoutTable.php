@@ -101,8 +101,8 @@ trait LayoutTable
         }
 
         // Less $this...
-        $options     = $this->options;
-        $table       = $this->table;
+        $options = $this->options;
+        $table   = $this->table;
 
         // Setting things up
         $table

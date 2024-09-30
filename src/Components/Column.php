@@ -12,8 +12,6 @@ use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Renderable;
 use Wongyip\Laravel\Renderable\Tags\Icon;
-use Wongyip\Laravel\Renderable\Tags\LinkWithIcon;
-use Wongyip\Laravel\Renderable\Tags\Raw;
 use Wongyip\PHPHelpers\Format;
 
 class Column
@@ -218,7 +216,7 @@ class Column
      */
     private function valueTagLink(string $tagName): TagAbstract
     {
-        $link = Anchor::create($this->value, $this->value);
+        $link = Anchor::create($this->value, $this->options->linkText ?? $this->value);
         if ($this->options->icon) {
             if ($this->options->iconPosition === ColumnOptions::ICON_POSITION_BEFORE) {
                 $link->contentsPrepend(Icon::create($this->options->icon, true), RawHTML::NBSP());

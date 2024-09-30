@@ -39,6 +39,11 @@ class ColumnOptions
      */
     public string $iconPosition;
     /**
+     * Text caption of link column.
+     * @var string|null
+     */
+    public string|null $linkText;
+    /**
      * Used by type: ol, ul.
      *
      * @var string
