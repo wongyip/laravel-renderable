@@ -33,16 +33,16 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @method string|Renderable idPrefix(string $set = null)
  * @method string|RendererInterface|Renderable prefix(string|RendererInterface $set = null)
  * @method string|RendererInterface|Renderable suffix(string|RendererInterface $set = null)
- * @method bool|Renderable tableBordered(bool $set = null)
- * @method bool|Renderable tableBorderless(bool $set = null)
+ * @method bool|Renderable tableBordered(bool $set = null) Get or toggle table-bordered styling.
+ * @method bool|Renderable tableBorderless(bool $set = null) Get or toggle table-borderless styling.
  * @method string|Renderable tableCaptionSide(string $set = null)
  * @method string|Renderable tableClassAppend(string $set = null)
  * @method string|Renderable tableClassBase(string $set = null)
  * @method string|Renderable tableClassPrepend(string $set = null)
  * @method bool|Renderable tableHorizontalHeaders(bool $set = null)
- * @method bool|Renderable tableHover(bool $set = null)
- * @method string|Renderable tableLabelCellWidth(string $set = null)
- * @method bool|Renderable tableStriped(bool $set = null)
+ * @method bool|Renderable tableHover(bool $set = null) Get or toggle table-hover styling.
+ * @method string|Renderable tableLabelCellWidth(string $set = null) Get or set CSS width of 'tbody > tr > td:first-child', integer value will be suffixed with default unit 'px' on output.
+ * @method bool|Renderable tableStriped(bool $set = null) Get or toggle table-striped styling.
  */
 class Renderable implements RendererInterface
 {

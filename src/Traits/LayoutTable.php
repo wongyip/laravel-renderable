@@ -152,9 +152,11 @@ trait LayoutTable
 
             // Fill table body with rows of data-columns.
             foreach ($columns as $name => $column) {
+                $labelCellWidth = $this->options->tableLabelCellWidth ?? 'auto';
+                $labelCellWidth = preg_match("/^\d+$/", $labelCellWidth) ? $labelCellWidth . 'px' : $labelCellWidth;
                 $table->body->addRows(
                     TR::create(
-                        $column->labelTag('th')->style('width', $this->options->tableLabelCellWidth ?? 'auto'),
+                        $column->labelTag('th')->style('width', $labelCellWidth),
                         $column->valueTag('td')
                     )
                     ->class('field-' . $name)

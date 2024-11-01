@@ -135,7 +135,8 @@ class RenderableOptions
      */
     public bool $tableHover = false;
     /**
-     * CSS width value with unit, for 'tbody > tr > td:first-child'.
+     * CSS width of 'tbody > tr > td:first-child', integer value will be
+     * suffixed with default unit 'px' on output.
      *
      * @var string
      */
