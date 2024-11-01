@@ -2,6 +2,8 @@
 
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Wongyip\Laravel\Renderable\Renderable;
+use Wongyip\Laravel\Renderable\Traits\ColumnContents;
 
 /**
  * Customizations and options of a renderable column.
@@ -67,6 +69,23 @@ class ColumnOptions
      * @var string
      */
     public string $listStyle;
+    /**
+     * Effective on scrolling enabled.
+     *
+     * @var int
+     */
+    public int $maxHeight;
+    /**
+     * Effective on scrolling enabled.
+     *
+     * @var int
+     */
+    public int $maxWidth;
+    /**
+     * @var int
+     * @see Renderable::scrolling()
+     */
+    public int $scrolling;
     /**
      * Expected data-type of the value.
      *

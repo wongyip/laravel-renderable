@@ -1,7 +1,6 @@
 <?php namespace Wongyip\Laravel\Renderable;
 
 use Exception;
-use HTMLPurifier_Config;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
 use Wongyip\HTML\Beautify;
@@ -9,6 +8,7 @@ use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\Tag;
 use Wongyip\Laravel\Renderable\Components\RenderableOptions;
 use Wongyip\Laravel\Renderable\Traits\Bootstrap4Trait;
+use Wongyip\Laravel\Renderable\Traits\ColumnContents;
 use Wongyip\Laravel\Renderable\Traits\LayoutGrid;
 use Wongyip\Laravel\Renderable\Traits\Attributes;
 use Wongyip\Laravel\Renderable\Traits\Columns;
@@ -19,11 +19,12 @@ use Wongyip\Laravel\Renderable\Traits\ColumnTypes;
 use Wongyip\Laravel\Renderable\Utils\HTML;
 
 /**
- * @method string|Renderable id(string $id = null)
- * @method RenderableOptions|Renderable options(RendererInterface $options = null)
- *
  * @see RenderableOptions
  * @see /config/renderable.php
+ * -----------------------------------------------------------------------------
+ * @method string|Renderable id(string $id = null)
+ * @method RenderableOptions|Renderable options(RendererInterface $options = null)
+ * -----------------------------------------------------------------------------
  * @method bool|Renderable beautifyHTML(bool $set = null)
  * @method string|Renderable containerIdSuffix(string $set = null)
  * @method string|Renderable emptyRecord(string $set = null)
@@ -45,7 +46,7 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  */
 class Renderable implements RendererInterface
 {
-    use Attributes, Columns, ColumnHeaders, ColumnLabels, ColumnTypes;
+    use Attributes, Columns, ColumnContents, ColumnHeaders, ColumnLabels, ColumnTypes;
 
     // Layouts
     use LayoutGrid, LayoutTable;
@@ -53,16 +54,17 @@ class Renderable implements RendererInterface
     // @todo Review needed.
     use Bootstrap4Trait;
 
-    const CSS_CLASS_BODY         = 'renderable-body';
-    const CSS_CLASS_CONTAINER    = 'renderable-container';
-    const CSS_CLASS_GRID         = 'renderable-grid';
-    const CSS_CLASS_LABEL        = 'renderable-label';
-    const CSS_CLASS_TABLE        = 'renderable-table';
-    const CSS_CLASS_TABLE_HEAD   = 'thead-light';
-    const CSS_CLASS_VALUE        = 'renderable-value';
-    const LAYOUT_DEFAULT         = 'table';
-    const LAYOUT_TABLE           = 'table';
-    const LAYOUT_GRID            = 'grid';
+    const CSS_CLASS_BODY            = 'renderable-body';
+    const CSS_CLASS_CONTAINER       = 'renderable-container';
+    const CSS_CLASS_GRID            = 'renderable-grid';
+    const CSS_CLASS_LABEL           = 'renderable-label';
+    const CSS_CLASS_TABLE           = 'renderable-table';
+    const CSS_CLASS_TABLE_HEAD      = 'thead-light';
+    const CSS_CLASS_VALUE           = 'renderable-value';
+    const CSS_CLASS_VALUE_CONTAINER = 'renderable-value-container';
+    const LAYOUT_DEFAULT            = 'table';
+    const LAYOUT_TABLE              = 'table';
+    const LAYOUT_GRID               = 'grid';
 
     private array $__exposed = [
         'id', 'options',
@@ -264,7 +266,6 @@ class Renderable implements RendererInterface
      * @param array|null $adHocAttrs
      * @param array|null $adHocOptions
      * @return string
-     * @see Renderable::tablePrepared()
      */
     public function render(array $adHocAttrs = null, array $adHocOptions = null): string
     {
@@ -274,7 +275,7 @@ class Renderable implements RendererInterface
 
         /**
          * Get the contents tag(s) prepared by the layout-trait.
-         * @see
+         * @see Renderable::tablePrepared()
          */
         $method = $this->layout() . 'Prepared';
         $contents = $this->$method();
@@ -287,13 +288,34 @@ class Renderable implements RendererInterface
         )->render();
 
         /**
-         * Sanitize HTML before output, with HTML Purifier (default config).
+         * Sanitize HTML before output with HTML Purifier, using config for
+         * trusted contents.
+         *
+         * IMPORTANT: user contributed content should be sanitized BEFORE
+         * injecting to the column.
+         *
+         * @see Column::valueTag()
+         */
+        $config = HTML::purifierConfig(HTML::PURIFY_MODE_TRUSTED);
+
+        /**
          * IDs are removed by default, change the config to allow prefixed IDs.
          * @see http://htmlpurifier.org/docs/enduser-id.html
          */
-        $config = HTMLPurifier_Config::createDefault();
         $config->set('Attr.EnableID', true);
         $config->set('Attr.IDPrefix', $this->options->idPrefix);
+
+        /**
+         * @note Test only here.
+         * @see https://stackoverflow.com/questions/28316700/htmlpurifier-add-unsupported-stylesheet-for-one-tag
+         *
+        $css = $config->getCSSDefinition();
+        $css->info['overflow'] = new HTMLPurifier_AttrDef_Enum(array('scroll'));
+        $css->info['overflow-x'] = new HTMLPurifier_AttrDef_Enum(array('scroll'));
+        $css->info['overflow-y'] = new HTMLPurifier_AttrDef_Enum(array('scroll'));
+         */
+
+        // Pure
         $purified = HTML::purify($naughtyHTML, $config);
 
         // Here we got the pure and maybe beautiful HTML.

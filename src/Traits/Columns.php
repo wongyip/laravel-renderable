@@ -65,7 +65,9 @@ trait Columns
         return $this;
     }
     /**
-     * Get or set the ColumnOptions of a column.
+     * Get or set the ColumnOptions of a column. Input ColumnOptions object to
+     * replace existing, or array of options to update existing (create on
+     * absent).
      *
      * @param string $name
      * @param ColumnOptions|array|null $options

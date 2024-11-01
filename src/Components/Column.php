@@ -6,12 +6,14 @@ use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Wongyip\HTML\Anchor;
+use Wongyip\HTML\Div;
 use Wongyip\HTML\RawHTML;
 use Wongyip\HTML\Interfaces\RendererInterface;
 use Wongyip\HTML\Tag;
 use Wongyip\HTML\TagAbstract;
 use Wongyip\Laravel\Renderable\Renderable;
 use Wongyip\Laravel\Renderable\Tags\Icon;
+use Wongyip\Laravel\Renderable\Utils\HTML;
 use Wongyip\PHPHelpers\Format;
 
 class Column
@@ -123,98 +125,74 @@ class Column
     }
 
     /**
-     * Export a value tag base on options.
+     * Make a value tag in 'bool' type.
      *
-     * N.B. returned tag may contain unsafe attributes, especially when input
-     * contains user-contributed contents, make sure you sanitize it before
-     * actually output the HTML.
-     *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    public function valueTag(string $tagName): TagAbstract
+    private function valueContentBool(): RendererInterface|string
     {
-        $method = 'valueTag' . ucfirst(strtolower($this->options->type));
-        if (method_exists($this, $method)) {
-            $tag = $this->$method($tagName);
-        }
-        else {
-            // Oops
-            Log::warning(
-                sprintf(
-                    'Column.valueTag: column %s with data type %s is not supported (method %s not found).',
-                    $this->options->type,
-                    $this->name,
-                    $method
-                )
-            );
-            $tag = Tag::make($tagName)->contents($this->flatten($this->value));
-        }
-        return $tag->class(Renderable::CSS_CLASS_VALUE);
-    }
-
-    /**
-     *  Make a value tag in 'bool' type.
-     *
-     * @param string $tagName
-     * @return TagAbstract
-     */
-    private function valueTagBool(string $tagName): TagAbstract
-    {
-        $value = is_bool($this->value)
+        return is_bool($this->value)
             ? ($this->value ? $this->options->valueTrue : $this->options->valueFalse)
             : $this->options->valueNull;
-        return Tag::make($tagName)->contents($value);
     }
 
     /**
-     *  Make a value tag in 'csv' type.
+     * Make a value tag in 'csv' type.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagCsv(string $tagName): TagAbstract
+    private function valueContentCsv(): RendererInterface|string
     {
         $csv = is_array($this->value) ? implode($this->options->glue, $this->value) : $this->value;
-        return Tag::make($tagName)->contents($this->flatten($csv));
+        return $this->flatten($csv);
     }
 
     /**
-     *  Make a value tag in 'html' type.
+     * When type if unrecognized.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagHtml(string $tagName): TagAbstract
+    private function valueContentDefault(): RendererInterface|string
     {
-        return Tag::make($tagName)
-            ->contents(
-                RawHTML::create($this->flatten($this->value))
-            );
+        Log::debug(sprintf('Column.valueContentDefault() - column %s is rendered as default flatten text.', $this->name));
+        return $this->flatten($this->value);
     }
 
     /**
-     *  Make a value tag in 'lines' type.
+     * Make a value tag in 'html' type. User contributed contents are strictly
+     * sanitized before output.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagLines(string $tagName): TagAbstract
+    private function valueContentHtml(): RendererInterface|string
+    {
+        /**
+         * ALWAYS STRICT SANITIZED USER CONTRIBUTED CONTENTS.
+         */
+        $sanitizedHtml = HTML::purify($this->flatten($this->value));
+        return RawHTML::create($sanitizedHtml);
+    }
+
+    /**
+     * Make a value tag in 'lines' type.
+     *
+     * @return RendererInterface|string
+     */
+    private function valueContentLines(): RendererInterface|string
     {
         $html = '';
         foreach ((is_array($this->value) ? $this->value : [$this->value]) as $value) {
             $html .= htmlspecialchars($this->flatten($value)) . '<br/>';
         }
-        return Tag::make($tagName)->contents(RawHTML::create($html));
+        return RawHTML::create($html);
     }
 
     /**
      * Make a value tag in 'link' type.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagLink(string $tagName): TagAbstract
+    private function valueContentLink(): RendererInterface|string
     {
         $link = Anchor::create($this->value, $this->options->linkText ?? $this->value);
         if ($this->options->icon) {
@@ -225,73 +203,129 @@ class Column
                 $link->contentsAppend(RawHTML::NBSP(), Icon::create($this->options->icon, true));
             }
         }
-        return Tag::make($tagName)->contents($link);
+        return $link;
     }
 
     /**
-     * @param string $tagName
-     * @return TagAbstract
+     * Mother of OL and UL.
+     *
+     * @return RendererInterface|string
      */
-    private function valueTagList(string $tagName): TagAbstract
+    private function valueContentList(): RendererInterface|string
     {
         $items = is_array($this->value) ? $this->value : [$this->value];
-        $ul = Tag::make($this->options->type)
+        $list = Tag::make($this->options->type)
             ->class($this->options->listClass)
             ->style($this->options->listStyle);
         foreach ($items as $item) {
-            $ul->contentsAppend(
+            $list->contentsAppend(
                 Tag::make('li')
                     ->contents($this->flatten($item))
                     ->class($this->options->itemClass)
                     ->style($this->options->itemStyle)
             );
         }
-        return Tag::make($tagName)->contents($ul);
+        return $list;
     }
 
     /**
      * Make a value tag in 'ol' type.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagOl(string $tagName): TagAbstract
+    private function valueContentOl(): RendererInterface|string
     {
-        return $this->valueTagList($tagName);
+        return $this->valueContentList();
     }
     /**
      * Make a value tag in 'string' type.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagString(string $tagName): TagAbstract
+    private function valueContentString(): RendererInterface|string
     {
         Log::debug(sprintf('Column.valueTagString() - column %s is typed as string instead of text.', $this->name));
-        $escaped = htmlspecialchars($this->flatten($this->value));
-        return Tag::make($tagName)->contents($escaped);
+        return htmlspecialchars($this->flatten($this->value));
     }
 
     /**
      * Make a value tag in 'text' type.
      *
-     * @param string $tagName
-     * @return TagAbstract
+     * @return RendererInterface|string
      */
-    private function valueTagText(string $tagName): TagAbstract
+    private function valueContentText(): RendererInterface|string
     {
-        $content = RawHTML::create(nl2br(htmlspecialchars($this->flatten($this->value))));
-        return Tag::make($tagName)->contents($content);
+        return RawHTML::create(nl2br(htmlspecialchars($this->flatten($this->value))));
     }
 
     /**
      * Make a value tag in 'ul' type.
      *
+     * @return RendererInterface|string
+     */
+    private function valueContentUl(): RendererInterface|string
+    {
+        return $this->valueContentList();
+    }
+
+    /**
+     * Export a value tag base on options.
+     *
+     * N.B. returned tag may contain unsafe attributes, especially when input
+     * contains user-contributed contents, make sure you sanitize it before
+     * actually output the HTML.
+     *
      * @param string $tagName
      * @return TagAbstract
+     * @use static::valueContentBool()
+     * @use static::valueContentCsv()
+     * @use static::valueContentHtml()
+     * @use static::valueContentLine()
+     * @use static::valueContentLink()
+     * @use static::valueContentList()
+     * @use static::valueContentOl()
+     * @use static::valueContentString()
+     * @use static::valueContentText()
+     * @use static::valueContentUl()
      */
-    private function valueTagUl(string $tagName): TagAbstract
+    public function valueTag(string $tagName): TagAbstract
     {
-        return $this->valueTagList($tagName);
+        /**
+         * Format the content by its type.
+         *
+         * @var RendererInterface|string $content
+         */
+        $method = 'valueContent' . ucfirst(strtolower($this->options->type));
+        $content = method_exists($this, $method)
+            ? $this->$method()
+            : $this->valueContentDefault();
+
+
+        // Value wrapper.
+        $container = Div::tag($content)->classAppend(Renderable::CSS_CLASS_VALUE_CONTAINER);
+
+        /**
+         * Scrolling long content: wrap content in container (DIV tag).
+         */
+        if (isset($this->options->scrolling) && $this->options->scrolling) {
+            /**
+             * @var TagAbstract $scrollingContent
+             */
+            $container->styleAppend(
+                match ($this->options->scrolling) {
+                    Renderable::CONTENT_SCROLLING_AUTO => 'overflow: auto',
+                    Renderable::CONTENT_SCROLLING_X => 'overflow-x: auto',
+                    Renderable::CONTENT_SCROLLING_Y => 'overflow-y: auto',
+                    default => '',
+                },
+                isset($this->options->maxHeight) ? sprintf('max-height: %dpx', $this->options->maxHeight): '',
+                isset($this->options->maxWidth) ? sprintf('max-width: %dpx', $this->options->maxWidth): '',
+            );
+
+        }
+
+        return Tag::make($tagName)
+            ->contents($container)
+            ->classAppend(Renderable::CSS_CLASS_VALUE);
     }
 }

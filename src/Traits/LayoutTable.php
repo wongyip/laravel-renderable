@@ -163,8 +163,16 @@ trait LayoutTable
         }
         // Horizontal
         else {
+
+            /**
+             * @todo Configuration needed.
+             */
+            $fieldHeader = TH::create('Field');
+            $valueHeader = TH::create('Value');
+
             $rowHead = $options->tableHorizontalHeaders ? TR::create($fieldHeader) : TR::create();
             $rowBody = $options->tableHorizontalHeaders ? TR::create($valueHeader) : TR::create();
+
             // Fill table head and body with data-columns.
             foreach ($columns as $name => $column) {
                 $rowHead->addCells($column->labelTag('th')->classAppend('field-' . $name));

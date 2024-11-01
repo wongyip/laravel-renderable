@@ -49,4 +49,7 @@ return [
         'valueNull'    => '-',
         'valueTrue'    => 'Yes',
     ],
+    'htmlPurifier' => [
+        'cacheDir' => storage_path('cache/html-purifier'),
+    ],
 ];
