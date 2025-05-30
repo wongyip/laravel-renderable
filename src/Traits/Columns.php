@@ -187,4 +187,102 @@ trait Columns
         }
         return $this;
     }
+
+    /**
+     * Include a column and place it after a specific column.
+     *
+     * IMPORTANT: effective on selective inclusion mode only, do nothing in case
+     * of included is TRUE (for all columns).
+     *
+     * Note: if the $afterColumn does not exists, append $column to the end of
+     * the list by default, or do nothing when $strict is TRUE.
+     *
+     * @param string $column
+     * @param string $afterColumn
+     * @param bool $strict
+     * @return static
+     */
+    public function insert(string $column, string $afterColumn, bool $strict = false): static
+    {
+        if (is_array($this->included)) {
+
+            $indexColumn = array_search($column, $this->included);
+            $indexReference = array_search($afterColumn, $this->included);
+
+            // Reference column exists.
+            if ($indexReference !== false) {
+
+                // Column included already: remove column and insert again after the reference column.
+                if ($indexColumn !== false) {
+                    $this->included[$indexColumn] = null;
+                    array_splice($this->included, $indexReference + 1, 0, $column);
+                    $this->included = array_filter($this->included);
+                }
+                // Simply insert.
+                else {
+                    array_splice($this->included, $indexReference + 1, 0, $column);
+                }
+            }
+            else {
+                // Both not exist: append column when not in $strict mode.
+                if ($indexColumn === false && !$strict) {
+                    $this->include($column);
+                }
+                /**
+                 * @note Do nothing if column is already included and the
+                 * reference column does not exists.
+                 */
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Include a column and place it before a specific column.
+     *
+     * IMPORTANT: effective on selective inclusion mode only, do nothing in case
+     * of included is TRUE (for all columns).
+     *
+     * Note: if the $beforeColumn does not exists, append $column to the end of
+     * the list by default, or do nothing when $strict is TRUE.
+     *
+     * @param string $column
+     * @param string $beforeColumn
+     * @param bool $strict
+     * @return static
+     */
+    public function insertBefore(string $column, string $beforeColumn, bool $strict = false): static
+    {
+        if (is_array($this->included)) {
+
+            $indexColumn = array_search($column, $this->included);
+            $indexReference = array_search($beforeColumn, $this->included);
+
+            // Reference column exists.
+            if ($indexReference !== false) {
+
+                // Column included already: remove column and insert again after the reference column.
+                if ($indexColumn !== false) {
+                    $this->included[$indexColumn] = null;
+                    array_splice($this->included, $indexReference, 0, $column);
+                    $this->included = array_filter($this->included);
+                }
+                // Simply insert.
+                else {
+                    array_splice($this->included, $indexReference, 0, $column);
+                }
+            }
+            else {
+                // Both not exist: append column when not in $strict mode.
+                if ($indexColumn === false && !$strict) {
+                    $this->include($column);
+                }
+                /**
+                 * @note Do nothing if column is already included and the
+                 * reference column does not exists.
+                 */
+            }
+        }
+        return $this;
+    }
 }
