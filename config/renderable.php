@@ -44,6 +44,8 @@ return [
         'linkText'     => null,
         'listClass'    => '',
         'listStyle'    => '',
+        'maskChar'     => '*',
+        'maskLength'   => null,
         'type'         => 'text',
         'valueFalse'   => 'No',
         'valueNull'    => '-',

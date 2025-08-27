@@ -140,8 +140,6 @@ trait ColumnTypes
     }
 
     /**
-     * [BETA]
-     *
      * Type column(s) as password, which will be rendered normally as innerText,
      * which line break is not rendered and looks like a space.
      *
