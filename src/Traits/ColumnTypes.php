@@ -140,6 +140,22 @@ trait ColumnTypes
     }
 
     /**
+     * [BETA]
+     *
+     * Type column(s) as password, which will be rendered normally as innerText,
+     * which line break is not rendered and looks like a space.
+     *
+     * @param string|array|string[] $names
+     * @param string $maskChar Default '*'.
+     * @param null $maskLength Default to the length ot the content.
+     * @return static
+     */
+    public function typePassword(array|string $names, string $maskChar = '*', $maskLength = null): static
+    {
+        return $this->__typeColumns($names, 'password', compact('maskChar', 'maskLength'));
+    }
+
+    /**
      * N.B. People usually want 'text' instead of 'string', where text will
      * be processed with nl2br() and 'string' will not.
      *

@@ -237,6 +237,24 @@ class Column
     {
         return $this->valueContentList();
     }
+
+    /**
+     * Make a value tag in 'ol' type.
+     *
+     * @return RendererInterface|string
+     */
+    private function valueContentPassword(): RendererInterface|string
+    {
+        try {
+            $char = substr($this->options->maskChar, 0, 1);
+            $len = $this->options->maskLength ?? (strlen($this->value) ?: 8);
+            return Tag::make('span', str_repeat($char, $len))->title('Password / masked string.');
+        }
+        catch (Exception $e) {
+            return '#INVALID VALUE';
+        }
+    }
+
     /**
      * Make a value tag in 'string' type.
      *
@@ -284,6 +302,7 @@ class Column
      * @use static::valueContentLink()
      * @use static::valueContentList()
      * @use static::valueContentOl()
+     * @use static::valueContentPassword()
      * @use static::valueContentString()
      * @use static::valueContentText()
      * @use static::valueContentUl()

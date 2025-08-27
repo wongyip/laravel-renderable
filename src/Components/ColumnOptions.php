@@ -70,6 +70,16 @@ class ColumnOptions
      */
     public string $listStyle;
     /**
+     * [Password only] Character that replaces the original content.
+     * @var string
+     */
+    public string $maskChar;
+    /**
+     * [Password only] Number of $maskChan to be repeated.
+     * @var string|null
+     */
+    public ?string $maskLength = null;
+    /**
      * Effective on scrolling enabled.
      *
      * @var int
