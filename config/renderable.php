@@ -35,6 +35,7 @@ return [
      * @see \Wongyip\Laravel\Renderable\Components\ColumnOptions
      */
     'columnOptions' => [
+        'format'       => null,
         'glue'         => ', ',
         'html'         => false,
         'icon'         => '',

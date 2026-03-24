@@ -19,7 +19,7 @@ use Wongyip\PHPHelpers\Format;
 class Column
 {
     /**
-     * @var string
+     * @var string|RendererInterface
      */
     public string|RendererInterface $label;
     /**
@@ -145,6 +145,16 @@ class Column
     {
         $csv = is_array($this->value) ? implode($this->options->glue, $this->value) : $this->value;
         return $this->flatten($csv);
+    }
+
+    /**
+     * Format a value using sprintf() function, base on the format string.
+     *
+     * @return RendererInterface|string
+     */
+    private function valueContentFormatted(): RendererInterface|string
+    {
+        return sprintf($this->options->format, $this->value);
     }
 
     /**
@@ -297,6 +307,7 @@ class Column
      * @return TagAbstract
      * @use static::valueContentBool()
      * @use static::valueContentCsv()
+     * @use static::valueContentFormatted()
      * @use static::valueContentHtml()
      * @use static::valueContentLine()
      * @use static::valueContentLink()

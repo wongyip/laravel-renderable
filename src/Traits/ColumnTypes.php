@@ -83,6 +83,23 @@ trait ColumnTypes
     }
 
     /**
+     * Type column(s) to be formated with the sprintf() function.
+     *
+     * E.g. $renderable->typeFormatted('price', 'HK$%.02f'), will output HK$1.23
+     * if the column value is 1.234.
+     *
+     * @param string|string[]|array $names
+     * @param string|null $format Format string for sprintf().
+     * @return static
+     *
+     * @see https://www.php.net/sprintf
+     */
+    public function typeFormatted(array|string $names, string $format = null): static
+    {
+        return $this->__typeColumns($names, 'formatted', compact('format'));
+    }
+
+    /**
      * Type column(s) as HTML code.
      *
      * @param string|array|string[] $names

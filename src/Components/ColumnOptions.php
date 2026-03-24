@@ -17,6 +17,13 @@ class ColumnOptions
     const ICON_POSITION_BEFORE = 'before';
     const ICON_DEFAULT_LINK    = 'link';
     /**
+     * Used by `Formatted String`.
+     *
+     * @var string
+     * @see Renderable::typeFormatted()
+     */
+    public string $format;
+    /**
      * Used by type: csv.
      *
      * @var string
