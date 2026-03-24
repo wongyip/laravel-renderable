@@ -19,10 +19,10 @@ class ColumnOptions
     /**
      * Used by `Formatted String`.
      *
-     * @var string
+     * @var string|null
      * @see Renderable::typeFormatted()
      */
-    public string $format;
+    public string|null $format;
     /**
      * Used by type: csv.
      *
