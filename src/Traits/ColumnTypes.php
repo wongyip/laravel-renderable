@@ -19,7 +19,7 @@ trait ColumnTypes
      * @param array|ColumnOptions|null $options
      * @return $this
      */
-    private function __typeColumns(string|array $names, string $type, array|ColumnOptions $options = null): static
+    private function __typeColumns(string|array $names, string $type, array|ColumnOptions|null $options = null): static
     {
         foreach ((is_array($names) ? $names : [$names]) as $column) {
             $this->type($column, $type, $options);
@@ -36,7 +36,7 @@ trait ColumnTypes
      * @param array|ColumnOptions|null $options
      * @return string|null|static
      */
-    public function type(string $name, string $type = null, array|ColumnOptions $options = null): string|null|static
+    public function type(string $name, string|null $type = null, array|ColumnOptions|null $options = null): string|null|static
     {
         // Get
         if (is_null($type)) {
@@ -65,7 +65,7 @@ trait ColumnTypes
      * @param string|null $valueNull Default to $valueFalse
      * @return static
      */
-    public function typeBool(string|array $names, string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
+    public function typeBool(string|array $names, string|null $valueTrue = null, string|null $valueFalse = null, string|null $valueNull = null): static
     {
         return $this->__typeColumns($names, 'bool', compact('valueTrue', 'valueFalse', 'valueNull'));
     }
@@ -77,7 +77,7 @@ trait ColumnTypes
      * @param string|null $glue
      * @return static
      */
-    public function typeCSV(array|string $names, string $glue = null): static
+    public function typeCSV(array|string $names, string|null $glue = null): static
     {
         return $this->__typeColumns($names, 'csv', compact('glue'));
     }
@@ -94,7 +94,7 @@ trait ColumnTypes
      *
      * @see https://www.php.net/sprintf
      */
-    public function typeFormatted(array|string $names, string $format = null): static
+    public function typeFormatted(array|string $names, string|null $format = null): static
     {
         return $this->__typeColumns($names, 'formatted', compact('format'));
     }
@@ -132,7 +132,7 @@ trait ColumnTypes
      * @see ColumnOptions::ICON_POSITION_AFTER
      * @see ColumnOptions::ICON_POSITION_BEFORE
      */
-    public function typeLink(array|string $names, string|bool $icon = null, bool $iconAfterLink = null, string $linkText = null): static
+    public function typeLink(array|string $names, string|bool|null $icon = null, bool|null $iconAfterLink = null, string|null $linkText = null): static
     {
         $icon = $icon ? ($icon === true ? ColumnOptions::ICON_DEFAULT_LINK : $icon) : '';
         $iconPosition = $iconAfterLink
@@ -151,7 +151,7 @@ trait ColumnTypes
      * @param string|null $itemStyle
      * @return static
      */
-    public function typeOL(array|string $names, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
+    public function typeOL(array|string $names, string|null $listClass = null, string|null $listStyle = null, string|null $itemClass = null, string|null $itemStyle = null): static
     {
         return $this->__typeColumns($names, 'ol', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }
@@ -207,7 +207,7 @@ trait ColumnTypes
      * @param string|null $itemStyle
      * @return static
      */
-    public function typeUL(array|string $names, string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
+    public function typeUL(array|string $names, string|null $listClass = null, string|null $listStyle = null, string|null $itemClass = null, string|null $itemStyle = null): static
     {
         return $this->__typeColumns($names, 'ul', compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }

@@ -60,7 +60,7 @@ trait LayoutTable
      * @param array|RenderableOptions|null $options Custom options, skip to taking values from config('renderable.options').
      * @return static
      */
-    static function table(array|Model $attributes, array|string|bool $included = null, array|string $excluded = null, array|RenderableOptions $options = null): static
+    static function table(array|Model $attributes, array|string|bool|null $included = null, array|string|null $excluded = null, array|RenderableOptions|null $options = null): static
     {
         return new static($attributes, $included, $excluded, $options, Renderable::LAYOUT_TABLE);
     }
@@ -76,7 +76,7 @@ trait LayoutTable
      * @param array|RenderableOptions|null $options Custom options, skip to taking values from config('renderable.options').
      * @return static
      */
-    static function tableHorizontal(array|Model $attributes, array|string|bool $included = null, array|string $excluded = null, array|RenderableOptions $options = null): static
+    static function tableHorizontal(array|Model $attributes, array|string|bool|null $included = null, array|string|null $excluded = null, array|RenderableOptions|null $options = null): static
     {
         $r = static::table($attributes, $included, $excluded, $options);
         $r->options->tableHorizontal = true;

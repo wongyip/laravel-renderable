@@ -45,7 +45,7 @@ class HTML
      * @return string
      * @use HTML::PURIFY_MODE_TRUSTED | HTML::PURIFY_MODE_STRICT
      */
-    static function purify(string $input, HTMLPurifier_Config|int $configOrMode = null): string
+    static function purify(string $input, HTMLPurifier_Config|int|null $configOrMode = null): string
     {
         try {
             $config = $configOrMode instanceof HTMLPurifier_Config
@@ -80,7 +80,7 @@ class HTML
      * @return bool
      * @see config/renderable.php
      */
-    static function purifierCacheDirReady(string &$path = null): bool
+    static function purifierCacheDirReady(string|null &$path = null): bool
     {
         $path = $path ?? config('renderable.htmlPurifier.cacheDir');
         if (file_exists($path) && is_dir($path)) {

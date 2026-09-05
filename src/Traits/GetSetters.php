@@ -25,7 +25,7 @@ trait GetSetters
      * @param bool $replace
      * @return array|null|static
      */
-    protected function __merge(string $property, array $array = null, bool $replace = false): mixed
+    protected function __merge(string $property, array|null $array = null, bool $replace = false): mixed
     {
         // Get
         if (is_null($array)) {

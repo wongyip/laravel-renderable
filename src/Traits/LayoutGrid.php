@@ -21,7 +21,7 @@ trait LayoutGrid
      * @param array|RenderableOptions|null $options Custom options, skip to taking values from config('renderable.options').
      * @return static
      */
-    static function grid(array|Model $attributes, array|string|bool $included = null, array|string $excluded = null, array|RenderableOptions $options = null): static
+    static function grid(array|Model $attributes, array|string|bool|null $included = null, array|string|null $excluded = null, array|RenderableOptions|null $options = null): static
     {
         return new static($attributes, $included, $excluded, $options, Renderable::LAYOUT_GRID);
     }

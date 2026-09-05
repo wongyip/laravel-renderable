@@ -45,7 +45,7 @@ class Column
      * @param string|RendererInterface|null $label
      * @param ColumnOptions|null $options
      */
-    public function __construct(string $name, mixed $value, string|RendererInterface $label = null, ColumnOptions $options = null)
+    public function __construct(string $name, mixed $value, string|RendererInterface|null $label = null, ?ColumnOptions $options = null)
     {
         $this->name      = $name;
         $this->value     = $value;
@@ -106,7 +106,7 @@ class Column
      * @param ColumnOptions|null $options
      * @return static
      */
-    public static function init(string $name, mixed $value, string|RendererInterface $label = null, ColumnOptions $options = null): static
+    public static function init(string $name, mixed $value, string|RendererInterface|null $label = null, ?ColumnOptions $options = null): static
     {
         return new static($name, $value, $label, $options);
     }

@@ -134,7 +134,7 @@ class ColumnOptions
      *
      * @param array|null $options
      */
-    public function __construct(array $options = null)
+    public function __construct(array|null $options = null)
     {
         // Merge input (if set) into defaults.
         $defaults = config('renderable.columnOptions');
@@ -157,7 +157,7 @@ class ColumnOptions
      * @param string|null $valueNull
      * @return static
      */
-    public static function bool(string $valueTrue = null, string $valueFalse = null, string $valueNull = null): static
+    public static function bool(string|null $valueTrue = null, string|null $valueFalse = null, string|null $valueNull = null): static
     {
         return new static(compact('valueTrue', 'valueFalse', 'valueNull'));
     }
@@ -178,7 +178,7 @@ class ColumnOptions
      * @param string|null $glue
      * @return static
      */
-    public static function csv(string $glue = null): static
+    public static function csv(string|null $glue = null): static
     {
         return new static(compact('glue'));
     }
@@ -192,7 +192,7 @@ class ColumnOptions
      * @param string|null $itemStyle
      * @return static
      */
-    public static function list(string $listClass = null, string $listStyle = null, string $itemClass = null, string $itemStyle = null): static
+    public static function list(string|null $listClass = null, string|null $listStyle = null, string|null $itemClass = null, string|null $itemStyle = null): static
     {
         return new static(compact('listClass', 'listStyle', 'itemClass', 'itemStyle'));
     }

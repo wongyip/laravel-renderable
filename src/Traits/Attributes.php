@@ -62,7 +62,7 @@ trait Attributes
      * @param bool $replace
      * @return array|static
      */
-    public function attributes(array $attributes = null, bool $replace = false): array|static
+    public function attributes(array|null $attributes = null, bool $replace = false): array|static
     {
         if (is_null($attributes)) {
             return $this->attributes;

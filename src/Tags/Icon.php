@@ -18,7 +18,7 @@ class Icon extends TagAbstract
      * @param string|null $iconStyle
      * @return static
      */
-    public static function create(string $iconName, bool $fixedWidth = null, string $iconStyle = null): static
+    public static function create(string $iconName, bool|null $fixedWidth = null, string|null $iconStyle = null): static
     {
         $styleClass = $iconStyle ? "fa-$iconStyle" : 'fas';
         $utilsClass = $fixedWidth ? 'fa-fw' : '';

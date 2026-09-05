@@ -22,27 +22,27 @@ use Wongyip\Laravel\Renderable\Utils\HTML;
  * @see RenderableOptions
  * @see /config/renderable.php
  * -----------------------------------------------------------------------------
- * @method string|Renderable id(string $id = null)
- * @method RenderableOptions|Renderable options(RendererInterface $options = null)
+ * @method string|null|Renderable id(string|null $id = null)
+ * @method RenderableOptions|null|Renderable options(RendererInterface|null $options = null)
  * -----------------------------------------------------------------------------
- * @method bool|Renderable beautifyHTML(bool $set = null)
- * @method string|Renderable containerIdSuffix(string $set = null)
- * @method string|Renderable emptyRecord(string $set = null)
- * @method string|Renderable gridClassAppend(string $set = null)
- * @method string|Renderable gridClassPrepend(string $set = null)
- * @method string|Renderable idPrefix(string $set = null)
- * @method string|RendererInterface|Renderable prefix(string|RendererInterface $set = null)
- * @method string|RendererInterface|Renderable suffix(string|RendererInterface $set = null)
- * @method bool|Renderable tableBordered(bool $set = null) Get or toggle table-bordered styling.
- * @method bool|Renderable tableBorderless(bool $set = null) Get or toggle table-borderless styling.
- * @method string|Renderable tableCaptionSide(string $set = null)
- * @method string|Renderable tableClassAppend(string $set = null)
- * @method string|Renderable tableClassBase(string $set = null)
- * @method string|Renderable tableClassPrepend(string $set = null)
- * @method bool|Renderable tableHorizontalHeaders(bool $set = null)
- * @method bool|Renderable tableHover(bool $set = null) Get or toggle table-hover styling.
- * @method string|Renderable tableLabelCellWidth(string $set = null) Get or set CSS width of 'tbody > tr > td:first-child', integer value will be suffixed with default unit 'px' on output.
- * @method bool|Renderable tableStriped(bool $set = null) Get or toggle table-striped styling.
+ * @method bool|null|Renderable beautifyHTML(bool|null $set = null)
+ * @method string|null|Renderable containerIdSuffix(string|null $set = null)
+ * @method string|null|Renderable emptyRecord(string|null $set = null)
+ * @method string|null|Renderable gridClassAppend(string|null $set = null)
+ * @method string|null|Renderable gridClassPrepend(string|null $set = null)
+ * @method string|null|Renderable idPrefix(string|null $set = null)
+ * @method string|null|RendererInterface|Renderable prefix(string|RendererInterface|null $set = null)
+ * @method string|null|RendererInterface|Renderable suffix(string|RendererInterface|null $set = null)
+ * @method bool|null|Renderable tableBordered(bool|null $set = null) Get or toggle table-bordered styling.
+ * @method bool|null|Renderable tableBorderless(bool|null $set = null) Get or toggle table-borderless styling.
+ * @method string|null|Renderable tableCaptionSide(string|null $set = null)
+ * @method string|null|Renderable tableClassAppend(string|null $set = null)
+ * @method string|null|Renderable tableClassBase(string|null $set = null)
+ * @method string|null|Renderable tableClassPrepend(string|null $set = null)
+ * @method bool|null|Renderable tableHorizontalHeaders(bool|null $set = null)
+ * @method bool|null|Renderable tableHover(bool|null $set = null) Get or toggle table-hover styling.
+ * @method string|null|Renderable tableLabelCellWidth(string|null $set = null) Get or set CSS width of 'tbody > tr > td:first-child', integer value will be suffixed with default unit 'px' on output.
+ * @method bool|null|Renderable tableStriped(bool|null $set = null) Get or toggle table-striped styling.
  */
 class Renderable implements RendererInterface
 {
@@ -135,7 +135,7 @@ class Renderable implements RendererInterface
      * @param array|RenderableOptions|null $options Customization and switches options.
      * @param string|null $layout skip for LAYOUT_DEFAULT.
      */
-    public function __construct(array|Model $attributes, bool|array|string $included = null, array|string $excluded = null, array|RenderableOptions $options = null, string $layout = null)
+    public function __construct(array|Model $attributes, bool|array|string|null $included = null, array|string|null $excluded = null, array|RenderableOptions|null $options = null, string|null $layout = null)
     {
         // Init.
         $this->id = crc32(uniqid());
@@ -229,7 +229,7 @@ class Renderable implements RendererInterface
      * @param string|null $layout
      * @return string|static
      */
-    public function layout(string $layout = null): string|static
+    public function layout(string|null $layout = null): string|static
     {
         // Get
         if (is_null($layout)) {
@@ -267,7 +267,7 @@ class Renderable implements RendererInterface
      * @param array|null $adHocOptions
      * @return string
      */
-    public function render(array $adHocAttrs = null, array $adHocOptions = null): string
+    public function render(array|null $adHocAttrs = null, array|null $adHocOptions = null): string
     {
         // Prepare the container with non-prefixed ID.
         $container = clone $this->container;

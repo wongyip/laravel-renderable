@@ -61,7 +61,7 @@ trait ColumnLabels
      * @param string|RendererInterface|null $label
      * @return string|RendererInterface|Renderable|static
      */
-    public function label(string $column, string|RendererInterface $label = null): string|RendererInterface|Renderable|static
+    public function label(string $column, string|RendererInterface|null $label = null): string|RendererInterface|Renderable|static
     {
         // Get
         if (is_null($label)) {
@@ -105,7 +105,7 @@ trait ColumnLabels
      * @param array|null $labels
      * @return array|string[]|RendererInterface[]|Renderable|static
      */
-    public function labels(array $labels = null): array|Renderable|static
+    public function labels(array|null $labels = null): array|Renderable|static
     {
         // Get
         if (is_null($labels)) {

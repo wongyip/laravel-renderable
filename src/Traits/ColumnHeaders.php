@@ -49,7 +49,7 @@ trait ColumnHeaders
      * @return string|null|static
      * @deprecated Keep for compatibility
      */
-    public function fieldHeaderStyle(string $set = null, bool $keepExisting = null): string|null|static
+    public function fieldHeaderStyle(string|null $set = null, bool|null $keepExisting = null): string|null|static
     {
         Log::warning('DEPRECATED Renderable::fieldHeaderStyle() called.');
         return is_null($set) ? '' : $this;
@@ -61,7 +61,7 @@ trait ColumnHeaders
      * @see RenderableOptions::$tableLabelCellWidth
      * @deprecated Keep for compatibility
      */
-    public function fieldHeaderWidth(int $set = null): int|null|static
+    public function fieldHeaderWidth(int|null $set = null): int|null|static
     {
         Log::warning('DEPRECATED Renderable::fieldHeaderWidth() called.');
         // Make it compatible.
@@ -78,7 +78,7 @@ trait ColumnHeaders
      * @return bool|Renderable|static
      * @deprecated Keep for compatibility
      */
-    public function renderTableHead(bool $set = null): bool|Renderable|static
+    public function renderTableHead(bool|null $set = null): bool|Renderable|static
     {
         Log::warning('DEPRECATED Renderable::renderTableHead() called.');
         if (is_null($set)) {

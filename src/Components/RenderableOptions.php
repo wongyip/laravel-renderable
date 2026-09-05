@@ -157,7 +157,7 @@ class RenderableOptions
     /**
      * @param array|null $options
      */
-    public function __construct(array $options = null)
+    public function __construct(array|null $options = null)
     {
         // Merge input $options into defaults, and apply if matching property exists.
         $defaults = config('renderable.options');

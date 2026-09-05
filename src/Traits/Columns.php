@@ -37,7 +37,7 @@ trait Columns
      * @deprecated Replaced by include() method.
      * @see self::include()
      */
-    public function columns(array|string|bool $names = null, bool $replace = false): array|static
+    public function columns(array|string|bool|null $names = null, bool $replace = false): array|static
     {
         return $this->include($names, $replace);
     }
@@ -54,7 +54,7 @@ trait Columns
      * @param bool $replace
      * @return array|string[]|static
      */
-    public function columnsHTML(string|array|bool $names = null, bool $replace = false): array|static
+    public function columnsHTML(string|array|bool|null $names = null, bool $replace = false): array|static
     {
         // Get
         if (is_null($names)) {
@@ -73,7 +73,7 @@ trait Columns
      * @param ColumnOptions|array|null $options
      * @return ColumnOptions|static
      */
-    public function columnOptions(string $name, ColumnOptions|array $options = null): ColumnOptions|static
+    public function columnOptions(string $name, ColumnOptions|array|null $options = null): ColumnOptions|static
     {
         // Get
         if (is_null($options)) {
@@ -120,7 +120,7 @@ trait Columns
      * @param bool $replace
      * @return array|string[]|static
      */
-    public function exclude(string|array $names = null, bool $replace = false): array|static
+    public function exclude(string|array|null $names = null, bool $replace = false): array|static
     {
         // Get
         if (is_null($names)) {
@@ -149,7 +149,7 @@ trait Columns
      * @param bool $replace
      * @return array|string[]|static
      */
-    public function include(array|string|bool $names = null, bool $replace = false): array|static
+    public function include(array|string|bool|null $names = null, bool $replace = false): array|static
     {
         // Get
         if (is_null($names)) {

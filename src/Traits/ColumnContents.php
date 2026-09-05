@@ -28,7 +28,7 @@ trait ColumnContents
      * @return Renderable
      * @use Renderable::CONTENT_SCROLLING_OFF | Renderable::CONTENT_SCROLLING_AUTO | Renderable::CONTENT_SCROLLING_X | Renderable::CONTENT_SCROLLING_Y
      */
-    public function scrolling(string $name, int $maxHeight = 500, int $maxWidth = null, int $scrolling = null): Renderable
+    public function scrolling(string $name, int $maxHeight = 500, int|null $maxWidth = null, int|null $scrolling = null): Renderable
     {
         $scrolling = $scrolling ?? static::CONTENT_SCROLLING_AUTO;
         $this->columnOptions($name, compact('scrolling', 'maxHeight', 'maxWidth'));
