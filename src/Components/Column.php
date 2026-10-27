@@ -2,9 +2,11 @@
 
 namespace Wongyip\Laravel\Renderable\Components;
 
+use BackedEnum;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use UnitEnum;
 use Wongyip\HTML\Anchor;
 use Wongyip\HTML\Div;
 use Wongyip\HTML\RawHTML;
@@ -80,6 +82,12 @@ class Column
             // DateTime to string
             elseif ($value instanceof DateTime) {
                 return $value->format(LARAVEL_RENDERABLE_DATETIME_FORMAT);
+            }
+            elseif ($value instanceof BackedEnum) {
+                return $value->value;
+            }
+            elseif ($value instanceof UnitEnum) {
+                return $value->name;
             }
             elseif (is_object($value)) {
                 Log::error(sprintf('Column.valueFlattened() return empty string: type (%s) has no handler.', get_class($value)));
